@@ -1,0 +1,61 @@
+{
+  "name": "aditi_webinar",
+  "version": "1.0.0",
+  "description": "Webinar registration and management system",
+  "main": "app.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "cross-env NODE_ENV=test jest --runInBand",
+    "test:watch": "cross-env NODE_ENV=test jest --watch",
+    "test:coverage": "cross-env NODE_ENV=test jest --coverage --runInBand",
+    "test:unit": "cross-env NODE_ENV=test jest tests/unit",
+    "test:integration": "cross-env NODE_ENV=test jest tests/integration",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:migrate:prod": "prisma migrate deploy",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
+    "db:seed": "node prisma/seed.js",
+    "lint": "echo 'Add eslint configuration for linting'",
+    "build": "echo 'No build step required'",
+    "prod": "cross-env NODE_ENV=production node app.js",
+    "health": "curl -f http://localhost:3000/api/attendee-count || exit 1"
+  },
+  "keywords": [
+    "webinar",
+    "registration",
+    "express",
+    "prisma",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "bcryptjs": "^3.0.3",
+    "connect-flash": "^0.1.1",
+    "csrf-sync": "^4.2.1",
+    "dotenv": "^17.2.3",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.2.1",
+    "express-session": "^1.18.2",
+    "express-validator": "^7.3.1",
+    "helmet": "^8.1.0",
+    "nodemailer": "^7.0.10",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
+    "prisma": "^5.22.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "cross-env": "^10.1.0",
+    "jest": "^30.2.0",
+    "nodemon": "^3.1.11",
+    "supertest": "^7.1.4"
+  }
+}

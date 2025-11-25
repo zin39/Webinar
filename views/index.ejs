@@ -1,0 +1,427 @@
+<%- include('partials/header') %>
+<%- include('partials/nav') %>
+
+<!-- Hero Section -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <!-- Mental Health Illustration -->
+      <div class="hero-illustration">
+        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Brain/Mind circle -->
+          <circle cx="100" cy="100" r="80" fill="#EEF2FF" stroke="#2563eb" stroke-width="2"/>
+          <!-- Peaceful face -->
+          <circle cx="100" cy="100" r="60" fill="#DBEAFE"/>
+          <!-- Closed eyes (peaceful) -->
+          <path d="M75 95 Q80 90 85 95" stroke="#1e293b" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M115 95 Q120 90 125 95" stroke="#1e293b" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <!-- Gentle smile -->
+          <path d="M85 115 Q100 125 115 115" stroke="#1e293b" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <!-- Decorative leaves/growth -->
+          <path d="M160 60 Q170 50 180 60 Q170 70 160 60" fill="#10b981" opacity="0.8"/>
+          <path d="M165 75 Q175 65 185 75 Q175 85 165 75" fill="#10b981" opacity="0.6"/>
+          <path d="M25 130 Q15 120 25 110 Q35 120 25 130" fill="#10b981" opacity="0.8"/>
+          <path d="M20 145 Q10 135 20 125 Q30 135 20 145" fill="#10b981" opacity="0.6"/>
+          <!-- Hearts representing care -->
+          <path d="M40 50 Q45 45 50 50 Q55 45 60 50 Q60 58 50 65 Q40 58 40 50" fill="#f59e0b" opacity="0.7"/>
+          <path d="M150 140 Q153 137 156 140 Q159 137 162 140 Q162 145 156 150 Q150 145 150 140" fill="#f59e0b" opacity="0.7"/>
+          <!-- Stars/sparkles -->
+          <circle cx="170" cy="100" r="3" fill="#2563eb"/>
+          <circle cx="30" cy="90" r="3" fill="#2563eb"/>
+          <circle cx="50" cy="160" r="2" fill="#2563eb"/>
+          <circle cx="155" cy="45" r="2" fill="#2563eb"/>
+        </svg>
+      </div>
+      <h1 class="hero-title"><%= webinar.title %></h1>
+      <p class="hero-subtitle"><%= webinar.subtitle %></p>
+
+      <div class="hero-meta">
+        <div class="meta-item">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          <span id="webinar-date"><%= new Date(webinar.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }) %></span>
+        </div>
+        <div class="meta-item">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span><%= new Date(webinar.date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' }) %></span>
+        </div>
+        <div class="meta-item">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span><%= webinar.duration %> minutes</span>
+        </div>
+      </div>
+
+      <a href="/register" class="btn btn-primary btn-lg">Register Now - It's Free</a>
+
+      <!-- Countdown Timer -->
+      <div class="countdown" id="countdown" data-date="<%= new Date(webinar.date).toISOString() %>">
+        <div class="countdown-item">
+          <span class="countdown-value" id="days">00</span>
+          <span class="countdown-label">Days</span>
+        </div>
+        <div class="countdown-item">
+          <span class="countdown-value" id="hours">00</span>
+          <span class="countdown-label">Hours</span>
+        </div>
+        <div class="countdown-item">
+          <span class="countdown-value" id="minutes">00</span>
+          <span class="countdown-label">Minutes</span>
+        </div>
+        <div class="countdown-item">
+          <span class="countdown-value" id="seconds">00</span>
+          <span class="countdown-label">Seconds</span>
+        </div>
+      </div>
+
+      <!-- Social Proof -->
+      <div class="social-proof">
+        <div class="avatars">
+          <div class="avatar"></div>
+          <div class="avatar"></div>
+          <div class="avatar"></div>
+          <div class="avatar"></div>
+        </div>
+        <span><strong id="attendee-count"><%= attendeeCount %></strong> people have already registered</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- About Section -->
+<section class="section" id="about">
+  <div class="container">
+    <h2 class="section-title">What You'll Learn</h2>
+    <p class="section-subtitle"><%= webinar.description %></p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        </div>
+        <h3>Recognize Stress Signs</h3>
+        <p>Learn to identify signs of academic stress and burnout in yourself and others.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+        </div>
+        <h3>Healthy Study Habits</h3>
+        <p>Discover practical study techniques and self-care strategies you can use immediately.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </div>
+        <h3>When to Seek Help</h3>
+        <p>Understand when and how to ask for professional support - it's a sign of strength.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+        </div>
+        <h3>Build Resilience</h3>
+        <p>Develop self-compassion and emotional resilience for your academic journey.</p>
+      </div>
+    </div>
+
+    <!-- Agenda -->
+    <div class="agenda">
+      <h3>Session Agenda (60 minutes)</h3>
+      <div class="agenda-list">
+        <div class="agenda-item">
+          <span class="agenda-time">0:00</span>
+          <svg class="agenda-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+          <span class="agenda-topic">Welcome & Introduction</span>
+        </div>
+        <div class="agenda-item">
+          <span class="agenda-time">0:05</span>
+          <svg class="agenda-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 16v-4M12 8h.01"></path>
+          </svg>
+          <span class="agenda-topic">Student Mental Health Reality in Nepal</span>
+        </div>
+        <div class="agenda-item">
+          <span class="agenda-time">0:15</span>
+          <svg class="agenda-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <span class="agenda-topic">Breaking Down Stigma & Myths</span>
+        </div>
+        <div class="agenda-item">
+          <span class="agenda-time">0:25</span>
+          <svg class="agenda-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+          <span class="agenda-topic">Practical Strategies & Self-Care Tools</span>
+        </div>
+        <div class="agenda-item">
+          <span class="agenda-time">0:40</span>
+          <svg class="agenda-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+          <span class="agenda-topic">Resources & Where to Get Help</span>
+        </div>
+        <div class="agenda-item">
+          <span class="agenda-time">0:45</span>
+          <svg class="agenda-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <span class="agenda-topic">Live Q&A Session</span>
+        </div>
+        <div class="agenda-item">
+          <span class="agenda-time">0:55</span>
+          <svg class="agenda-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+          <span class="agenda-topic">Closing & Next Steps</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Speaker Section -->
+<section class="section section-gray" id="speaker">
+  <div class="container">
+    <h2 class="section-title">Meet Your Speaker</h2>
+
+    <div class="speaker-card">
+      <div class="speaker-image">
+        <% if (webinar.speakerImage) { %>
+          <img src="<%= webinar.speakerImage %>" alt="<%= webinar.speakerName %>" class="speaker-photo">
+        <% } else { %>
+          <div class="speaker-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+        <% } %>
+      </div>
+      <div class="speaker-info">
+        <h3><%= webinar.speakerName %></h3>
+        <p class="speaker-bio"><%= webinar.speakerBio %></p>
+        <div class="speaker-credentials">
+          <span class="credential">
+            <svg class="credential-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="8" r="5"></circle>
+              <path d="M20 21a8 8 0 1 0-16 0"></path>
+            </svg>
+            NHAFN Fellow
+          </span>
+          <span class="credential">
+            <svg class="credential-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+            Mental Health Advocate
+          </span>
+          <span class="credential">
+            <svg class="credential-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            Community Leader
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">What Past Attendees Say</h2>
+
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <p class="testimonial-text">"Finally, someone talking about mental health openly! The practical strategies helped me manage my exam stress better."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">P</div>
+          <div>
+            <strong>Priya S.</strong>
+            <span>College Student</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <p class="testimonial-text">"As a parent, I learned so much about supporting my child's mental wellbeing. The session was eye-opening and judgment-free."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">R</div>
+          <div>
+            <strong>Ramesh T.</strong>
+            <span>Parent</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <p class="testimonial-text">"The resources shared were incredibly helpful. I now know where to seek help and how to support my peers."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">A</div>
+          <div>
+            <strong>Anisha K.</strong>
+            <span>High School Student</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="section section-gray" id="faq">
+  <div class="container">
+    <h2 class="section-title">Frequently Asked Questions</h2>
+
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-question">
+          Is this webinar really free?
+          <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="faq-answer">
+          <p>Yes, this webinar is completely free. No credit card required, no hidden fees.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">
+          Will there be a recording?
+          <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="faq-answer">
+          <p>Yes, all registered attendees will receive a recording of the webinar within 24 hours after the live session.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">
+          What if I can't attend live?
+          <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="faq-answer">
+          <p>No problem! Register anyway and we'll send you the recording. However, we encourage live attendance for the Q&A session.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">
+          What platform will the webinar be on?
+          <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="faq-answer">
+          <p>The webinar will be hosted on Zoom. You'll receive the join link before the session starts.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">
+          Who is this webinar for?
+          <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="faq-answer">
+          <p>This webinar is for students (high school and college), parents wanting to support their children, educators, and anyone interested in understanding student mental health.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">
+          Will my privacy be protected?
+          <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="faq-answer">
+          <p>Absolutely. Cameras are optional, and you can participate as you're comfortable. All discussions are confidential and judgment-free.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="section cta-section">
+  <div class="container">
+    <div class="cta-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+      </svg>
+    </div>
+    <h2>Let's Prioritize Mental Health Together</h2>
+    <p>Join others who have already registered. Your wellbeing matters!</p>
+    <a href="/register" class="btn btn-primary btn-lg">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+        <circle cx="8.5" cy="7" r="4"></circle>
+        <line x1="20" y1="8" x2="20" y2="14"></line>
+        <line x1="23" y1="11" x2="17" y2="11"></line>
+      </svg>
+      Register Now - It's Free
+    </a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <svg class="footer-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+        <span>MindWell</span>
+      </div>
+      <p>&copy; <%= new Date().getFullYear() %> NHAFN Community Advocacy Project | Mental Health Leadership Program</p>
+    </div>
+  </div>
+</footer>
+
+<%- include('partials/footer') %>

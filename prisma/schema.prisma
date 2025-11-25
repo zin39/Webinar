@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Attendee {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  company      String?
+  jobTitle     String?
+  phone        String?
+  howHeard     String?
+  registeredAt DateTime @default(now())
+  emailSent    Boolean  @default(false)
+}
+
+model WebinarConfig {
+  id           String   @id @default(cuid())
+  title        String
+  subtitle     String?
+  description  String?
+  date         DateTime
+  duration     Int      @default(60)
+  meetingLink  String?
+  speakerName  String?
+  speakerBio   String?
+  speakerImage String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

@@ -1,0 +1,200 @@
+<%- include('partials/header') %>
+<%- include('partials/nav') %>
+
+<section class="register-section">
+  <div class="container">
+    <div class="register-grid">
+      <!-- Left: Webinar Info -->
+      <div class="register-info">
+        <a href="/" class="back-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Back to Home
+        </a>
+
+        <h1><%= webinar.title %></h1>
+        <p class="register-subtitle"><%= webinar.subtitle %></p>
+
+        <div class="register-meta">
+          <div class="meta-item">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span><%= new Date(webinar.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }) %></span>
+          </div>
+          <div class="meta-item">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span><%= new Date(webinar.date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' }) %></span>
+          </div>
+        </div>
+
+        <div class="register-benefits">
+          <h3>What you'll get:</h3>
+          <ul>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Live access to the webinar
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Recording sent to your email
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Exclusive Q&A session
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Free downloadable resources
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Right: Registration Form -->
+      <div class="register-form-container">
+        <div class="form-card">
+          <h2>Reserve Your Spot</h2>
+          <p>Fill in your details below to register for the webinar.</p>
+
+          <% if (errors && errors.length > 0) { %>
+            <div class="alert alert-error">
+              <% errors.forEach(error => { %>
+                <p><%= error.msg %></p>
+              <% }); %>
+            </div>
+          <% } %>
+
+          <form action="/register" method="POST" class="register-form">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <div class="form-group">
+              <label for="name">Full Name *</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value="<%= formData.name || '' %>"
+                placeholder="John Doe"
+                required
+              >
+              <span class="field-error" id="name-error"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email Address *</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value="<%= formData.email || '' %>"
+                placeholder="john@example.com"
+                required
+              >
+              <span class="field-error" id="email-error"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="phone">Phone Number (Optional)</label>
+              <div class="phone-input-group">
+                <select id="countryCode" name="countryCode" class="country-code-select">
+                  <option value="+977" <%= formData.countryCode === '+977' ? 'selected' : '' %>>+977 (Nepal)</option>
+                  <option value="+91" <%= formData.countryCode === '+91' ? 'selected' : '' %>>+91 (India)</option>
+                  <option value="+1" <%= formData.countryCode === '+1' ? 'selected' : '' %>>+1 (US/Canada)</option>
+                  <option value="+44" <%= formData.countryCode === '+44' ? 'selected' : '' %>>+44 (UK)</option>
+                  <option value="+61" <%= formData.countryCode === '+61' ? 'selected' : '' %>>+61 (Australia)</option>
+                  <option value="+86" <%= formData.countryCode === '+86' ? 'selected' : '' %>>+86 (China)</option>
+                  <option value="+81" <%= formData.countryCode === '+81' ? 'selected' : '' %>>+81 (Japan)</option>
+                  <option value="+82" <%= formData.countryCode === '+82' ? 'selected' : '' %>>+82 (South Korea)</option>
+                  <option value="+65" <%= formData.countryCode === '+65' ? 'selected' : '' %>>+65 (Singapore)</option>
+                  <option value="+971" <%= formData.countryCode === '+971' ? 'selected' : '' %>>+971 (UAE)</option>
+                  <option value="+966" <%= formData.countryCode === '+966' ? 'selected' : '' %>>+966 (Saudi Arabia)</option>
+                  <option value="+49" <%= formData.countryCode === '+49' ? 'selected' : '' %>>+49 (Germany)</option>
+                  <option value="+33" <%= formData.countryCode === '+33' ? 'selected' : '' %>>+33 (France)</option>
+                  <option value="+39" <%= formData.countryCode === '+39' ? 'selected' : '' %>>+39 (Italy)</option>
+                  <option value="+34" <%= formData.countryCode === '+34' ? 'selected' : '' %>>+34 (Spain)</option>
+                  <option value="+55" <%= formData.countryCode === '+55' ? 'selected' : '' %>>+55 (Brazil)</option>
+                  <option value="+52" <%= formData.countryCode === '+52' ? 'selected' : '' %>>+52 (Mexico)</option>
+                  <option value="+880" <%= formData.countryCode === '+880' ? 'selected' : '' %>>+880 (Bangladesh)</option>
+                  <option value="+92" <%= formData.countryCode === '+92' ? 'selected' : '' %>>+92 (Pakistan)</option>
+                  <option value="+94" <%= formData.countryCode === '+94' ? 'selected' : '' %>>+94 (Sri Lanka)</option>
+                </select>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value="<%= formData.phone || '' %>"
+                  placeholder="9812345678"
+                  class="phone-number-input"
+                  pattern="[0-9]{6,15}"
+                  title="Please enter a valid phone number (6-15 digits)"
+                >
+              </div>
+              <span class="field-error" id="phone-error"></span>
+              <small class="form-hint">We may send you a reminder before the webinar</small>
+            </div>
+
+            <div class="form-group">
+              <label for="company">Company / School (Optional)</label>
+              <input
+                type="text"
+                id="company"
+                name="company"
+                value="<%= formData.company || '' %>"
+                placeholder="Your Company"
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="jobTitle">Job Title (Optional)</label>
+              <input
+                type="text"
+                id="jobTitle"
+                name="jobTitle"
+                value="<%= formData.jobTitle || '' %>"
+                placeholder="Software Developer"
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="howHeard">How did you hear about us? (Optional)</label>
+              <select id="howHeard" name="howHeard">
+                <option value="">Select an option</option>
+                <option value="social" <%= formData.howHeard === 'social' ? 'selected' : '' %>>Social Media</option>
+                <option value="search" <%= formData.howHeard === 'search' ? 'selected' : '' %>>Search Engine</option>
+                <option value="friend" <%= formData.howHeard === 'friend' ? 'selected' : '' %>>Friend/Colleague</option>
+                <option value="email" <%= formData.howHeard === 'email' ? 'selected' : '' %>>Email</option>
+                <option value="other" <%= formData.howHeard === 'other' ? 'selected' : '' %>>Other</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg btn-block">
+              Register for Free
+            </button>
+
+            <p class="form-disclaimer">
+              By registering, you agree to receive email updates about the webinar. We respect your privacy.
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
