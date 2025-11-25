@@ -96,9 +96,28 @@ service-account*.json
 .yarn/install-state.gz
 .pnp.*
 
-# Docker (if used later)
+# Docker (not using Docker - PostgreSQL runs on same VM)
+Dockerfile
+docker-compose.yml
+docker-compose.prod.yml
 docker-compose.override.yml
+.dockerignore
 
 # Uploaded files (if any)
 uploads/
 public/uploads/
+
+# Logs directory
+logs/
+
+# Documentation files (not needed in repo)
+*.docx
+*.doc
+PRODUCTION_CHECKLIST.md
+
+# Claude Code
+.claude/
+
+# Test configuration (optional - remove if you want to keep tests in repo)
+# jest.config.js
+# tests/

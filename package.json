@@ -46,10 +46,13 @@
     "express-session": "^1.18.2",
     "express-validator": "^7.3.1",
     "helmet": "^8.1.0",
+    "morgan": "^1.10.1",
     "nodemailer": "^7.0.10",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
-    "prisma": "^5.22.0"
+    "prisma": "^5.22.0",
+    "ua-parser-js": "^2.0.6",
+    "winston": "^3.18.3"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",

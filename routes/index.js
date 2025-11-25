@@ -35,7 +35,9 @@ module.exports = function(registerLimiter, csrfProtection) {
   // Landing page
   router.get('/', async (req, res) => {
     const webinar = await getWebinarConfig();
-    const attendeeCount = await prisma.attendee.count().catch(() => 0);
+    const BASE_ATTENDEE_COUNT = 11; // Initial count before website launch
+    const actualCount = await prisma.attendee.count().catch(() => 0);
+    const attendeeCount = BASE_ATTENDEE_COUNT + actualCount;
 
     res.render('index', {
       title: webinar.title,

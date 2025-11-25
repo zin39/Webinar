@@ -1,0 +1,360 @@
+<%- include('../partials/header') %>
+
+<div class="admin-layout">
+  <!-- Admin Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-header">
+      <h2>Admin Panel</h2>
+      <span class="admin-name"><%= user.name %></span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/admin" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        Attendees
+      </a>
+      <a href="/admin/analytics" class="sidebar-link active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <line x1="18" y1="20" x2="18" y2="10"></line>
+          <line x1="12" y1="20" x2="12" y2="4"></line>
+          <line x1="6" y1="20" x2="6" y2="14"></line>
+        </svg>
+        Analytics
+      </a>
+      <a href="/admin/export" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        Export CSV
+      </a>
+      <a href="/" class="sidebar-link" target="_blank">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <line x1="10" y1="14" x2="21" y2="3"></line>
+        </svg>
+        View Site
+      </a>
+      <a href="/auth/logout" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        Logout
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+    <div class="admin-header">
+      <h1>Site Analytics</h1>
+      <div class="date-filter">
+        <a href="/admin/analytics?days=7" class="btn btn-sm <%= days === 7 ? 'btn-primary' : 'btn-outline' %>">7 Days</a>
+        <a href="/admin/analytics?days=14" class="btn btn-sm <%= days === 14 ? 'btn-primary' : 'btn-outline' %>">14 Days</a>
+        <a href="/admin/analytics?days=30" class="btn btn-sm <%= days === 30 ? 'btn-primary' : 'btn-outline' %>">30 Days</a>
+      </div>
+    </div>
+
+    <% if (!analytics) { %>
+      <div class="alert alert-warning">Unable to load analytics data. Please try again later.</div>
+    <% } else { %>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value"><%= analytics.totalViews %></span>
+          <span class="stat-label">Page Views</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value"><%= analytics.uniqueVisitors %></span>
+          <span class="stat-label">Unique Visitors</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-purple">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value"><%= days %></span>
+          <span class="stat-label">Days Tracked</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-orange">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value"><%= analytics.errorCounts.error || 0 %></span>
+          <span class="stat-label">Errors Logged</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics Grid -->
+    <div class="analytics-grid">
+      <!-- Top Pages -->
+      <div class="table-card">
+        <div class="table-header">
+          <h2>Top Pages</h2>
+        </div>
+        <% if (analytics.viewsByPage.length === 0) { %>
+          <div class="empty-state-small">
+            <p>No page view data yet</p>
+          </div>
+        <% } else { %>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Page</th>
+                <th>Views</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% analytics.viewsByPage.forEach(page => { %>
+                <tr>
+                  <td><code><%= page.path %></code></td>
+                  <td><strong><%= page.count %></strong></td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        <% } %>
+      </div>
+
+      <!-- Browser Stats -->
+      <div class="table-card">
+        <div class="table-header">
+          <h2>Browsers</h2>
+        </div>
+        <% if (analytics.browserStats.length === 0) { %>
+          <div class="empty-state-small">
+            <p>No browser data yet</p>
+          </div>
+        <% } else { %>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Browser</th>
+                <th>Visits</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% analytics.browserStats.forEach(browser => { %>
+                <tr>
+                  <td><%= browser.browser || 'Unknown' %></td>
+                  <td><strong><%= browser.count %></strong></td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        <% } %>
+      </div>
+
+      <!-- Device Stats -->
+      <div class="table-card">
+        <div class="table-header">
+          <h2>Devices</h2>
+        </div>
+        <% if (analytics.deviceStats.length === 0) { %>
+          <div class="empty-state-small">
+            <p>No device data yet</p>
+          </div>
+        <% } else { %>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Device</th>
+                <th>Visits</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% analytics.deviceStats.forEach(device => { %>
+                <tr>
+                  <td>
+                    <span class="device-icon">
+                      <% if (device.device === 'mobile') { %>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                          <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                          <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                        </svg>
+                      <% } else if (device.device === 'tablet') { %>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                          <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                          <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                        </svg>
+                      <% } else { %>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                          <line x1="8" y1="21" x2="16" y2="21"></line>
+                          <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
+                      <% } %>
+                    </span>
+                    <%= device.device.charAt(0).toUpperCase() + device.device.slice(1) %>
+                  </td>
+                  <td><strong><%= device.count %></strong></td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        <% } %>
+      </div>
+
+      <!-- Daily Views -->
+      <div class="table-card">
+        <div class="table-header">
+          <h2>Daily Traffic</h2>
+        </div>
+        <% if (analytics.viewsByDay.length === 0) { %>
+          <div class="empty-state-small">
+            <p>No daily data yet</p>
+          </div>
+        <% } else { %>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Views</th>
+                <th>Visitors</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% analytics.viewsByDay.forEach(day => { %>
+                <tr>
+                  <td><%= new Date(day.date).toLocaleDateString() %></td>
+                  <td><strong><%= Number(day.views) %></strong></td>
+                  <td><%= Number(day.visitors) %></td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Recent Errors -->
+    <% if (analytics.recentErrors && analytics.recentErrors.length > 0) { %>
+    <div class="table-card">
+      <div class="table-header">
+        <h2>Recent Errors</h2>
+        <span class="table-count"><%= analytics.recentErrors.length %> errors</span>
+      </div>
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Level</th>
+              <th>Message</th>
+              <th>Path</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% analytics.recentErrors.forEach(error => { %>
+              <tr>
+                <td><%= new Date(error.timestamp).toLocaleString() %></td>
+                <td>
+                  <span class="badge badge-<%= error.level === 'error' ? 'danger' : 'warning' %>">
+                    <%= error.level %>
+                  </span>
+                </td>
+                <td class="error-message"><%= error.message.substring(0, 100) %><%= error.message.length > 100 ? '...' : '' %></td>
+                <td><code><%= error.path || '-' %></code></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <% } %>
+
+    <% } %>
+  </main>
+</div>
+
+<style>
+  .date-filter {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .empty-state-small {
+    padding: 2rem;
+    text-align: center;
+    color: #6b7280;
+  }
+
+  .device-icon {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 0.5rem;
+  }
+
+  .error-message {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .stat-icon-orange {
+    background-color: rgba(249, 115, 22, 0.1);
+    color: #f97316;
+  }
+
+  .badge-danger {
+    background-color: #fee2e2;
+    color: #dc2626;
+  }
+
+  code {
+    background-color: #f3f4f6;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+  }
+</style>
+
+<%- include('../partials/footer') %>

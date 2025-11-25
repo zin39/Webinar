@@ -7,6 +7,9 @@ const path = require('path');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const { csrfSync } = require('csrf-sync');
+const morgan = require('morgan');
+const logger = require('./utils/logger');
+const { analyticsMiddleware } = require('./middleware/analytics');
 
 const app = express();
 const isProduction = process.env.NODE_ENV === 'production';
@@ -105,6 +108,15 @@ app.use(express.static(path.join(__dirname, 'public'), {
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(express.json({ limit: '10kb' }));
 
+// HTTP request logging with Morgan
+const morganFormat = isProduction ? 'combined' : 'dev';
+app.use(morgan(morganFormat, {
+  stream: {
+    write: (message) => logger.info(message.trim())
+  },
+  skip: (req) => req.path.startsWith('/css') || req.path.startsWith('/js') || req.path.startsWith('/images')
+}));
+
 // Session with secure settings
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -147,6 +159,9 @@ app.use((req, res, next) => {
   next();
 });
 
+// Analytics middleware - track page views
+app.use(analyticsMiddleware);
+
 // Routes with rate limiting
 app.use('/', require('./routes/index')(registerLimiter, csrfSynchronisedProtection));
 app.use('/auth', require('./routes/auth')(authLimiter, csrfSynchronisedProtection));
@@ -160,10 +175,8 @@ app.use((req, res) => {
 
 // Error handler - don't leak error details in production
 app.use((err, req, res, next) => {
-  console.error(`[${new Date().toISOString()}] Error:`, err.message);
-  if (!isProduction) {
-    console.error(err.stack);
-  }
+  // Log error using Winston logger (also saves to database)
+  logger.httpError(err, req);
 
   // Handle CSRF errors
   if (err.code === 'EBADCSRFTOKEN') {

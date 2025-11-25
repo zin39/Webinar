@@ -44,3 +44,41 @@ model WebinarConfig {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
+
+// Analytics - Page Views
+model PageView {
+  id        String   @id @default(cuid())
+  path      String
+  method    String   @default("GET")
+  ip        String?
+  userAgent String?
+  browser   String?
+  os        String?
+  device    String?
+  country   String?
+  referer   String?
+  sessionId String?
+  timestamp DateTime @default(now())
+
+  @@index([path])
+  @@index([timestamp])
+  @@index([sessionId])
+}
+
+// Error Logs
+model ErrorLog {
+  id        String   @id @default(cuid())
+  level     String   // error, warn, info
+  message   String
+  stack     String?
+  path      String?
+  method    String?
+  ip        String?
+  userAgent String?
+  userId    String?
+  metadata  String?  // JSON string for additional data
+  timestamp DateTime @default(now())
+
+  @@index([level])
+  @@index([timestamp])
+}

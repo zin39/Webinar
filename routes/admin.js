@@ -1,6 +1,7 @@
 const express = require('express');
 const prisma = require('../config/db');
 const { ensureAuthenticated } = require('../middleware/auth');
+const { getAnalyticsSummary } = require('../middleware/analytics');
 
 // Escape CSV fields to prevent formula injection
 function escapeCSV(field) {
@@ -113,6 +114,24 @@ module.exports = function(csrfProtection) {
       req.flash('error_msg', 'Failed to resend email');
     }
     res.redirect('/admin');
+  });
+
+  // Analytics dashboard
+  router.get('/analytics', async (req, res) => {
+    try {
+      const days = parseInt(req.query.days) || 7;
+      const analytics = await getAnalyticsSummary(days);
+
+      res.render('admin/analytics', {
+        title: 'Site Analytics',
+        analytics,
+        days
+      });
+    } catch (error) {
+      console.error('Analytics error:', error);
+      req.flash('error_msg', 'Failed to load analytics');
+      res.redirect('/admin');
+    }
   });
 
   return router;
