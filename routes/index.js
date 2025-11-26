@@ -3,6 +3,24 @@ const { body, validationResult } = require('express-validator');
 const prisma = require('../config/db');
 const { sendConfirmationEmail } = require('../utils/email');
 const { generateCalendarLinks } = require('../utils/calendar');
+const path = require('path');
+const fs = require('fs');
+
+// Helper to get site settings for OG image
+function getSiteSettings() {
+  try {
+    const configPath = path.join(__dirname, '../config/site-settings.json');
+    if (fs.existsSync(configPath)) {
+      return JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    }
+  } catch (err) {
+    console.error('Error reading site settings:', err);
+  }
+  return { ogImage: null };
+}
+
+// Valid OG image filename pattern
+const VALID_OG_IMAGE_PATTERN = /^og-share-\d+\.(png|jpg|jpeg)$/i;
 
 // Webinar config (can be loaded from DB or env)
 const getWebinarConfig = async () => {
@@ -31,6 +49,49 @@ const getWebinarConfig = async () => {
 
 module.exports = function(registerLimiter, csrfProtection) {
   const router = express.Router();
+
+  // Dedicated OG image route with no-cache headers for social media crawlers
+  router.get('/og-image.png', (req, res) => {
+    const settings = getSiteSettings();
+    const DEFAULT_IMAGE = 'webinar-share-nov2024.png';
+
+    // Determine which image to serve
+    let imagePath;
+    let imageFile;
+
+    if (settings.ogImage && VALID_OG_IMAGE_PATTERN.test(settings.ogImage)) {
+      imageFile = settings.ogImage;
+      imagePath = path.join(__dirname, '../public/images', imageFile);
+    }
+
+    // Check if the uploaded image exists, otherwise fallback to default
+    if (!imagePath || !fs.existsSync(imagePath)) {
+      imageFile = DEFAULT_IMAGE;
+      imagePath = path.join(__dirname, '../public/images', DEFAULT_IMAGE);
+    }
+
+    // Final check - if even default doesn't exist, return 404
+    if (!fs.existsSync(imagePath)) {
+      return res.status(404).send('OG image not found');
+    }
+
+    // Set aggressive no-cache headers to force social media crawlers to fetch fresh
+    res.set({
+      'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
+      'Pragma': 'no-cache',
+      'Expires': '0',
+      'Surrogate-Control': 'no-store',
+      'X-Content-Type-Options': 'nosniff'
+    });
+
+    // Determine content type
+    const ext = path.extname(imagePath).toLowerCase();
+    const contentType = ext === '.png' ? 'image/png' : 'image/jpeg';
+    res.type(contentType);
+
+    // Send the file
+    res.sendFile(imagePath);
+  });
 
   // Landing page
   router.get('/', async (req, res) => {
