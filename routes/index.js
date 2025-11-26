@@ -75,12 +75,11 @@ module.exports = function(registerLimiter, csrfProtection) {
       return res.status(404).send('OG image not found');
     }
 
-    // Set aggressive no-cache headers to force social media crawlers to fetch fresh
+    // Set headers for social media crawlers
     res.set({
-      'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
-      'Pragma': 'no-cache',
-      'Expires': '0',
-      'Surrogate-Control': 'no-store',
+      'Cache-Control': 'public, max-age=3600',  // Allow caching for 1 hour
+      'Cross-Origin-Resource-Policy': 'cross-origin',  // Allow LinkedIn/Facebook to fetch
+      'Access-Control-Allow-Origin': '*',  // Allow any origin to access
       'X-Content-Type-Options': 'nosniff'
     });
 
