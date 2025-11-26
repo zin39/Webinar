@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OG Image Template - Screenshot This</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #1e293b;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    .og-container {
+      width: 1200px;
+      height: 630px;
+      background: linear-gradient(135deg, #1e3a8a 0%, #7c3aed 50%, #2563eb 100%);
+      border-radius: 0;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+    }
+
+    .og-content {
+      flex: 1;
+      padding: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      z-index: 2;
+    }
+
+    .og-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      padding: 10px 20px;
+      border-radius: 50px;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      width: fit-content;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .og-badge svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .og-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .og-title {
+      color: white;
+      font-size: 56px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    }
+
+    .og-subtitle {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 24px;
+      font-weight: 400;
+      line-height: 1.4;
+      max-width: 550px;
+    }
+
+    .og-details {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .og-detail {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: white;
+      font-size: 20px;
+      font-weight: 500;
+    }
+
+    .og-detail svg {
+      width: 24px;
+      height: 24px;
+      opacity: 0.9;
+    }
+
+    .og-speaker-section {
+      width: 350px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      position: relative;
+    }
+
+    .og-speaker-photo {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      border: 5px solid rgba(255, 255, 255, 0.3);
+      object-fit: cover;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+
+    .og-speaker-name {
+      color: white;
+      font-size: 24px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .og-speaker-title {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 14px;
+      text-align: center;
+      line-height: 1.4;
+      max-width: 280px;
+    }
+
+    .og-cta {
+      position: absolute;
+      bottom: 40px;
+      right: 40px;
+      background: white;
+      color: #1e3a8a;
+      padding: 16px 32px;
+      border-radius: 50px;
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    /* Decorative elements */
+    .og-decoration {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .og-decoration-1 {
+      width: 300px;
+      height: 300px;
+      top: -100px;
+      right: 200px;
+    }
+
+    .og-decoration-2 {
+      width: 200px;
+      height: 200px;
+      bottom: -50px;
+      left: 100px;
+    }
+
+    .instructions {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fef3c7;
+      color: #92400e;
+      padding: 15px 25px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+  </style>
+</head>
+<body>
+  <div class="instructions">
+    Screenshot the box below at exactly 1200x630px. Use browser dev tools or a screenshot tool.
+  </div>
+
+  <div class="og-container">
+    <div class="og-decoration og-decoration-1"></div>
+    <div class="og-decoration og-decoration-2"></div>
+
+    <div class="og-content">
+      <div class="og-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        Free Live Webinar
+      </div>
+
+      <div class="og-main">
+        <h1 class="og-title">Student Mental Health:<br>Thriving Beyond Grades</h1>
+        <p class="og-subtitle">An honest conversation about academic stress and practical strategies to thrive</p>
+      </div>
+
+      <div class="og-details">
+        <div class="og-detail">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          Sunday, Nov 30
+        </div>
+        <div class="og-detail">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          6:15 PM NPT
+        </div>
+      </div>
+    </div>
+
+    <div class="og-speaker-section">
+      <!-- Replace with actual speaker photo path -->
+      <img src="/images/speaker.jpeg" alt="Dr. Aditi Pajiyar" class="og-speaker-photo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 200 200%27%3E%3Crect fill=%27%234f46e5%27 width=%27200%27 height=%27200%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 fill=%27white%27 font-size=%2760%27 font-family=%27sans-serif%27%3EAP%3C/text%3E%3C/svg%3E'">
+      <div class="og-speaker-name">Dr. Aditi Pajiyar</div>
+      <div class="og-speaker-title">Mental Health Leadership Fellow<br>NHAFN</div>
+    </div>
+
+    <div class="og-cta">
+      Register Free
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20">
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+        <polyline points="12 5 19 12 12 19"></polyline>
+      </svg>
+    </div>
+  </div>
+</body>
+</html>

@@ -50,7 +50,19 @@
             <circle cx="12" cy="12" r="10"></circle>
             <polyline points="12 6 12 12 16 14"></polyline>
           </svg>
-          <span><%= new Date(webinar.date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' }) %></span>
+          <span>
+            <%
+              const utcDate = new Date(webinar.date);
+              const nepalOffset = 5 * 60 + 45; // Nepal is UTC+5:45
+              const nepalDate = new Date(utcDate.getTime() + nepalOffset * 60 * 1000);
+              const nepalHours = nepalDate.getUTCHours();
+              const nepalMinutes = nepalDate.getUTCMinutes();
+              const nepalAmPm = nepalHours >= 12 ? 'PM' : 'AM';
+              const nepalHour12 = nepalHours % 12 || 12;
+              const nepalTimeStr = nepalHour12 + ':' + (nepalMinutes < 10 ? '0' : '') + nepalMinutes + ' ' + nepalAmPm + ' NPT';
+            %>
+            <%= nepalTimeStr %> / <%= utcDate.getUTCHours() %>:<%= utcDate.getUTCMinutes() < 10 ? '0' : '' %><%= utcDate.getUTCMinutes() %> UTC
+          </span>
         </div>
         <div class="meta-item">
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

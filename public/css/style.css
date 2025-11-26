@@ -1242,16 +1242,36 @@ img {
 .btn-share {
   padding: 10px 20px;
   font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .btn-twitter {
-  background: #1da1f2;
+  background: #000000;
   color: white;
+}
+
+.btn-twitter:hover {
+  background: #333333;
 }
 
 .btn-linkedin {
   background: #0077b5;
   color: white;
+}
+
+.btn-linkedin:hover {
+  background: #005582;
+}
+
+.btn-whatsapp {
+  background: #25D366;
+  color: white;
+}
+
+.btn-whatsapp:hover {
+  background: #1da851;
 }
 
 /* ===== Auth Pages ===== */

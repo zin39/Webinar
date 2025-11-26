@@ -32,7 +32,19 @@
               <circle cx="12" cy="12" r="10"></circle>
               <polyline points="12 6 12 12 16 14"></polyline>
             </svg>
-            <span><%= new Date(webinar.date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' }) %></span>
+            <span>
+              <%
+                const utcDateReg = new Date(webinar.date);
+                const nepalOffsetReg = 5 * 60 + 45;
+                const nepalDateReg = new Date(utcDateReg.getTime() + nepalOffsetReg * 60 * 1000);
+                const nepalHoursReg = nepalDateReg.getUTCHours();
+                const nepalMinutesReg = nepalDateReg.getUTCMinutes();
+                const nepalAmPmReg = nepalHoursReg >= 12 ? 'PM' : 'AM';
+                const nepalHour12Reg = nepalHoursReg % 12 || 12;
+                const nepalTimeStrReg = nepalHour12Reg + ':' + (nepalMinutesReg < 10 ? '0' : '') + nepalMinutesReg + ' ' + nepalAmPmReg + ' NPT';
+              %>
+              <%= nepalTimeStrReg %> / <%= utcDateReg.getUTCHours() %>:<%= utcDateReg.getUTCMinutes() < 10 ? '0' : '' %><%= utcDateReg.getUTCMinutes() %> UTC
+            </span>
           </div>
         </div>
 
