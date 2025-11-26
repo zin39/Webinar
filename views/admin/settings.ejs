@@ -1,0 +1,310 @@
+<%- include('../partials/header') %>
+
+<div class="admin-layout">
+  <!-- Admin Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-header">
+      <h2>Admin Panel</h2>
+      <span class="admin-name"><%= user.name %></span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/admin" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        Attendees
+      </a>
+      <a href="/admin/analytics" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <line x1="18" y1="20" x2="18" y2="10"></line>
+          <line x1="12" y1="20" x2="12" y2="4"></line>
+          <line x1="6" y1="20" x2="6" y2="14"></line>
+        </svg>
+        Analytics
+      </a>
+      <a href="/admin/settings" class="sidebar-link active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+        Settings
+      </a>
+      <a href="/admin/export" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        Export CSV
+      </a>
+      <a href="/" class="sidebar-link" target="_blank">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <line x1="10" y1="14" x2="21" y2="3"></line>
+        </svg>
+        View Site
+      </a>
+      <a href="/auth/logout" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        Logout
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+    <div class="admin-header">
+      <h1>Site Settings</h1>
+    </div>
+
+    <!-- OG Image Settings -->
+    <div class="settings-card">
+      <div class="settings-header">
+        <h2>Social Share Image (OG Image)</h2>
+        <p class="settings-description">This image will be shown when your webinar link is shared on LinkedIn, Facebook, Twitter, and other platforms.</p>
+      </div>
+
+      <div class="settings-content">
+        <!-- Current Image Preview -->
+        <div class="og-image-preview">
+          <h3>Current Image</h3>
+          <% if (ogImage) { %>
+            <img src="/images/<%= ogImage %>?v=<%= Date.now() %>" alt="Current OG Image" class="og-preview-img">
+            <p class="og-image-name">File: <%= ogImage %></p>
+          <% } else { %>
+            <div class="no-image-placeholder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="48" height="48">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+              </svg>
+              <p>No OG image uploaded yet</p>
+            </div>
+          <% } %>
+        </div>
+
+        <!-- Upload Form -->
+        <div class="og-upload-form">
+          <h3>Upload New Image</h3>
+          <form action="/admin/settings/og-image" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+            <div class="form-group">
+              <label for="ogImage">Select Image (PNG, JPG - Recommended: 1200x630px)</label>
+              <input type="file" id="ogImage" name="ogImage" accept="image/png,image/jpeg,image/jpg" required>
+            </div>
+
+            <div class="form-info">
+              <p><strong>Tips for best results:</strong></p>
+              <ul>
+                <li>Use 1200x630 pixels for optimal display</li>
+                <li>PNG format recommended for best quality</li>
+                <li>Keep file size under 5MB</li>
+                <li>Include your webinar title and key details</li>
+              </ul>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              Upload Image
+            </button>
+          </form>
+        </div>
+
+        <!-- Cache Busting Info -->
+        <div class="cache-info">
+          <h3>About Social Media Caching</h3>
+          <p>Social platforms cache images aggressively. After uploading a new image:</p>
+          <ul>
+            <li><strong>LinkedIn:</strong> Use the <a href="https://www.linkedin.com/post-inspector/" target="_blank">Post Inspector</a> to refresh the cache</li>
+            <li><strong>Facebook:</strong> Use the <a href="https://developers.facebook.com/tools/debug/" target="_blank">Sharing Debugger</a> to scrape again</li>
+            <li><strong>Twitter:</strong> Use the <a href="https://cards-dev.twitter.com/validator" target="_blank">Card Validator</a> to preview</li>
+          </ul>
+          <p class="cache-note">The system automatically adds a timestamp to bypass browser caching.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<style>
+.settings-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.settings-header {
+  padding: 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.settings-header h2 {
+  margin: 0 0 8px 0;
+  font-size: 1.25rem;
+  color: #1a1a2e;
+}
+
+.settings-description {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.settings-content {
+  padding: 24px;
+}
+
+.og-image-preview {
+  margin-bottom: 32px;
+}
+
+.og-image-preview h3,
+.og-upload-form h3,
+.cache-info h3 {
+  font-size: 1rem;
+  color: #1a1a2e;
+  margin: 0 0 16px 0;
+}
+
+.og-preview-img {
+  max-width: 100%;
+  max-height: 315px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.og-image-name {
+  margin-top: 8px;
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.no-image-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  background: #f8fafc;
+  border: 2px dashed #e5e7eb;
+  border-radius: 8px;
+  color: #94a3b8;
+}
+
+.no-image-placeholder p {
+  margin: 12px 0 0 0;
+}
+
+.og-upload-form {
+  margin-bottom: 32px;
+  padding: 24px;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.og-upload-form .form-group {
+  margin-bottom: 16px;
+}
+
+.og-upload-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.og-upload-form input[type="file"] {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border: 2px dashed #cbd5e1;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+}
+
+.og-upload-form input[type="file"]:hover {
+  border-color: #7c3aed;
+}
+
+.form-info {
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #e0e7ff;
+  border-radius: 8px;
+  font-size: 0.875rem;
+}
+
+.form-info p {
+  margin: 0 0 8px 0;
+  color: #3730a3;
+}
+
+.form-info ul {
+  margin: 0;
+  padding-left: 20px;
+  color: #4338ca;
+}
+
+.form-info li {
+  margin-bottom: 4px;
+}
+
+.cache-info {
+  padding: 24px;
+  background: #fef3c7;
+  border-radius: 8px;
+}
+
+.cache-info h3 {
+  color: #92400e;
+}
+
+.cache-info p {
+  margin: 0 0 12px 0;
+  color: #78350f;
+  font-size: 0.95rem;
+}
+
+.cache-info ul {
+  margin: 0 0 16px 0;
+  padding-left: 20px;
+}
+
+.cache-info li {
+  margin-bottom: 8px;
+  color: #78350f;
+}
+
+.cache-info a {
+  color: #7c3aed;
+  text-decoration: underline;
+}
+
+.cache-note {
+  font-size: 0.875rem;
+  font-style: italic;
+  margin-bottom: 0 !important;
+}
+
+.btn svg {
+  margin-right: 8px;
+}
+</style>
+
+<%- include('../partials/footer') %>

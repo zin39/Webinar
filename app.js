@@ -8,8 +8,42 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const { csrfSync } = require('csrf-sync');
 const morgan = require('morgan');
+const fs = require('fs');
 const logger = require('./utils/logger');
 const { analyticsMiddleware } = require('./middleware/analytics');
+
+// Valid OG image filename pattern (only our generated filenames)
+const VALID_OG_IMAGE_PATTERN = /^og-share-\d+\.(png|jpg|jpeg)$/i;
+
+// SECURITY: Validate ogImage filename to prevent path traversal
+function isValidOgImageFilename(filename) {
+  if (!filename || typeof filename !== 'string') return false;
+  if (filename.includes('/') || filename.includes('\\') || filename.includes('..')) return false;
+  if (!VALID_OG_IMAGE_PATTERN.test(filename)) return false;
+  if (path.basename(filename) !== filename) return false;
+  return true;
+}
+
+// Helper to get site settings for OG image (with security validation)
+function getSiteSettings() {
+  try {
+    const configPath = path.join(__dirname, 'config/site-settings.json');
+    if (fs.existsSync(configPath)) {
+      const settings = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+
+      // SECURITY: Validate ogImage filename on read
+      if (settings.ogImage && !isValidOgImageFilename(settings.ogImage)) {
+        console.warn('Invalid ogImage filename in settings, ignoring');
+        settings.ogImage = null;
+      }
+
+      return settings;
+    }
+  } catch (err) {
+    console.error('Error reading site settings:', err);
+  }
+  return { ogImage: null };
+}
 
 const app = express();
 const isProduction = process.env.NODE_ENV === 'production';
@@ -157,6 +191,12 @@ app.use((req, res, next) => {
   res.locals.error = req.flash('error');
   res.locals.user = req.user || null;
   res.locals.siteUrl = process.env.SITE_URL || `http://localhost:${process.env.PORT || 3000}`;
+
+  // Add OG image settings for social sharing
+  const siteSettings = getSiteSettings();
+  res.locals.ogImage = siteSettings.ogImage;
+  res.locals.ogImageTimestamp = siteSettings.ogImageUpdatedAt || Date.now();
+
   next();
 });
 
