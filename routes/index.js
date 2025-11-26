@@ -135,6 +135,22 @@ module.exports = function(registerLimiter, csrfProtection) {
 
   // Success page
   router.get('/success', async (req, res) => {
+    const email = req.query.email;
+
+    // Validate that email is provided and is actually registered
+    if (!email) {
+      return res.redirect('/register');
+    }
+
+    // Check if this email is actually registered
+    const attendee = await prisma.attendee.findUnique({
+      where: { email: email }
+    }).catch(() => null);
+
+    if (!attendee) {
+      return res.redirect('/register');
+    }
+
     const webinar = await getWebinarConfig();
     const calendarLinks = generateCalendarLinks(webinar);
 
@@ -142,7 +158,7 @@ module.exports = function(registerLimiter, csrfProtection) {
       title: 'Registration Successful',
       webinar,
       calendarLinks,
-      email: req.query.email || ''
+      email: attendee.email
     });
   });
 
