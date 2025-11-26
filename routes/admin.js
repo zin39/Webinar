@@ -284,8 +284,35 @@ module.exports = function(csrfProtection) {
   });
 
   // Upload OG image
-  router.post('/settings/og-image', csrfProtection, (req, res, next) => {
+  // Note: For multipart/form-data, we need to run multer FIRST to parse the body,
+  // then manually check CSRF token since req.body isn't available before multer runs
+  router.post('/settings/og-image', (req, res, next) => {
     upload.single('ogImage')(req, res, function (err) {
+      // SECURITY: Manually validate CSRF token after multer parses the form
+      const csrfToken = req.body && req.body._csrf;
+      if (!csrfToken) {
+        req.flash('error_msg', 'Security token missing. Please try again.');
+        return res.redirect('/admin/settings');
+      }
+
+      // Validate CSRF token using the session
+      try {
+        csrfProtection(req, res, (csrfErr) => {
+          if (csrfErr) {
+            req.flash('error_msg', 'Security token invalid. Please refresh and try again.');
+            return res.redirect('/admin/settings');
+          }
+          handleUpload(req, res, err);
+        });
+      } catch (csrfError) {
+        req.flash('error_msg', 'Security validation failed. Please try again.');
+        return res.redirect('/admin/settings');
+      }
+    });
+  });
+
+  // Extracted upload handler function
+  function handleUpload(req, res, err) {
       if (err instanceof multer.MulterError) {
         if (err.code === 'LIMIT_FILE_SIZE') {
           req.flash('error_msg', 'File is too large. Maximum size is 5MB.');
@@ -353,8 +380,7 @@ module.exports = function(csrfProtection) {
         req.flash('error_msg', 'Failed to save image settings');
         res.redirect('/admin/settings');
       }
-    });
-  });
+  }
 
   return router;
 };
