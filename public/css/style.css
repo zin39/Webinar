@@ -111,6 +111,13 @@ img {
   fill: none;
 }
 
+.nav-logo-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 .nav-logo span {
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   -webkit-background-clip: text;
@@ -619,24 +626,53 @@ img {
 }
 
 /* ===== Speaker Section ===== */
+.speakers-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
 .speaker-card {
   display: flex;
-  gap: 48px;
-  max-width: 800px;
-  margin: 0 auto;
+  flex-direction: column;
+  gap: 24px;
   background: var(--bg-white);
-  padding: 40px;
+  padding: 32px;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
+  position: relative;
+  text-align: center;
+}
+
+.speaker-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: var(--primary);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 50px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.speaker-badge-guest {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
 }
 
 .speaker-image {
   flex-shrink: 0;
+  display: flex;
+  justify-content: center;
 }
 
 .speaker-placeholder {
-  width: 200px;
-  height: 250px;
+  width: 180px;
+  height: 220px;
   border-radius: var(--radius-lg);
   background: linear-gradient(135deg, var(--bg-gray), var(--bg-light));
   display: flex;
@@ -651,8 +687,8 @@ img {
 }
 
 .speaker-photo {
-  width: 200px;
-  height: 250px;
+  width: 180px;
+  height: 220px;
   border-radius: var(--radius-lg);
   object-fit: cover;
   object-position: top center;
@@ -899,6 +935,13 @@ img {
   width: 24px;
   height: 24px;
   stroke: var(--primary);
+}
+
+.footer-logo-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .footer p {
@@ -1235,6 +1278,7 @@ img {
 
 .share-buttons {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   justify-content: center;
 }
@@ -1272,6 +1316,26 @@ img {
 
 .btn-whatsapp:hover {
   background: #1da851;
+}
+
+.btn-facebook {
+  background: #1877F2;
+  color: white;
+}
+
+.btn-facebook:hover {
+  background: #0d65d9;
+}
+
+.btn-instagram {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  color: white;
+  border: none;
+}
+
+.btn-instagram:hover {
+  background: linear-gradient(45deg, #e08322 0%, #d55730 25%, #cb1632 50%, #bb1255 75%, #ab0777 100%);
+  color: white;
 }
 
 /* ===== Auth Pages ===== */
@@ -1593,9 +1657,9 @@ img {
     grid-template-columns: 1fr;
   }
 
-  .speaker-card {
-    flex-direction: column;
-    text-align: center;
+  .speakers-grid {
+    grid-template-columns: 1fr;
+    max-width: 500px;
   }
 
   .speaker-credentials {

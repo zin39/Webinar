@@ -108,56 +108,123 @@
       opacity: 0.9;
     }
 
-    .og-speaker-section {
-      width: 350px;
+    .og-speakers-section {
+      width: 420px;
       display: flex;
-      flex-direction: column;
+      gap: 20px;
       align-items: center;
       justify-content: center;
-      padding: 40px;
+      padding: 30px 20px;
       position: relative;
     }
 
+    .og-speaker {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+    }
+
     .og-speaker-photo {
-      width: 200px;
-      height: 200px;
+      width: 140px;
+      height: 140px;
       border-radius: 50%;
-      border: 5px solid rgba(255, 255, 255, 0.3);
+      border: 4px solid rgba(255, 255, 255, 0.3);
       object-fit: cover;
-      margin-bottom: 20px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      object-position: center 10%;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    }
+
+    .og-speaker-badge {
+      background: rgba(255, 255, 255, 0.25);
+      color: white;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+
+    .og-speaker-badge-guest {
+      background: rgba(139, 92, 246, 0.6);
+    }
+
+    .og-logo {
+      position: absolute;
+      top: 30px;
+      right: 40px;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
     }
 
     .og-speaker-name {
       color: white;
-      font-size: 24px;
+      font-size: 18px;
       font-weight: 700;
       text-align: center;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
     }
 
     .og-speaker-title {
       color: rgba(255, 255, 255, 0.8);
-      font-size: 14px;
+      font-size: 11px;
       text-align: center;
-      line-height: 1.4;
-      max-width: 280px;
+      line-height: 1.3;
+      max-width: 160px;
     }
 
-    .og-cta {
+    .og-footer {
       position: absolute;
-      bottom: 40px;
-      right: 40px;
-      background: white;
-      color: #1e3a8a;
-      padding: 16px 32px;
-      border-radius: 50px;
-      font-size: 18px;
-      font-weight: 700;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      padding: 16px 60px;
       display: flex;
       align-items: center;
-      gap: 8px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      justify-content: space-between;
+    }
+
+    .og-url {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: white;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .og-url svg {
+      width: 22px;
+      height: 22px;
+      opacity: 0.9;
+    }
+
+    .og-qr {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .qr-code {
+      width: 60px;
+      height: 60px;
+      border-radius: 6px;
+      background: white;
+      padding: 4px;
     }
 
     /* Decorative elements */
@@ -198,13 +265,12 @@
   </style>
 </head>
 <body>
-  <div class="instructions">
-    Screenshot the box below at exactly 1200x630px. Use browser dev tools or a screenshot tool.
-  </div>
-
   <div class="og-container">
     <div class="og-decoration og-decoration-1"></div>
     <div class="og-decoration og-decoration-2"></div>
+
+    <!-- Company Logo -->
+    <img src="/images/logo.jpeg" alt="Logo" class="og-logo">
 
     <div class="og-content">
       <div class="og-badge">
@@ -235,24 +301,42 @@
             <circle cx="12" cy="12" r="10"></circle>
             <polyline points="12 6 12 12 16 14"></polyline>
           </svg>
-          6:15 PM NPT
+          6:00 PM NPT
         </div>
       </div>
     </div>
 
-    <div class="og-speaker-section">
-      <!-- Replace with actual speaker photo path -->
-      <img src="/images/speaker.jpeg" alt="Dr. Aditi Pajiyar" class="og-speaker-photo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 200 200%27%3E%3Crect fill=%27%234f46e5%27 width=%27200%27 height=%27200%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 fill=%27white%27 font-size=%2760%27 font-family=%27sans-serif%27%3EAP%3C/text%3E%3C/svg%3E'">
-      <div class="og-speaker-name">Dr. Aditi Pajiyar</div>
-      <div class="og-speaker-title">Mental Health Leadership Fellow<br>NHAFN</div>
+    <div class="og-speakers-section">
+      <!-- Host - Dr. Aditi -->
+      <div class="og-speaker">
+        <img src="/images/speaker.jpeg" alt="Dr. Aditi Pajiyar" class="og-speaker-photo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 200 200%27%3E%3Crect fill=%27%234f46e5%27 width=%27200%27 height=%27200%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 fill=%27white%27 font-size=%2760%27 font-family=%27sans-serif%27%3EAP%3C/text%3E%3C/svg%3E'">
+        <span class="og-speaker-badge">Host</span>
+        <div class="og-speaker-name">Dr. Aditi Pajiyar</div>
+        <div class="og-speaker-title">Mental Health Fellow<br>NHAFN</div>
+      </div>
+
+      <!-- Guest - Dr. Amit -->
+      <div class="og-speaker">
+        <img src="/images/guest_speaker_image.jpeg" alt="Dr. Amit Jha" class="og-speaker-photo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 200 200%27%3E%3Crect fill=%27%237c3aed%27 width=%27200%27 height=%27200%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 fill=%27white%27 font-size=%2760%27 font-family=%27sans-serif%27%3EAJ%3C/text%3E%3C/svg%3E'">
+        <span class="og-speaker-badge og-speaker-badge-guest">Guest</span>
+        <div class="og-speaker-name">Dr. Amit Jha</div>
+        <div class="og-speaker-title">Child & Adolescent<br>Psychiatrist</div>
+      </div>
     </div>
 
-    <div class="og-cta">
-      Register Free
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20">
-        <line x1="5" y1="12" x2="19" y2="12"></line>
-        <polyline points="12 5 19 12 12 19"></polyline>
-      </svg>
+    <div class="og-footer">
+      <div class="og-url">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="2" y1="12" x2="22" y2="12"></line>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
+        mindwell.lumetium.com
+      </div>
+      <div class="og-qr">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=70x70&data=https://mindwell.lumetium.com&bgcolor=ffffff&color=1e3a8a" alt="QR Code" class="qr-code">
+        <span>Scan to Register</span>
+      </div>
     </div>
   </div>
 </body>
