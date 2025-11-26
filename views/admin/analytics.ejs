@@ -327,6 +327,38 @@
     margin-bottom: 1.5rem;
   }
 
+  /* Fix for Top Pages table - ensure Views column is visible */
+  .analytics-grid .table-card {
+    overflow: visible;
+  }
+
+  .analytics-grid .data-table {
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  .analytics-grid .data-table th:first-child,
+  .analytics-grid .data-table td:first-child {
+    width: 70%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .analytics-grid .data-table th:last-child,
+  .analytics-grid .data-table td:last-child {
+    width: 30%;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .analytics-grid .data-table td code {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+  }
+
   .empty-state-small {
     padding: 2rem;
     text-align: center;
