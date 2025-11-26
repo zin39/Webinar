@@ -1791,4 +1791,23 @@ img {
   .auth-card {
     padding: 32px 24px;
   }
+
+  /* Mobile logo fixes */
+  .nav-logo-img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .nav-logo span {
+    font-size: 1rem;
+  }
+
+  .footer-logo-img {
+    width: 28px;
+    height: 28px;
+  }
+
+  .footer-brand span {
+    font-size: 0.95rem;
+  }
 }
