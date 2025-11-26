@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OG Image Template - Screenshot This</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>OG Image Template (1200x630)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -22,322 +22,323 @@
       padding: 40px;
     }
 
-    .og-container {
+    .og-image {
       width: 1200px;
       height: 630px;
-      background: linear-gradient(135deg, #1e3a8a 0%, #7c3aed 50%, #2563eb 100%);
-      border-radius: 0;
+      background: linear-gradient(135deg, #f0f4ff 0%, #e8f4f8 50%, #fdf4ff 100%);
+      position: relative;
       overflow: hidden;
-      position: relative;
-      display: flex;
     }
 
-    .og-content {
-      flex: 1;
-      padding: 60px;
+    /* Soft decorative blobs */
+    .blob-1 {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(196, 181, 253, 0.5) 0%, transparent 70%);
+      top: -150px;
+      right: -100px;
+      border-radius: 50%;
+    }
+
+    .blob-2 {
+      position: absolute;
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(circle, rgba(165, 214, 243, 0.5) 0%, transparent 70%);
+      bottom: -100px;
+      left: -100px;
+      border-radius: 50%;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+      height: 100%;
       display: flex;
       flex-direction: column;
+      padding: 45px 50px;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
       justify-content: space-between;
-      position: relative;
-      z-index: 2;
+      align-items: flex-start;
+      margin-bottom: 30px;
     }
 
-    .og-badge {
-      display: inline-flex;
+    .header-left {
+      display: flex;
       align-items: center;
-      gap: 8px;
-      background: rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(10px);
-      padding: 10px 20px;
+      gap: 24px;
+    }
+
+    .badge {
+      background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+      color: white;
+      padding: 12px 24px;
       border-radius: 50px;
-      color: white;
-      font-size: 16px;
-      font-weight: 600;
-      width: fit-content;
+      font-size: 14px;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
     }
 
-    .og-badge svg {
-      width: 20px;
-      height: 20px;
-    }
-
-    .og-main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    .og-title {
-      color: white;
-      font-size: 56px;
-      font-weight: 800;
-      line-height: 1.1;
-      margin-bottom: 20px;
-      text-shadow: 0 2px 20px rgba(0,0,0,0.3);
-    }
-
-    .og-subtitle {
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 24px;
-      font-weight: 400;
-      line-height: 1.4;
-      max-width: 550px;
-    }
-
-    .og-details {
-      display: flex;
-      gap: 30px;
-      align-items: center;
-    }
-
-    .og-detail {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: white;
-      font-size: 20px;
-      font-weight: 500;
-    }
-
-    .og-detail svg {
-      width: 24px;
-      height: 24px;
-      opacity: 0.9;
-    }
-
-    .og-speakers-section {
-      width: 420px;
+    .datetime {
       display: flex;
       gap: 20px;
-      align-items: center;
-      justify-content: center;
-      padding: 30px 20px;
-      position: relative;
     }
 
-    .og-speaker {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      flex: 1;
-    }
-
-    .og-speaker-photo {
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      border: 4px solid rgba(255, 255, 255, 0.3);
-      object-fit: cover;
-      object-position: center 10%;
-      margin-bottom: 12px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-    }
-
-    .og-speaker-badge {
-      background: rgba(255, 255, 255, 0.25);
-      color: white;
-      font-size: 10px;
+    .datetime-item {
+      color: #475569;
+      font-size: 16px;
       font-weight: 600;
-      padding: 4px 12px;
-      border-radius: 20px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-top: 8px;
-      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .og-speaker-badge-guest {
-      background: rgba(139, 92, 246, 0.6);
+    .datetime-item svg {
+      width: 18px;
+      height: 18px;
+      stroke: #7c3aed;
     }
 
-    .og-logo {
-      position: absolute;
-      top: 30px;
-      right: 40px;
+    .logo {
       width: 70px;
       height: 70px;
       border-radius: 50%;
       object-fit: cover;
-      border: 3px solid rgba(255, 255, 255, 0.3);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      border: 3px solid white;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
 
-    .og-speaker-name {
-      color: white;
-      font-size: 18px;
+    /* Main Content */
+    .main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 50px;
+    }
+
+    .main-left {
+      flex: 1;
+    }
+
+    .title {
+      color: #1e293b;
+      font-size: 52px;
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+
+    .title .highlight {
+      background: linear-gradient(135deg, #7c3aed, #2563eb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      color: #475569;
+      font-size: 22px;
+      line-height: 1.5;
+      max-width: 520px;
+    }
+
+    /* Speakers Section */
+    .speakers {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .speaker {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: white;
+      border: 2px solid rgba(139, 92, 246, 0.15);
+      padding: 16px 20px;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      min-width: 320px;
+    }
+
+    .speaker-photo {
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center 10%;
+      border: 3px solid rgba(139, 92, 246, 0.2);
+      flex-shrink: 0;
+    }
+
+    .speaker-info {
+      flex: 1;
+    }
+
+    .speaker-role {
+      color: #7c3aed;
+      font-size: 12px;
       font-weight: 700;
-      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 1px;
       margin-bottom: 4px;
     }
 
-    .og-speaker-title {
-      color: rgba(255, 255, 255, 0.8);
-      font-size: 11px;
-      text-align: center;
-      line-height: 1.3;
-      max-width: 160px;
+    .speaker-role.guest {
+      color: #2563eb;
     }
 
-    .og-footer {
+    .speaker-name {
+      color: #1e293b;
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 2px;
+    }
+
+    .speaker-title {
+      color: #64748b;
+      font-size: 13px;
+      line-height: 1.3;
+    }
+
+    /* Footer */
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: white;
+      border-radius: 20px;
+      padding: 20px 30px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .cta-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cta-url {
+      color: #7c3aed;
+      font-size: 26px;
+      font-weight: 800;
+    }
+
+    .cta-text {
+      color: #64748b;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .qr-section {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .qr-code {
+      width: 80px;
+      height: 80px;
+      border-radius: 12px;
+      background: white;
+      padding: 6px;
+      border: 2px solid #e2e8f0;
+    }
+
+    .qr-text {
+      color: #475569;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* Decorative accent */
+    .accent-line {
       position: absolute;
       bottom: 0;
       left: 0;
       right: 0;
-      background: rgba(0, 0, 0, 0.3);
-      backdrop-filter: blur(10px);
-      padding: 16px 60px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .og-url {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: white;
-      font-size: 20px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-    }
-
-    .og-url svg {
-      width: 22px;
-      height: 22px;
-      opacity: 0.9;
-    }
-
-    .og-qr {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    .qr-code {
-      width: 60px;
-      height: 60px;
-      border-radius: 6px;
-      background: white;
-      padding: 4px;
-    }
-
-    /* Decorative elements */
-    .og-decoration {
-      position: absolute;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .og-decoration-1 {
-      width: 300px;
-      height: 300px;
-      top: -100px;
-      right: 200px;
-    }
-
-    .og-decoration-2 {
-      width: 200px;
-      height: 200px;
-      bottom: -50px;
-      left: 100px;
-    }
-
-    .instructions {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #fef3c7;
-      color: #92400e;
-      padding: 15px 25px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      z-index: 1000;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      height: 6px;
+      background: linear-gradient(90deg, #8b5cf6, #3b82f6, #8b5cf6);
     }
   </style>
 </head>
 <body>
-  <div class="og-container">
-    <div class="og-decoration og-decoration-1"></div>
-    <div class="og-decoration og-decoration-2"></div>
+  <div class="og-image">
+    <div class="blob-1"></div>
+    <div class="blob-2"></div>
 
-    <!-- Company Logo -->
-    <img src="/images/logo.jpeg" alt="Logo" class="og-logo">
-
-    <div class="og-content">
-      <div class="og-badge">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"></circle>
-          <polyline points="12 6 12 12 16 14"></polyline>
-        </svg>
-        Free Live Webinar
-      </div>
-
-      <div class="og-main">
-        <h1 class="og-title">Student Mental Health:<br>Thriving Beyond Grades</h1>
-        <p class="og-subtitle">An honest conversation about academic stress and practical strategies to thrive</p>
-      </div>
-
-      <div class="og-details">
-        <div class="og-detail">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-            <line x1="16" y1="2" x2="16" y2="6"></line>
-            <line x1="8" y1="2" x2="8" y2="6"></line>
-            <line x1="3" y1="10" x2="21" y2="10"></line>
-          </svg>
-          Sunday, Nov 30
+    <div class="content">
+      <div class="header">
+        <div class="header-left">
+          <div class="badge">Free Webinar</div>
+          <div class="datetime">
+            <div class="datetime-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              Sunday, Nov 30
+            </div>
+            <div class="datetime-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              6:00 PM NPT
+            </div>
+          </div>
         </div>
-        <div class="og-detail">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <polyline points="12 6 12 12 16 14"></polyline>
-          </svg>
-          6:00 PM NPT
+        <img src="/images/logo.jpeg" alt="Logo" class="logo">
+      </div>
+
+      <div class="main">
+        <div class="main-left">
+          <h1 class="title">Student <span class="highlight">Mental Health:</span><br>Thriving Beyond Grades</h1>
+          <p class="subtitle">An honest conversation about academic stress and practical strategies to thrive</p>
+        </div>
+
+        <div class="speakers">
+          <div class="speaker">
+            <img src="/images/speaker.jpeg" alt="Dr. Aditi Pajiyar" class="speaker-photo">
+            <div class="speaker-info">
+              <div class="speaker-role">Host</div>
+              <div class="speaker-name">Dr. Aditi Pajiyar</div>
+              <div class="speaker-title">Mental Health Fellow, NHAFN</div>
+            </div>
+          </div>
+
+          <div class="speaker">
+            <img src="/images/guest_speaker_image.jpeg" alt="Dr. Amit Jha" class="speaker-photo">
+            <div class="speaker-info">
+              <div class="speaker-role guest">Guest Speaker</div>
+              <div class="speaker-name">Dr. Amit Jha</div>
+              <div class="speaker-title">Child & Adolescent Psychiatrist</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="cta-info">
+          <div class="cta-url">mindwell.lumetium.com</div>
+          <div class="cta-text">Register Free</div>
+        </div>
+        <div class="qr-section">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=https://mindwell.lumetium.com&bgcolor=ffffff&color=7c3aed" alt="QR Code" class="qr-code">
+          <div class="qr-text">Scan to<br>Register</div>
         </div>
       </div>
     </div>
 
-    <div class="og-speakers-section">
-      <!-- Host - Dr. Aditi -->
-      <div class="og-speaker">
-        <img src="/images/speaker.jpeg" alt="Dr. Aditi Pajiyar" class="og-speaker-photo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 200 200%27%3E%3Crect fill=%27%234f46e5%27 width=%27200%27 height=%27200%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 fill=%27white%27 font-size=%2760%27 font-family=%27sans-serif%27%3EAP%3C/text%3E%3C/svg%3E'">
-        <span class="og-speaker-badge">Host</span>
-        <div class="og-speaker-name">Dr. Aditi Pajiyar</div>
-        <div class="og-speaker-title">Mental Health Fellow<br>NHAFN</div>
-      </div>
-
-      <!-- Guest - Dr. Amit -->
-      <div class="og-speaker">
-        <img src="/images/guest_speaker_image.jpeg" alt="Dr. Amit Jha" class="og-speaker-photo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 200 200%27%3E%3Crect fill=%27%237c3aed%27 width=%27200%27 height=%27200%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 fill=%27white%27 font-size=%2760%27 font-family=%27sans-serif%27%3EAJ%3C/text%3E%3C/svg%3E'">
-        <span class="og-speaker-badge og-speaker-badge-guest">Guest</span>
-        <div class="og-speaker-name">Dr. Amit Jha</div>
-        <div class="og-speaker-title">Child & Adolescent<br>Psychiatrist</div>
-      </div>
-    </div>
-
-    <div class="og-footer">
-      <div class="og-url">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="2" y1="12" x2="22" y2="12"></line>
-          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-        </svg>
-        mindwell.lumetium.com
-      </div>
-      <div class="og-qr">
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=70x70&data=https://mindwell.lumetium.com&bgcolor=ffffff&color=1e3a8a" alt="QR Code" class="qr-code">
-        <span>Scan to Register</span>
-      </div>
-    </div>
+    <div class="accent-line"></div>
   </div>
 </body>
 </html>
