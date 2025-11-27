@@ -499,10 +499,34 @@ module.exports = function(csrfProtection) {
       const days = parseInt(req.query.days) || 7;
       const analytics = await getAnalyticsSummary(days);
 
+      // Calculate conversion stats
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - days);
+
+      // Get registrations in the time period
+      const registrationsInPeriod = await prisma.attendee.count({
+        where: { registeredAt: { gte: startDate } }
+      });
+
+      // Get total registrations (all time)
+      const totalRegistrations = await prisma.attendee.count();
+
+      // Calculate conversion rate
+      const conversionStats = {
+        registrationsInPeriod,
+        totalRegistrations,
+        uniqueVisitors: analytics ? analytics.uniqueVisitors : 0,
+        conversionRate: analytics && analytics.uniqueVisitors > 0
+          ? ((registrationsInPeriod / analytics.uniqueVisitors) * 100).toFixed(2)
+          : 0,
+        bounced: analytics ? Math.max(0, analytics.uniqueVisitors - registrationsInPeriod) : 0
+      };
+
       res.render('admin/analytics', {
         title: 'Site Analytics',
         analytics,
-        days
+        days,
+        conversionStats
       });
     } catch (error) {
       console.error('Analytics error:', error);

@@ -146,6 +146,87 @@
       </div>
     </div>
 
+    <!-- Conversion Rate Section -->
+    <% if (conversionStats) { %>
+    <div class="conversion-section">
+      <div class="conversion-header">
+        <h2>Conversion Funnel</h2>
+        <span class="conversion-period">Last <%= days %> days</span>
+      </div>
+      <div class="conversion-grid">
+        <div class="conversion-card">
+          <div class="conversion-icon visitor-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <div class="conversion-info">
+            <span class="conversion-value"><%= conversionStats.uniqueVisitors %></span>
+            <span class="conversion-label">Unique Visitors</span>
+          </div>
+        </div>
+
+        <div class="conversion-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </div>
+
+        <div class="conversion-card">
+          <div class="conversion-icon registered-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="8.5" cy="7" r="4"></circle>
+              <polyline points="17 11 19 13 23 9"></polyline>
+            </svg>
+          </div>
+          <div class="conversion-info">
+            <span class="conversion-value"><%= conversionStats.registrationsInPeriod %></span>
+            <span class="conversion-label">Registered</span>
+          </div>
+        </div>
+
+        <div class="conversion-card conversion-rate-card">
+          <div class="conversion-icon rate-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+              <line x1="12" y1="20" x2="12" y2="10"></line>
+              <line x1="18" y1="20" x2="18" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="16"></line>
+            </svg>
+          </div>
+          <div class="conversion-info">
+            <span class="conversion-value rate-value"><%= conversionStats.conversionRate %>%</span>
+            <span class="conversion-label">Conversion Rate</span>
+          </div>
+        </div>
+
+        <div class="conversion-card bounced-card">
+          <div class="conversion-icon bounced-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+          </div>
+          <div class="conversion-info">
+            <span class="conversion-value"><%= conversionStats.bounced %></span>
+            <span class="conversion-label">Left Without Registering</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="conversion-summary">
+        <p>
+          <strong>Total Registrations (All Time):</strong> <%= conversionStats.totalRegistrations %>
+        </p>
+      </div>
+    </div>
+    <% } %>
+
     <!-- Analytics Grid -->
     <div class="analytics-grid">
       <!-- Top Pages -->
@@ -266,7 +347,7 @@
             <p>No daily data yet</p>
           </div>
         <% } else { %>
-          <table class="data-table">
+          <table class="data-table data-table-3col">
             <thead>
               <tr>
                 <th>Date</th>
@@ -351,6 +432,7 @@
     table-layout: fixed;
   }
 
+  /* Default 2-column table layout */
   .analytics-grid .data-table th:first-child,
   .analytics-grid .data-table td:first-child {
     width: 70%;
@@ -363,6 +445,28 @@
     width: 30%;
     text-align: right;
     white-space: nowrap;
+  }
+
+  /* 3-column table layout (Daily Traffic) */
+  .data-table-3col {
+    table-layout: fixed !important;
+  }
+
+  .data-table-3col th:first-child,
+  .data-table-3col td:first-child {
+    width: 50% !important;
+  }
+
+  .data-table-3col th:nth-child(2),
+  .data-table-3col td:nth-child(2) {
+    width: 25% !important;
+    text-align: center;
+  }
+
+  .data-table-3col th:last-child,
+  .data-table-3col td:last-child {
+    width: 25% !important;
+    text-align: right;
   }
 
   .analytics-grid .data-table td code {
@@ -407,6 +511,146 @@
     padding: 0.125rem 0.375rem;
     border-radius: 0.25rem;
     font-size: 0.875rem;
+  }
+
+  /* Conversion Section Styles */
+  .conversion-section {
+    background: #fff;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .conversion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .conversion-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #1f2937;
+  }
+
+  .conversion-period {
+    font-size: 0.875rem;
+    color: #6b7280;
+    background: #f3f4f6;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+  }
+
+  .conversion-grid {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .conversion-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: #f9fafb;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    flex: 1;
+    min-width: 180px;
+  }
+
+  .conversion-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .visitor-icon {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+  }
+
+  .registered-icon {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+  }
+
+  .rate-icon {
+    background: rgba(139, 92, 246, 0.1);
+    color: #8b5cf6;
+  }
+
+  .bounced-icon {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+  }
+
+  .conversion-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .conversion-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+  }
+
+  .rate-value {
+    color: #8b5cf6;
+  }
+
+  .conversion-label {
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+
+  .conversion-arrow {
+    color: #9ca3af;
+    flex-shrink: 0;
+  }
+
+  .conversion-rate-card {
+    background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+  }
+
+  .bounced-card {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  }
+
+  .conversion-summary {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+
+  .conversion-summary p {
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .conversion-grid {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .conversion-arrow {
+      transform: rotate(90deg);
+      align-self: center;
+    }
+
+    .conversion-card {
+      min-width: 100%;
+    }
   }
 </style>
 
