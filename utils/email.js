@@ -14,10 +14,44 @@ const createTransporter = () => {
   });
 };
 
+// Helper function to log email attempts
+const logEmailAttempt = async (data) => {
+  try {
+    await prisma.emailLog.create({
+      data: {
+        toEmail: data.toEmail,
+        toName: data.toName || null,
+        subject: data.subject,
+        type: data.type,
+        status: data.status,
+        errorMessage: data.errorMessage || null,
+        errorCode: data.errorCode || null,
+        smtpResponse: data.smtpResponse || null,
+        attendeeId: data.attendeeId || null,
+        retryCount: data.retryCount || 0,
+        metadata: data.metadata ? JSON.stringify(data.metadata) : null
+      }
+    });
+  } catch (err) {
+    console.error('Failed to log email attempt:', err);
+  }
+};
+
 const sendConfirmationEmail = async (attendee, webinar, calendarLinks) => {
+  const subject = `You're registered: ${webinar.title}`;
+
   // Skip if SMTP not configured
   if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
     console.log('SMTP not configured, skipping email');
+    await logEmailAttempt({
+      toEmail: attendee.email,
+      toName: attendee.name,
+      subject: subject,
+      type: 'confirmation',
+      status: 'skipped',
+      errorMessage: 'SMTP not configured',
+      attendeeId: attendee.id
+    });
     return;
   }
 
@@ -135,10 +169,10 @@ const sendConfirmationEmail = async (attendee, webinar, calendarLinks) => {
   `;
 
   try {
-    await transporter.sendMail({
+    const result = await transporter.sendMail({
       from: process.env.EMAIL_FROM || process.env.SMTP_USER,
       to: attendee.email,
-      subject: `You're registered: ${webinar.title}`,
+      subject: subject,
       text: textContent,
       html: htmlContent
     });
@@ -149,9 +183,36 @@ const sendConfirmationEmail = async (attendee, webinar, calendarLinks) => {
       data: { emailSent: true }
     });
 
+    // Log successful email
+    await logEmailAttempt({
+      toEmail: attendee.email,
+      toName: attendee.name,
+      subject: subject,
+      type: 'confirmation',
+      status: 'sent',
+      smtpResponse: result.response || null,
+      attendeeId: attendee.id,
+      metadata: { messageId: result.messageId }
+    });
+
     console.log(`Confirmation email sent to ${attendee.email}`);
   } catch (error) {
     console.error('Email send error:', error);
+
+    // Log failed email
+    await logEmailAttempt({
+      toEmail: attendee.email,
+      toName: attendee.name,
+      subject: subject,
+      type: 'confirmation',
+      status: 'failed',
+      errorMessage: error.message || 'Unknown error',
+      errorCode: error.code || null,
+      smtpResponse: error.response || null,
+      attendeeId: attendee.id,
+      metadata: { stack: error.stack }
+    });
+
     throw error;
   }
 };

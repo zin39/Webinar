@@ -274,6 +274,61 @@ module.exports = function(csrfProtection) {
     }
   });
 
+  // Email logs
+  router.get('/emails', async (req, res) => {
+    try {
+      const page = parseInt(req.query.page) || 1;
+      const limit = 50;
+      const skip = (page - 1) * limit;
+      const statusFilter = req.query.status || 'all';
+      const typeFilter = req.query.type || 'all';
+
+      // Build where clause
+      const where = {};
+      if (statusFilter !== 'all') {
+        where.status = statusFilter;
+      }
+      if (typeFilter !== 'all') {
+        where.type = typeFilter;
+      }
+
+      // Get total count for pagination
+      const totalCount = await prisma.emailLog.count({ where });
+      const totalPages = Math.ceil(totalCount / limit);
+
+      // Get email logs
+      const emailLogs = await prisma.emailLog.findMany({
+        where,
+        orderBy: { timestamp: 'desc' },
+        skip,
+        take: limit
+      });
+
+      // Get stats
+      const stats = {
+        total: await prisma.emailLog.count(),
+        sent: await prisma.emailLog.count({ where: { status: 'sent' } }),
+        failed: await prisma.emailLog.count({ where: { status: 'failed' } }),
+        skipped: await prisma.emailLog.count({ where: { status: 'skipped' } })
+      };
+
+      res.render('admin/emails', {
+        title: 'Email Logs',
+        emailLogs,
+        stats,
+        page,
+        totalPages,
+        totalCount,
+        statusFilter,
+        typeFilter
+      });
+    } catch (error) {
+      console.error('Email logs error:', error);
+      req.flash('error_msg', 'Failed to load email logs');
+      res.redirect('/admin');
+    }
+  });
+
   // Settings page
   router.get('/settings', csrfProtection, (req, res) => {
     const settings = getSiteSettings();

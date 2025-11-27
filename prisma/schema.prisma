@@ -82,3 +82,25 @@ model ErrorLog {
   @@index([level])
   @@index([timestamp])
 }
+
+// Email Logs
+model EmailLog {
+  id           String   @id @default(cuid())
+  toEmail      String
+  toName       String?
+  subject      String
+  type         String   // confirmation, reminder, notification, resend
+  status       String   // sent, failed, skipped
+  errorMessage String?
+  errorCode    String?
+  smtpResponse String?
+  attendeeId   String?
+  retryCount   Int      @default(0)
+  metadata     String?  // JSON string for additional data
+  timestamp    DateTime @default(now())
+
+  @@index([toEmail])
+  @@index([status])
+  @@index([type])
+  @@index([timestamp])
+}
