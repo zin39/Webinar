@@ -324,6 +324,22 @@ module.exports = function(csrfProtection) {
       });
     } catch (error) {
       console.error('Email logs error:', error);
+
+      // Check if table doesn't exist
+      if (error.code === 'P2021' || error.message.includes('does not exist')) {
+        return res.render('admin/emails', {
+          title: 'Email Logs',
+          emailLogs: [],
+          stats: { total: 0, sent: 0, failed: 0, skipped: 0 },
+          page: 1,
+          totalPages: 0,
+          totalCount: 0,
+          statusFilter: 'all',
+          typeFilter: 'all',
+          migrationNeeded: true
+        });
+      }
+
       req.flash('error_msg', 'Failed to load email logs');
       res.redirect('/admin');
     }
