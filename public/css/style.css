@@ -1325,37 +1325,64 @@ img {
   font-size: 0.875rem;
 }
 
+.footer-connect {
+  margin: 24px 0;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.footer-connect-title {
+  font-size: 1.25rem;
+  color: var(--text);
+  margin-bottom: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
 .footer-social {
   display: flex;
-  gap: 24px;
+  gap: 16px;
   justify-content: center;
   align-items: center;
-  margin: 16px 0;
   flex-wrap: wrap;
 }
 
-.footer-icon {
-  color: #94a3b8;
-  transition: color 0.2s, transform 0.2s;
-}
-
-.footer-icon:hover {
-  color: #0077b5;
-  transform: scale(1.1);
-}
-
-.footer-email {
-  color: #94a3b8;
-  text-decoration: none;
+.footer-social-link {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  transition: color 0.2s;
+  gap: 10px;
+  padding: 12px 24px;
+  background: #fff;
+  border-radius: 8px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.footer-email:hover {
-  color: var(--primary);
+.footer-social-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.footer-social-link:first-child:hover {
+  background: #0077b5;
+  border-color: #0077b5;
+  color: #fff;
+}
+
+.footer-social-link:last-child:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.footer-social-link svg {
+  flex-shrink: 0;
 }
 
 /* ===== Register Page ===== */
