@@ -80,7 +80,7 @@
       <div class="header-actions">
         <!-- Bulk Email Dropdown -->
         <div class="dropdown">
-          <button type="button" class="btn btn-secondary dropdown-toggle" onclick="toggleDropdown(this)">
+          <button type="button" class="btn btn-secondary dropdown-toggle" id="emailDropdownBtn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
               <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
               <polyline points="22,6 12,13 2,6"></polyline>
@@ -91,7 +91,7 @@
             </svg>
           </button>
           <div class="dropdown-menu">
-            <form action="/admin/send-bulk-email" method="POST" class="dropdown-form" onsubmit="return confirm('Are you sure you want to send emails to ALL attendees? This will send confirmation emails to everyone in the list.')">
+            <form action="/admin/send-bulk-email" method="POST" class="dropdown-form" id="sendAllForm" data-confirm="Are you sure you want to send emails to ALL attendees? This will send confirmation emails to everyone in the list.">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
               <input type="hidden" name="filter" value="all">
               <button type="submit" class="dropdown-item">
@@ -104,7 +104,7 @@
                 Send to All (<%= stats.total %>)
               </button>
             </form>
-            <form action="/admin/send-bulk-email" method="POST" class="dropdown-form" onsubmit="return confirm('Are you sure you want to send emails to attendees with pending status? This will only send to those who haven\'t received an email yet.')">
+            <form action="/admin/send-bulk-email" method="POST" class="dropdown-form" id="sendPendingForm" data-confirm="Are you sure you want to send emails to attendees with pending status? This will only send to those who haven't received an email yet.">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
               <input type="hidden" name="filter" value="pending">
               <button type="submit" class="dropdown-item">
@@ -267,7 +267,7 @@
                         </svg>
                       </button>
                     </form>
-                    <form action="/admin/attendee/<%= attendee.id %>/delete" method="POST" class="inline-form" onsubmit="return confirm('Are you sure you want to remove this attendee?')">
+                    <form action="/admin/attendee/<%= attendee.id %>/delete" method="POST" class="inline-form delete-form" data-confirm="Are you sure you want to remove this attendee?">
                       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                       <button type="submit" class="btn btn-sm btn-danger" title="Remove">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
@@ -385,24 +385,61 @@
 </style>
 
 <script>
-function toggleDropdown(button) {
-  const dropdown = button.closest('.dropdown');
-  const isOpen = dropdown.classList.contains('open');
+document.addEventListener('DOMContentLoaded', function() {
+  // Dropdown toggle
+  var dropdownBtn = document.getElementById('emailDropdownBtn');
+  if (dropdownBtn) {
+    dropdownBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var dropdown = this.closest('.dropdown');
+      var isOpen = dropdown.classList.contains('open');
 
-  // Close all other dropdowns
-  document.querySelectorAll('.dropdown.open').forEach(d => {
-    if (d !== dropdown) d.classList.remove('open');
+      // Close all other dropdowns
+      document.querySelectorAll('.dropdown.open').forEach(function(d) {
+        if (d !== dropdown) d.classList.remove('open');
+      });
+
+      // Toggle current dropdown
+      dropdown.classList.toggle('open');
+    });
+  }
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.dropdown')) {
+      document.querySelectorAll('.dropdown.open').forEach(function(d) {
+        d.classList.remove('open');
+      });
+    }
   });
 
-  // Toggle current dropdown
-  dropdown.classList.toggle('open');
-}
-
-// Close dropdown when clicking outside
-document.addEventListener('click', function(e) {
-  if (!e.target.closest('.dropdown')) {
-    document.querySelectorAll('.dropdown.open').forEach(d => d.classList.remove('open'));
+  // Form confirmation handlers
+  var sendAllForm = document.getElementById('sendAllForm');
+  if (sendAllForm) {
+    sendAllForm.addEventListener('submit', function(e) {
+      if (!confirm(this.dataset.confirm)) {
+        e.preventDefault();
+      }
+    });
   }
+
+  var sendPendingForm = document.getElementById('sendPendingForm');
+  if (sendPendingForm) {
+    sendPendingForm.addEventListener('submit', function(e) {
+      if (!confirm(this.dataset.confirm)) {
+        e.preventDefault();
+      }
+    });
+  }
+
+  // Delete form confirmation handlers
+  document.querySelectorAll('.delete-form').forEach(function(form) {
+    form.addEventListener('submit', function(e) {
+      if (!confirm(this.dataset.confirm)) {
+        e.preventDefault();
+      }
+    });
+  });
 });
 </script>
 
