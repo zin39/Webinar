@@ -17,9 +17,52 @@
       background: #1e293b;
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
+      justify-content: flex-start;
+      padding: 20px;
+      overflow-x: auto;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
       justify-content: center;
-      padding: 40px;
+    }
+
+    .controls button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .controls button.zoom-btn {
+      background: #4f46e5;
+      color: white;
+    }
+
+    .controls button.zoom-btn:hover {
+      background: #4338ca;
+    }
+
+    .controls button.info-btn {
+      background: #475569;
+      color: white;
+    }
+
+    .post-wrapper {
+      transform-origin: top center;
+      transition: transform 0.3s ease;
+    }
+
+    .post-wrapper.fit-screen {
+      transform: scale(var(--scale-factor, 1));
     }
 
     .post {
@@ -303,8 +346,15 @@
   </style>
 </head>
 <body>
-  <div class="post">
-    <div class="blob-1"></div>
+  <div class="controls">
+    <button class="zoom-btn" onclick="toggleFit()">Fit to Screen</button>
+    <button class="zoom-btn" onclick="resetZoom()">100% (Original)</button>
+    <button class="info-btn">1200 x 627px</button>
+  </div>
+
+  <div class="post-wrapper" id="postWrapper">
+    <div class="post">
+      <div class="blob-1"></div>
     <div class="blob-2"></div>
     <div class="blob-3"></div>
 
@@ -397,6 +447,38 @@
     </div>
 
     <div class="accent-line"></div>
+    </div>
   </div>
+
+  <script>
+    const wrapper = document.getElementById('postWrapper');
+    const POST_WIDTH = 1200;
+
+    function calculateScale() {
+      const viewportWidth = window.innerWidth - 40;
+      return Math.min(1, viewportWidth / POST_WIDTH);
+    }
+
+    function toggleFit() {
+      if (wrapper.classList.contains('fit-screen')) {
+        resetZoom();
+      } else {
+        const scale = calculateScale();
+        wrapper.style.setProperty('--scale-factor', scale);
+        wrapper.classList.add('fit-screen');
+      }
+    }
+
+    function resetZoom() {
+      wrapper.classList.remove('fit-screen');
+      wrapper.style.removeProperty('--scale-factor');
+    }
+
+    window.addEventListener('load', function() {
+      if (window.innerWidth < POST_WIDTH + 40) {
+        toggleFit();
+      }
+    });
+  </script>
 </body>
 </html>
