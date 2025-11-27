@@ -625,4 +625,36 @@
 }
 </style>
 
+<script>
+// Add visual feedback when file is selected
+document.addEventListener('DOMContentLoaded', function() {
+  // Handle platform image file inputs
+  document.querySelectorAll('.file-input').forEach(function(input) {
+    input.addEventListener('change', function() {
+      const label = this.nextElementSibling;
+      if (this.files && this.files.length > 0) {
+        const filename = this.files[0].name;
+        // Truncate long filenames
+        const displayName = filename.length > 20 ? filename.substring(0, 17) + '...' : filename;
+        label.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="20 6 9 17 4 12"></polyline></svg> ' + displayName;
+        label.style.borderColor = '#10b981';
+        label.style.color = '#10b981';
+        label.style.background = '#ecfdf5';
+      }
+    });
+  });
+
+  // Handle default OG image file input
+  const ogImageInput = document.getElementById('ogImage');
+  if (ogImageInput) {
+    ogImageInput.addEventListener('change', function() {
+      if (this.files && this.files.length > 0) {
+        this.style.borderColor = '#10b981';
+        this.style.background = '#ecfdf5';
+      }
+    });
+  }
+});
+</script>
+
 <%- include('../partials/footer') %>
