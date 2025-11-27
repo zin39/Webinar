@@ -125,6 +125,21 @@ const globalLimiter = rateLimit({
 });
 app.use(globalLimiter);
 
+// Admin rate limiter - higher limit for dashboard usage
+const adminLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 500, // 500 requests per window for admin
+  message: 'Too many requests from admin panel',
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).render('error', {
+      title: 'Too Many Requests',
+      message: 'Too many requests from admin panel. Please wait a few minutes.'
+    });
+  }
+});
+
 // Passport config
 require('./config/passport')(passport);
 
@@ -206,7 +221,7 @@ app.use(analyticsMiddleware);
 // Routes with rate limiting
 app.use('/', require('./routes/index')(registerLimiter, csrfSynchronisedProtection));
 app.use('/auth', require('./routes/auth')(authLimiter, csrfSynchronisedProtection));
-app.use('/admin', require('./routes/admin')(csrfSynchronisedProtection));
+app.use('/admin', adminLimiter, require('./routes/admin')(csrfSynchronisedProtection));
 app.use('/api', require('./routes/api'));
 app.use('/survey', require('./routes/survey')(csrfSynchronisedProtection));
 

@@ -155,12 +155,12 @@ const sendConfirmationEmail = async (attendee, webinar, calendarLinks) => {
             <a href="${calendarLinks.outlook}" class="btn btn-secondary" target="_blank">Outlook</a>
           </div>
 
-          <p style="text-align: center; color: #64748b; margin-top: 20px;">Questions? Reply to this email anytime.</p>
+          <p style="text-align: center; color: #64748b; margin-top: 20px;">Questions? Reach out anytime at <a href="mailto:mentalwellbeing1008@gmail.com" style="color: #2563eb;">mentalwellbeing1008@gmail.com</a></p>
 
           <p style="text-align: center; font-size: 18px; color: #2563eb; margin-top: 25px;"><strong>Looking forward to seeing you there!</strong></p>
 
           <div class="footer">
-            <p style="margin-top: 15px;">Warm regards,<br><strong>Dr. Aditi Pajiyar</strong><br>NHAFN Mental Health Fellow</p>
+            <p style="margin-top: 15px;">Warm regards,<br><strong>Dr. Aditi Pajiyar</strong><br>NHAFN Mental Health Fellow<br>📧 <a href="mailto:mentalwellbeing1008@gmail.com" style="color: #64748b;">mentalwellbeing1008@gmail.com</a></p>
           </div>
         </div>
       </div>
@@ -192,13 +192,14 @@ NEXT STEPS:
 
 Add to Google Calendar: ${calendarLinks.google}
 
-Questions? Reply to this email anytime.
+Questions? Reach out anytime at mentalwellbeing1008@gmail.com
 
 Looking forward to seeing you there!
 
 Warm regards,
 Dr. Aditi Pajiyar
 NHAFN Mental Health Fellow
+Email: mentalwellbeing1008@gmail.com
   `;
 
   try {
