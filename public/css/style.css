@@ -1325,6 +1325,39 @@ img {
   font-size: 0.875rem;
 }
 
+.footer-social {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  align-items: center;
+  margin: 16px 0;
+  flex-wrap: wrap;
+}
+
+.footer-icon {
+  color: #94a3b8;
+  transition: color 0.2s, transform 0.2s;
+}
+
+.footer-icon:hover {
+  color: #0077b5;
+  transform: scale(1.1);
+}
+
+.footer-email {
+  color: #94a3b8;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  transition: color 0.2s;
+}
+
+.footer-email:hover {
+  color: var(--primary);
+}
+
 /* ===== Register Page ===== */
 .register-section {
   padding: 120px 0 80px;
