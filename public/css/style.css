@@ -2234,6 +2234,12 @@ img {
     text-align: center;
     padding: 28px;
     gap: 24px;
+    margin-bottom: 32px;
+  }
+
+  .guest-speaker-card {
+    display: block;
+    width: 100%;
   }
 
   .featured-speaker-image .speaker-photo {
@@ -2276,8 +2282,17 @@ img {
     gap: 20px;
   }
 
+  .guest-speakers-grid .guest-speaker-card:last-child {
+    grid-column: span 1;
+    max-width: 100%;
+  }
+
   .guest-image-wrapper {
-    height: 180px;
+    height: 250px;
+  }
+
+  .guest-photo {
+    object-position: top center;
   }
 
   .guest-info {
