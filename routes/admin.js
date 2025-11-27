@@ -13,6 +13,12 @@ const CONFIG_PATH = path.join(__dirname, '../config/site-settings.json');
 // Valid OG image filename pattern (only our generated filenames)
 const VALID_OG_IMAGE_PATTERN = /^og-share-\d+\.(png|jpg|jpeg)$/i;
 
+// Valid platform image filename pattern
+const VALID_PLATFORM_IMAGE_PATTERN = /^platform-(facebook|linkedin|twitter|instagram-square|instagram-story|whatsapp)-\d+\.(png|jpg|jpeg)$/i;
+
+// Valid platform IDs
+const VALID_PLATFORMS = ['facebook', 'linkedin', 'twitter', 'instagram-square', 'instagram-story', 'whatsapp'];
+
 // Image magic bytes for validation
 const IMAGE_SIGNATURES = {
   jpeg: Buffer.from([0xFF, 0xD8, 0xFF]),
@@ -30,6 +36,28 @@ function isValidOgImageFilename(filename) {
 
   // Must match our expected pattern
   if (!VALID_OG_IMAGE_PATTERN.test(filename)) {
+    return false;
+  }
+
+  // Double-check: basename must equal original (no directory components)
+  if (path.basename(filename) !== filename) {
+    return false;
+  }
+
+  return true;
+}
+
+// Validate platform image filename to prevent path traversal
+function isValidPlatformImageFilename(filename) {
+  if (!filename || typeof filename !== 'string') return false;
+
+  // Must not contain path separators or traversal
+  if (filename.includes('/') || filename.includes('\\') || filename.includes('..')) {
+    return false;
+  }
+
+  // Must match our expected pattern
+  if (!VALID_PLATFORM_IMAGE_PATTERN.test(filename)) {
     return false;
   }
 
@@ -81,12 +109,24 @@ function getSiteSettings() {
         settings.ogImageUpdatedAt = null;
       }
 
+      // SECURITY: Validate platform images on read
+      if (settings.platformImages && typeof settings.platformImages === 'object') {
+        for (const platform of Object.keys(settings.platformImages)) {
+          if (!VALID_PLATFORMS.includes(platform) || !isValidPlatformImageFilename(settings.platformImages[platform])) {
+            console.warn(`Invalid platform image detected for ${platform}, removing`);
+            delete settings.platformImages[platform];
+          }
+        }
+      } else {
+        settings.platformImages = {};
+      }
+
       return settings;
     }
   } catch (err) {
     console.error('Error reading site settings:', err);
   }
-  return { ogImage: null };
+  return { ogImage: null, platformImages: {} };
 }
 
 // Helper to save site settings (with validation)
@@ -98,6 +138,16 @@ function saveSiteSettings(settings) {
     if (sanitized.ogImage && !isValidOgImageFilename(sanitized.ogImage)) {
       console.warn('Attempted to save invalid ogImage filename, rejecting');
       return false;
+    }
+
+    // SECURITY: Validate platform images before saving
+    if (sanitized.platformImages && typeof sanitized.platformImages === 'object') {
+      for (const platform of Object.keys(sanitized.platformImages)) {
+        if (!VALID_PLATFORMS.includes(platform) || !isValidPlatformImageFilename(sanitized.platformImages[platform])) {
+          console.warn(`Attempted to save invalid platform image for ${platform}, rejecting`);
+          return false;
+        }
+      }
     }
 
     const configDir = path.dirname(CONFIG_PATH);
@@ -131,6 +181,38 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: function (req, file, cb) {
+    const allowedTypes = /jpeg|jpg|png/;
+    const ext = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mime = allowedTypes.test(file.mimetype);
+    if (ext && mime) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only PNG and JPG images are allowed'));
+    }
+  }
+});
+
+// Configure multer for platform-specific image uploads
+const platformStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadDir = path.join(__dirname, '../public/images');
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    const platform = req.params.platform;
+    const ext = path.extname(file.originalname).toLowerCase();
+    const filename = `platform-${platform}-${Date.now()}${ext}`;
+    cb(null, filename);
+  }
+});
+
+const uploadPlatform = multer({
+  storage: platformStorage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
   fileFilter: function (req, file, cb) {
     const allowedTypes = /jpeg|jpg|png/;
@@ -330,6 +412,87 @@ module.exports = function(csrfProtection) {
     res.redirect('/admin');
   });
 
+  // Bulk send emails to all attendees
+  router.post('/send-bulk-email', csrfProtection, async (req, res) => {
+    try {
+      const { sendConfirmationEmail } = require('../utils/email');
+      const { generateCalendarLinks } = require('../utils/calendar');
+
+      // Get filter type from query/body - 'all' sends to everyone, 'pending' only to those without email sent
+      const filter = req.body.filter || 'all';
+
+      // Get webinar config first
+      const webinar = await prisma.webinarConfig.findFirst({ where: { isActive: true } }) || {
+        title: 'Webinar',
+        date: new Date(process.env.WEBINAR_DATE || '2025-12-01T14:00:00Z'),
+        duration: 60,
+        meetingLink: process.env.WEBINAR_MEETING_LINK || '#'
+      };
+
+      const calendarLinks = generateCalendarLinks(webinar);
+
+      // Get attendees based on filter
+      let attendees;
+      if (filter === 'pending') {
+        attendees = await prisma.attendee.findMany({
+          where: { emailSent: false },
+          orderBy: { registeredAt: 'desc' }
+        });
+      } else {
+        attendees = await prisma.attendee.findMany({
+          orderBy: { registeredAt: 'desc' }
+        });
+      }
+
+      if (attendees.length === 0) {
+        req.flash('info_msg', filter === 'pending'
+          ? 'No pending emails to send. All attendees have already received their confirmation emails.'
+          : 'No attendees to send emails to.');
+        return res.redirect('/admin');
+      }
+
+      let successCount = 0;
+      let failCount = 0;
+
+      // Send emails sequentially with a small delay to avoid rate limiting
+      for (const attendee of attendees) {
+        try {
+          // Generate survey token if attendee doesn't have one
+          let updatedAttendee = attendee;
+          if (!attendee.surveyToken) {
+            const surveyToken = crypto.randomBytes(32).toString('hex');
+            updatedAttendee = await prisma.attendee.update({
+              where: { id: attendee.id },
+              data: { surveyToken }
+            });
+          }
+
+          await sendConfirmationEmail(updatedAttendee, webinar, calendarLinks);
+          successCount++;
+
+          // Small delay between emails (100ms) to avoid rate limiting
+          await new Promise(resolve => setTimeout(resolve, 100));
+        } catch (emailError) {
+          console.error(`Failed to send email to ${attendee.email}:`, emailError);
+          failCount++;
+        }
+      }
+
+      // Build summary message
+      if (failCount === 0) {
+        req.flash('success_msg', `Successfully sent ${successCount} confirmation email${successCount !== 1 ? 's' : ''}!`);
+      } else if (successCount === 0) {
+        req.flash('error_msg', `Failed to send all ${failCount} emails. Please check email configuration.`);
+      } else {
+        req.flash('warning_msg', `Sent ${successCount} email${successCount !== 1 ? 's' : ''}, but ${failCount} failed. Check email logs for details.`);
+      }
+    } catch (error) {
+      console.error('Bulk email error:', error);
+      req.flash('error_msg', 'Failed to send bulk emails. Please try again.');
+    }
+    res.redirect('/admin');
+  });
+
   // Analytics dashboard
   router.get('/analytics', async (req, res) => {
     try {
@@ -424,7 +587,8 @@ module.exports = function(csrfProtection) {
     const settings = getSiteSettings();
     res.render('admin/settings', {
       title: 'Site Settings',
-      ogImage: settings.ogImage
+      ogImage: settings.ogImage,
+      platformImages: settings.platformImages || {}
     });
   });
 
@@ -527,6 +691,122 @@ module.exports = function(csrfProtection) {
       }
   }
 
+  // Upload platform-specific image
+  router.post('/settings/platform-image/:platform', (req, res, next) => {
+    const platform = req.params.platform;
+
+    // SECURITY: Validate platform ID
+    if (!VALID_PLATFORMS.includes(platform)) {
+      req.flash('error_msg', 'Invalid platform specified');
+      return res.redirect('/admin/settings');
+    }
+
+    uploadPlatform.single('platformImage')(req, res, function (err) {
+      // SECURITY: Manually validate CSRF token after multer parses the form
+      const csrfToken = req.body && req.body._csrf;
+      if (!csrfToken) {
+        req.flash('error_msg', 'Security token missing. Please try again.');
+        return res.redirect('/admin/settings');
+      }
+
+      // Validate CSRF token using the session
+      try {
+        csrfProtection(req, res, (csrfErr) => {
+          if (csrfErr) {
+            req.flash('error_msg', 'Security token invalid. Please refresh and try again.');
+            return res.redirect('/admin/settings');
+          }
+          handlePlatformUpload(req, res, err, platform);
+        });
+      } catch (csrfError) {
+        req.flash('error_msg', 'Security validation failed. Please try again.');
+        return res.redirect('/admin/settings');
+      }
+    });
+  });
+
+  // Extracted platform upload handler function
+  function handlePlatformUpload(req, res, err, platform) {
+    if (err instanceof multer.MulterError) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        req.flash('error_msg', 'File is too large. Maximum size is 5MB.');
+      } else {
+        req.flash('error_msg', 'Upload failed. Please try again with a valid image.');
+      }
+      return res.redirect('/admin/settings');
+    } else if (err) {
+      req.flash('error_msg', 'Invalid file type. Only PNG and JPG images are allowed.');
+      return res.redirect('/admin/settings');
+    }
+
+    if (!req.file) {
+      req.flash('error_msg', 'Please select an image to upload');
+      return res.redirect('/admin/settings');
+    }
+
+    try {
+      // SECURITY: Validate magic bytes to ensure file is actually an image
+      const imageType = validateImageMagicBytes(req.file.path);
+      if (!imageType) {
+        fs.unlinkSync(req.file.path);
+        req.flash('error_msg', 'Invalid image file. The file does not appear to be a valid PNG or JPEG image.');
+        return res.redirect('/admin/settings');
+      }
+
+      // SECURITY: Validate that our generated filename is safe
+      if (!isValidPlatformImageFilename(req.file.filename)) {
+        fs.unlinkSync(req.file.path);
+        req.flash('error_msg', 'Upload failed due to invalid filename.');
+        return res.redirect('/admin/settings');
+      }
+
+      const settings = getSiteSettings();
+
+      // Initialize platformImages if not exists
+      if (!settings.platformImages) {
+        settings.platformImages = {};
+      }
+
+      // SECURITY: Delete old platform image only if filename passes validation
+      const oldFilename = settings.platformImages[platform];
+      if (oldFilename && isValidPlatformImageFilename(oldFilename)) {
+        const oldPath = path.join(__dirname, '../public/images', oldFilename);
+
+        // SECURITY: Verify the resolved path is within the images directory
+        const imagesDir = path.resolve(__dirname, '../public/images');
+        const resolvedOldPath = path.resolve(oldPath);
+
+        if (resolvedOldPath.startsWith(imagesDir) && fs.existsSync(resolvedOldPath)) {
+          fs.unlinkSync(resolvedOldPath);
+        }
+      }
+
+      // Save new filename
+      settings.platformImages[platform] = req.file.filename;
+
+      if (!saveSiteSettings(settings)) {
+        req.flash('error_msg', 'Failed to save image settings');
+        return res.redirect('/admin/settings');
+      }
+
+      const platformNames = {
+        'facebook': 'Facebook',
+        'linkedin': 'LinkedIn',
+        'twitter': 'Twitter',
+        'instagram-square': 'Instagram Square',
+        'instagram-story': 'Instagram Story',
+        'whatsapp': 'WhatsApp'
+      };
+
+      req.flash('success_msg', `${platformNames[platform]} image uploaded successfully!`);
+      res.redirect('/admin/settings');
+    } catch (error) {
+      console.error('Error saving platform image settings:', error);
+      req.flash('error_msg', 'Failed to save image settings');
+      res.redirect('/admin/settings');
+    }
+  }
+
   // Survey responses
   router.get('/surveys', async (req, res) => {
     try {
@@ -558,7 +838,8 @@ module.exports = function(csrfProtection) {
         responses,
         stats,
         surveyType,
-        analytics
+        analytics,
+        siteUrl: process.env.SITE_URL || `http://localhost:${process.env.PORT || 3000}`
       });
     } catch (error) {
       console.error('Survey responses error:', error);
@@ -571,7 +852,8 @@ module.exports = function(csrfProtection) {
           stats: { total: 0, preWebinar: 0, postWebinar: 0 },
           surveyType: 'all',
           migrationNeeded: true,
-          analytics: { pre: {}, post: {}, comparison: {} }
+          analytics: { pre: {}, post: {}, comparison: {} },
+          siteUrl: process.env.SITE_URL || `http://localhost:${process.env.PORT || 3000}`
         });
       }
 

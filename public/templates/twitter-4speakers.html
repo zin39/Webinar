@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Twitter/X Post - 4 Speakers (1200x675)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #0f172a;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    .post {
+      width: 1200px;
+      height: 675px;
+      background: #000000;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Gradient mesh */
+    .mesh {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 0% 100%, rgba(29, 161, 242, 0.3) 0%, transparent 50%),
+        radial-gradient(ellipse at 100% 0%, rgba(120, 86, 255, 0.25) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(255, 0, 128, 0.1) 0%, transparent 50%);
+    }
+
+    /* Grid pattern overlay */
+    .grid-overlay {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+
+    .post-content {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      display: flex;
+      padding: 45px 55px;
+      gap: 45px;
+    }
+
+    /* Left Section */
+    .left-section {
+      flex: 1.1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .badge {
+      background: linear-gradient(135deg, #1da1f2 0%, #0d8bd9 100%);
+      color: white;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      box-shadow: 0 4px 20px rgba(29, 161, 242, 0.4);
+    }
+
+    .datetime {
+      display: flex;
+      gap: 20px;
+    }
+
+    .datetime-item {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .datetime-item svg {
+      width: 16px;
+      height: 16px;
+      stroke: #1da1f2;
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .title {
+      color: white;
+      font-size: 46px;
+      font-weight: 800;
+      line-height: 1.12;
+      margin-bottom: 16px;
+    }
+
+    .title .highlight {
+      background: linear-gradient(135deg, #1da1f2 0%, #7856ff 50%, #ff0080 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 16px;
+      line-height: 1.5;
+      max-width: 450px;
+    }
+
+    .cta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .cta-button {
+      background: #1da1f2;
+      color: white;
+      padding: 14px 36px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 6px 24px rgba(29, 161, 242, 0.4);
+    }
+
+    .cta-url {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* Right Section - Speakers */
+    .right-section {
+      width: 470px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .speakers-label {
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+
+    .speakers-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      flex: 1;
+    }
+
+    .speaker {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 14px 16px;
+      border-radius: 16px;
+    }
+
+    .speaker.host {
+      background: linear-gradient(135deg, rgba(29, 161, 242, 0.15) 0%, rgba(120, 86, 255, 0.1) 100%);
+      border: 1px solid rgba(29, 161, 242, 0.3);
+    }
+
+    .speaker-photo {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center top;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      flex-shrink: 0;
+    }
+
+    .speaker.host .speaker-photo {
+      border: 2px solid rgba(29, 161, 242, 0.5);
+      box-shadow: 0 4px 15px rgba(29, 161, 242, 0.3);
+    }
+
+    .speaker-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .speaker-role {
+      color: #1da1f2;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .speaker.host .speaker-role {
+      color: #7dd3fc;
+    }
+
+    .speaker-name {
+      color: white;
+      font-size: 14px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .speaker-title {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Logo */
+    .logo-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 8px;
+    }
+
+    .logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+    }
+
+    /* Bottom accent */
+    .accent-line {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #1da1f2, #7856ff, #ff0080, #1da1f2);
+    }
+  </style>
+</head>
+<body>
+  <div class="post">
+    <div class="mesh"></div>
+    <div class="grid-overlay"></div>
+
+    <div class="post-content">
+      <div class="left-section">
+        <div class="header">
+          <div class="badge">Free Live Webinar</div>
+          <div class="datetime">
+            <div class="datetime-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              Nov 30
+            </div>
+            <div class="datetime-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              6 PM NPT
+            </div>
+          </div>
+        </div>
+
+        <div class="main">
+          <h1 class="title">Student <span class="highlight">Mental Health:</span><br>Thriving Beyond Grades</h1>
+          <p class="subtitle">An honest conversation about academic stress and practical strategies to thrive.</p>
+        </div>
+
+        <div class="cta">
+          <span class="cta-button">Register Now</span>
+          <span class="cta-url">mindwell.lumetium.com</span>
+        </div>
+      </div>
+
+      <div class="right-section">
+        <div class="speakers-label">Featured Speakers</div>
+
+        <div class="speakers-grid">
+          <!-- Host -->
+          <div class="speaker host">
+            <img src="/images/speaker.jpeg" alt="Dr. Aditi Pajiyar" class="speaker-photo">
+            <div class="speaker-info">
+              <span class="speaker-role">Host</span>
+              <div class="speaker-name">Dr. Aditi Pajiyar</div>
+              <div class="speaker-title">Mental Health Fellow, NHAFN</div>
+            </div>
+          </div>
+
+          <!-- Guest Speaker 1 -->
+          <div class="speaker">
+            <img src="/images/guest_speaker_image.jpeg" alt="Dr. Amit Jha" class="speaker-photo">
+            <div class="speaker-info">
+              <span class="speaker-role">Guest Speaker</span>
+              <div class="speaker-name">Dr. Amit Jha</div>
+              <div class="speaker-title">Child & Adolescent Psychiatrist</div>
+            </div>
+          </div>
+
+          <!-- Guest Speaker 2 -->
+          <div class="speaker">
+            <img src="/images/nikita_pradhan.jpeg" alt="Nikita Pradhan" class="speaker-photo">
+            <div class="speaker-info">
+              <span class="speaker-role">Guest Speaker</span>
+              <div class="speaker-name">Nikita Pradhan</div>
+              <div class="speaker-title">Mental Health Advocate</div>
+            </div>
+          </div>
+
+          <!-- Guest Speaker 3 -->
+          <div class="speaker">
+            <img src="/images/gopal_mahaseth.jpeg" alt="Gopal Mahaseth" class="speaker-photo">
+            <div class="speaker-info">
+              <span class="speaker-role">Guest Speaker</span>
+              <div class="speaker-name">Gopal Mahaseth</div>
+              <div class="speaker-title">Youth Counselor</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="logo-container">
+          <img src="/images/logo.jpeg" alt="Logo" class="logo">
+        </div>
+      </div>
+    </div>
+
+    <div class="accent-line"></div>
+  </div>
+</body>
+</html>

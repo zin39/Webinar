@@ -371,6 +371,11 @@
     background: #f8fafc;
     border-radius: 8px;
     padding: 16px;
+    min-height: 300px;
+  }
+
+  .chart-card > div {
+    min-height: 250px;
   }
 
   .chart-card h3 {
@@ -423,6 +428,9 @@
   // Analytics data from server
   const analyticsData = <%- JSON.stringify(analytics || { pre: {}, post: {}, comparison: {} }) %>;
 
+  // Debug: Log analytics data
+  console.log('Analytics Data:', analyticsData);
+
   // Chart color palette
   const colors = {
     primary: '#2563eb',
@@ -436,9 +444,41 @@
 
   const chartInstances = {};
 
-  // Helper function to check if data exists
+  // Helper function to check if data exists (has at least one value > 0)
   function hasData(obj) {
-    return obj && Object.keys(obj).length > 0 && !Object.keys(obj).every(k => k === 'Not provided');
+    if (!obj || typeof obj !== 'object') {
+      console.log('hasData: obj is null or not object', obj);
+      return false;
+    }
+    const keys = Object.keys(obj);
+    if (keys.length === 0) {
+      console.log('hasData: no keys in object');
+      return false;
+    }
+    // Check if there's at least one entry with a value > 0 (any key, including 'Not provided')
+    const result = keys.some(k => obj[k] > 0);
+    console.log('hasData check for', obj, ':', result);
+    return result;
+  }
+
+  // Helper function to filter out 'Not provided' entries
+  function filterData(obj) {
+    if (!obj) return {};
+    const filtered = {};
+    Object.keys(obj).forEach(k => {
+      if (k !== 'Not provided' && obj[k] > 0) {
+        filtered[k] = obj[k];
+      }
+    });
+    return filtered;
+  }
+
+  // Show "No data" message in chart container
+  function showNoData(containerId, message) {
+    const container = document.getElementById(containerId);
+    if (container) {
+      container.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 200px; color: #94a3b8; font-size: 14px;">' + (message || 'No data available') + '</div>';
+    }
   }
 
   // Toggle chart sections
@@ -457,7 +497,11 @@
 
   // Render Pre-Webinar Charts
   function renderPreCharts() {
-    if (!analyticsData.pre) return;
+    console.log('renderPreCharts called, pre data:', analyticsData.pre);
+    if (!analyticsData.pre) {
+      console.log('No pre analytics data');
+      return;
+    }
 
     // Knowledge Level - Horizontal Bar
     if (hasData(analyticsData.pre.knowledgeLevel)) {
@@ -469,64 +513,94 @@
         }
       });
       Object.keys(analyticsData.pre.knowledgeLevel).forEach(k => {
-        if (!sortedKnowledge[k]) sortedKnowledge[k] = analyticsData.pre.knowledgeLevel[k];
+        if (!sortedKnowledge[k] && k !== 'Not provided') sortedKnowledge[k] = analyticsData.pre.knowledgeLevel[k];
       });
 
-      chartInstances.knowledgeLevel = new ApexCharts(document.querySelector("#chart-knowledge-level"), {
-        chart: { type: 'bar', height: 250, toolbar: { show: false } },
-        series: [{ name: 'Responses', data: Object.values(sortedKnowledge) }],
-        xaxis: { categories: Object.keys(sortedKnowledge) },
-        plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '60%' } },
-        colors: [colors.primary],
-        dataLabels: { enabled: true, formatter: (val) => val + ' responses' }
-      });
-      chartInstances.knowledgeLevel.render();
+      if (Object.keys(sortedKnowledge).length > 0) {
+        chartInstances.knowledgeLevel = new ApexCharts(document.querySelector("#chart-knowledge-level"), {
+          chart: { type: 'bar', height: 250, toolbar: { show: false } },
+          series: [{ name: 'Responses', data: Object.values(sortedKnowledge) }],
+          xaxis: { categories: Object.keys(sortedKnowledge) },
+          plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '60%' } },
+          colors: [colors.primary],
+          dataLabels: { enabled: true, formatter: (val) => val + ' responses' }
+        });
+        chartInstances.knowledgeLevel.render();
+      } else {
+        showNoData('chart-knowledge-level', 'No pre-webinar data');
+      }
+    } else {
+      showNoData('chart-knowledge-level', 'No pre-webinar responses yet');
     }
 
     // Academic Stress - Donut
     if (hasData(analyticsData.pre.academicStress)) {
-      chartInstances.academicStress = new ApexCharts(document.querySelector("#chart-academic-stress"), {
-        chart: { type: 'donut', height: 280, toolbar: { show: false } },
-        series: Object.values(analyticsData.pre.academicStress),
-        labels: Object.keys(analyticsData.pre.academicStress),
-        colors: [colors.primary, colors.teal, colors.purple, colors.gray, colors.warning],
-        legend: { position: 'bottom' },
-        dataLabels: { enabled: true, formatter: (val) => val.toFixed(1) + '%' }
-      });
-      chartInstances.academicStress.render();
+      const filteredStress = filterData(analyticsData.pre.academicStress);
+      if (Object.keys(filteredStress).length > 0) {
+        chartInstances.academicStress = new ApexCharts(document.querySelector("#chart-academic-stress"), {
+          chart: { type: 'donut', height: 280, toolbar: { show: false } },
+          series: Object.values(filteredStress),
+          labels: Object.keys(filteredStress),
+          colors: [colors.primary, colors.teal, colors.purple, colors.gray, colors.warning],
+          legend: { position: 'bottom' },
+          dataLabels: { enabled: true, formatter: (val) => val.toFixed(1) + '%' }
+        });
+        chartInstances.academicStress.render();
+      } else {
+        showNoData('chart-academic-stress', 'No stress data provided');
+      }
+    } else {
+      showNoData('chart-academic-stress', 'No pre-webinar responses yet');
     }
 
     // Comfort Level - Bar Distribution
     if (hasData(analyticsData.pre.comfortLevel)) {
       const comfortData = [1, 2, 3, 4, 5].map(n => analyticsData.pre.comfortLevel[n] || analyticsData.pre.comfortLevel[String(n)] || 0);
-      chartInstances.comfortLevel = new ApexCharts(document.querySelector("#chart-comfort-level"), {
-        chart: { type: 'bar', height: 250, toolbar: { show: false } },
-        series: [{ name: 'Responses', data: comfortData }],
-        xaxis: { categories: ['1 (Very Low)', '2', '3', '4', '5 (Very High)'] },
-        colors: [colors.teal],
-        plotOptions: { bar: { borderRadius: 4 } },
-        dataLabels: { enabled: true }
-      });
-      chartInstances.comfortLevel.render();
+      if (comfortData.some(v => v > 0)) {
+        chartInstances.comfortLevel = new ApexCharts(document.querySelector("#chart-comfort-level"), {
+          chart: { type: 'bar', height: 250, toolbar: { show: false } },
+          series: [{ name: 'Responses', data: comfortData }],
+          xaxis: { categories: ['1 (Very Low)', '2', '3', '4', '5 (Very High)'] },
+          colors: [colors.teal],
+          plotOptions: { bar: { borderRadius: 4 } },
+          dataLabels: { enabled: true }
+        });
+        chartInstances.comfortLevel.render();
+      } else {
+        showNoData('chart-comfort-level', 'No comfort level data');
+      }
+    } else {
+      showNoData('chart-comfort-level', 'No pre-webinar responses yet');
     }
 
     // Knows Resources - Donut
     if (hasData(analyticsData.pre.knowsResources)) {
-      chartInstances.knowsResources = new ApexCharts(document.querySelector("#chart-knows-resources"), {
-        chart: { type: 'donut', height: 280, toolbar: { show: false } },
-        series: Object.values(analyticsData.pre.knowsResources),
-        labels: Object.keys(analyticsData.pre.knowsResources),
-        colors: [colors.success, colors.teal, colors.warning, colors.danger],
-        legend: { position: 'bottom' },
-        dataLabels: { enabled: true, formatter: (val) => val.toFixed(1) + '%' }
-      });
-      chartInstances.knowsResources.render();
+      const filteredResources = filterData(analyticsData.pre.knowsResources);
+      if (Object.keys(filteredResources).length > 0) {
+        chartInstances.knowsResources = new ApexCharts(document.querySelector("#chart-knows-resources"), {
+          chart: { type: 'donut', height: 280, toolbar: { show: false } },
+          series: Object.values(filteredResources),
+          labels: Object.keys(filteredResources),
+          colors: [colors.success, colors.teal, colors.warning, colors.danger],
+          legend: { position: 'bottom' },
+          dataLabels: { enabled: true, formatter: (val) => val.toFixed(1) + '%' }
+        });
+        chartInstances.knowsResources.render();
+      } else {
+        showNoData('chart-knows-resources', 'No resources data');
+      }
+    } else {
+      showNoData('chart-knows-resources', 'No pre-webinar responses yet');
     }
   }
 
   // Render Post-Webinar Charts
   function renderPostCharts() {
-    if (!analyticsData.post) return;
+    console.log('renderPostCharts called, post data:', analyticsData.post);
+    if (!analyticsData.post) {
+      console.log('No post analytics data');
+      return;
+    }
 
     // Satisfaction - Horizontal Bar
     if (hasData(analyticsData.post.satisfaction)) {
@@ -536,91 +610,135 @@
         if (analyticsData.post.satisfaction[k]) sortedSat[k] = analyticsData.post.satisfaction[k];
       });
       Object.keys(analyticsData.post.satisfaction).forEach(k => {
-        if (!sortedSat[k]) sortedSat[k] = analyticsData.post.satisfaction[k];
+        if (!sortedSat[k] && k !== 'Not provided') sortedSat[k] = analyticsData.post.satisfaction[k];
       });
 
-      chartInstances.satisfaction = new ApexCharts(document.querySelector("#chart-satisfaction"), {
-        chart: { type: 'bar', height: 250, toolbar: { show: false } },
-        series: [{ name: 'Responses', data: Object.values(sortedSat) }],
-        xaxis: { categories: Object.keys(sortedSat) },
-        plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '60%' } },
-        colors: [colors.success],
-        dataLabels: { enabled: true }
-      });
-      chartInstances.satisfaction.render();
+      if (Object.keys(sortedSat).length > 0) {
+        chartInstances.satisfaction = new ApexCharts(document.querySelector("#chart-satisfaction"), {
+          chart: { type: 'bar', height: 250, toolbar: { show: false } },
+          series: [{ name: 'Responses', data: Object.values(sortedSat) }],
+          xaxis: { categories: Object.keys(sortedSat) },
+          plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '60%' } },
+          colors: [colors.success],
+          dataLabels: { enabled: true }
+        });
+        chartInstances.satisfaction.render();
+      } else {
+        showNoData('chart-satisfaction', 'No satisfaction data');
+      }
+    } else {
+      showNoData('chart-satisfaction', 'No post-webinar responses yet');
     }
 
     // Would Recommend - Donut
     if (hasData(analyticsData.post.wouldRecommend)) {
-      chartInstances.wouldRecommend = new ApexCharts(document.querySelector("#chart-recommend"), {
-        chart: { type: 'donut', height: 280, toolbar: { show: false } },
-        series: Object.values(analyticsData.post.wouldRecommend),
-        labels: Object.keys(analyticsData.post.wouldRecommend),
-        colors: [colors.danger, colors.warning, colors.gray, colors.teal, colors.success],
-        legend: { position: 'bottom' },
-        dataLabels: { enabled: true, formatter: (val) => val.toFixed(1) + '%' }
-      });
-      chartInstances.wouldRecommend.render();
+      const filteredRecommend = filterData(analyticsData.post.wouldRecommend);
+      if (Object.keys(filteredRecommend).length > 0) {
+        chartInstances.wouldRecommend = new ApexCharts(document.querySelector("#chart-recommend"), {
+          chart: { type: 'donut', height: 280, toolbar: { show: false } },
+          series: Object.values(filteredRecommend),
+          labels: Object.keys(filteredRecommend),
+          colors: [colors.danger, colors.warning, colors.gray, colors.teal, colors.success],
+          legend: { position: 'bottom' },
+          dataLabels: { enabled: true, formatter: (val) => val.toFixed(1) + '%' }
+        });
+        chartInstances.wouldRecommend.render();
+      } else {
+        showNoData('chart-recommend', 'No recommendation data');
+      }
+    } else {
+      showNoData('chart-recommend', 'No post-webinar responses yet');
     }
 
     // Content Relevance - Bar
     if (hasData(analyticsData.post.contentRelevance)) {
       const contentData = [1, 2, 3, 4, 5].map(n => analyticsData.post.contentRelevance[n] || analyticsData.post.contentRelevance[String(n)] || 0);
-      chartInstances.contentRelevance = new ApexCharts(document.querySelector("#chart-content"), {
-        chart: { type: 'bar', height: 250, toolbar: { show: false } },
-        series: [{ name: 'Responses', data: contentData }],
-        xaxis: { categories: ['1', '2', '3', '4', '5'] },
-        colors: [colors.purple],
-        plotOptions: { bar: { borderRadius: 4 } },
-        dataLabels: { enabled: true }
-      });
-      chartInstances.contentRelevance.render();
+      if (contentData.some(v => v > 0)) {
+        chartInstances.contentRelevance = new ApexCharts(document.querySelector("#chart-content"), {
+          chart: { type: 'bar', height: 250, toolbar: { show: false } },
+          series: [{ name: 'Responses', data: contentData }],
+          xaxis: { categories: ['1', '2', '3', '4', '5'] },
+          colors: [colors.purple],
+          plotOptions: { bar: { borderRadius: 4 } },
+          dataLabels: { enabled: true }
+        });
+        chartInstances.contentRelevance.render();
+      } else {
+        showNoData('chart-content', 'No content relevance data');
+      }
+    } else {
+      showNoData('chart-content', 'No post-webinar responses yet');
     }
 
     // Facilitator Rating - Bar
     if (hasData(analyticsData.post.facilitatorRating)) {
       const facData = [1, 2, 3, 4, 5].map(n => analyticsData.post.facilitatorRating[n] || analyticsData.post.facilitatorRating[String(n)] || 0);
-      chartInstances.facilitatorRating = new ApexCharts(document.querySelector("#chart-facilitator"), {
-        chart: { type: 'bar', height: 250, toolbar: { show: false } },
-        series: [{ name: 'Responses', data: facData }],
-        xaxis: { categories: ['1', '2', '3', '4', '5'] },
-        colors: [colors.warning],
-        plotOptions: { bar: { borderRadius: 4 } },
-        dataLabels: { enabled: true }
-      });
-      chartInstances.facilitatorRating.render();
+      if (facData.some(v => v > 0)) {
+        chartInstances.facilitatorRating = new ApexCharts(document.querySelector("#chart-facilitator"), {
+          chart: { type: 'bar', height: 250, toolbar: { show: false } },
+          series: [{ name: 'Responses', data: facData }],
+          xaxis: { categories: ['1', '2', '3', '4', '5'] },
+          colors: [colors.warning],
+          plotOptions: { bar: { borderRadius: 4 } },
+          dataLabels: { enabled: true }
+        });
+        chartInstances.facilitatorRating.render();
+      } else {
+        showNoData('chart-facilitator', 'No facilitator rating data');
+      }
+    } else {
+      showNoData('chart-facilitator', 'No post-webinar responses yet');
     }
 
     // Learned Strategies - Horizontal Bar
     if (hasData(analyticsData.post.learnedStrategies)) {
-      chartInstances.learnedStrategies = new ApexCharts(document.querySelector("#chart-learned"), {
-        chart: { type: 'bar', height: 250, toolbar: { show: false } },
-        series: [{ name: 'Responses', data: Object.values(analyticsData.post.learnedStrategies) }],
-        xaxis: { categories: Object.keys(analyticsData.post.learnedStrategies) },
-        plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '60%' } },
-        colors: [colors.teal],
-        dataLabels: { enabled: true }
-      });
-      chartInstances.learnedStrategies.render();
+      const filteredStrategies = filterData(analyticsData.post.learnedStrategies);
+      if (Object.keys(filteredStrategies).length > 0) {
+        chartInstances.learnedStrategies = new ApexCharts(document.querySelector("#chart-learned"), {
+          chart: { type: 'bar', height: 250, toolbar: { show: false } },
+          series: [{ name: 'Responses', data: Object.values(filteredStrategies) }],
+          xaxis: { categories: Object.keys(filteredStrategies) },
+          plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '60%' } },
+          colors: [colors.teal],
+          dataLabels: { enabled: true }
+        });
+        chartInstances.learnedStrategies.render();
+      } else {
+        showNoData('chart-learned', 'No strategies data');
+      }
+    } else {
+      showNoData('chart-learned', 'No post-webinar responses yet');
     }
 
     // Comfort Level After - Horizontal Bar
     if (hasData(analyticsData.post.comfortLevelAfter)) {
-      chartInstances.comfortLevelAfter = new ApexCharts(document.querySelector("#chart-comfort-after"), {
-        chart: { type: 'bar', height: 250, toolbar: { show: false } },
-        series: [{ name: 'Responses', data: Object.values(analyticsData.post.comfortLevelAfter) }],
-        xaxis: { categories: Object.keys(analyticsData.post.comfortLevelAfter) },
-        plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '60%' } },
-        colors: [colors.primary],
-        dataLabels: { enabled: true }
-      });
-      chartInstances.comfortLevelAfter.render();
+      const filteredComfort = filterData(analyticsData.post.comfortLevelAfter);
+      if (Object.keys(filteredComfort).length > 0) {
+        chartInstances.comfortLevelAfter = new ApexCharts(document.querySelector("#chart-comfort-after"), {
+          chart: { type: 'bar', height: 250, toolbar: { show: false } },
+          series: [{ name: 'Responses', data: Object.values(filteredComfort) }],
+          xaxis: { categories: Object.keys(filteredComfort) },
+          plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '60%' } },
+          colors: [colors.primary],
+          dataLabels: { enabled: true }
+        });
+        chartInstances.comfortLevelAfter.render();
+      } else {
+        showNoData('chart-comfort-after', 'No comfort level data');
+      }
+    } else {
+      showNoData('chart-comfort-after', 'No post-webinar responses yet');
     }
   }
 
   // Render Comparison Chart
   function renderComparisonChart() {
-    if (!analyticsData.comparison) return;
+    console.log('renderComparisonChart called, comparison data:', analyticsData.comparison);
+    if (!analyticsData.comparison) {
+      console.log('No comparison analytics data');
+      showNoData('chart-knowledge-comparison', 'No comparison data available');
+      return;
+    }
 
     const categories = ['Very Low', 'Low', 'Moderate', 'High', 'Very High'];
     const beforeData = categories.map(c => analyticsData.comparison.knowledgeBefore?.[c] || 0);
@@ -640,15 +758,36 @@
         legend: { position: 'top' }
       });
       chartInstances.comparison.render();
+    } else {
+      showNoData('chart-knowledge-comparison', 'Need both pre and post-webinar responses for comparison');
     }
   }
 
   // Initialize charts on page load
   document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOMContentLoaded - initializing charts');
+    console.log('ApexCharts available:', typeof ApexCharts !== 'undefined');
+    console.log('Analytics data:', JSON.stringify(analyticsData, null, 2));
+
+    if (typeof ApexCharts === 'undefined') {
+      console.error('ApexCharts not loaded!');
+      document.querySelectorAll('.chart-card > div').forEach(el => {
+        el.innerHTML = '<p style="color: #ef4444; text-align: center; padding: 20px;">Chart library failed to load. Please refresh the page.</p>';
+      });
+      return;
+    }
+
     if (typeof analyticsData !== 'undefined' && analyticsData) {
-      renderPreCharts();
-      renderPostCharts();
-      renderComparisonChart();
+      try {
+        renderPreCharts();
+        renderPostCharts();
+        renderComparisonChart();
+        console.log('Charts rendered successfully');
+      } catch (error) {
+        console.error('Error rendering charts:', error);
+      }
+    } else {
+      console.log('No analytics data available');
     }
   });
 </script>
