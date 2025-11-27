@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pre-Webinar Survey - Student Mental Health Webinar</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .survey-section {
+      min-height: 100vh;
+      padding: 100px 0 60px;
+      background: linear-gradient(135deg, #EEF2FF 0%, #DBEAFE 50%, #E0E7FF 100%);
+    }
+    .survey-card {
+      max-width: 700px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .survey-header {
+      background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    .survey-header h1 {
+      font-size: 1.75rem;
+      margin-bottom: 8px;
+    }
+    .survey-header p {
+      opacity: 0.9;
+      font-size: 0.95rem;
+    }
+    .survey-body {
+      padding: 40px;
+    }
+    .survey-intro {
+      text-align: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .survey-intro p {
+      color: #64748b;
+    }
+    .question-group {
+      margin-bottom: 28px;
+    }
+    .question-label {
+      display: block;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 12px;
+      font-size: 1rem;
+    }
+    .question-label span.required {
+      color: #ef4444;
+    }
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .radio-option:hover {
+      border-color: #2563eb;
+      background: #eff6ff;
+    }
+    .radio-option input[type="radio"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #2563eb;
+    }
+    .radio-option.selected {
+      border-color: #2563eb;
+      background: #eff6ff;
+    }
+    .scale-group {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .scale-option {
+      flex: 1;
+      text-align: center;
+    }
+    .scale-option input[type="radio"] {
+      display: none;
+    }
+    .scale-option label {
+      display: block;
+      padding: 16px 8px;
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 600;
+      font-size: 1.25rem;
+    }
+    .scale-option input:checked + label {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: white;
+    }
+    .scale-option label:hover {
+      border-color: #2563eb;
+    }
+    .scale-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+    .textarea-field {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 100px;
+      transition: border-color 0.2s;
+    }
+    .textarea-field:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+    .input-field {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+    .input-field:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+    .readonly-field {
+      background: #f1f5f9;
+      color: #64748b;
+      cursor: not-allowed;
+    }
+    .readonly-field:focus {
+      border-color: #e2e8f0;
+    }
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+    }
+    .alert-error {
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      padding: 14px 18px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .already-submitted {
+      text-align: center;
+      padding: 40px;
+    }
+    .already-submitted .icon {
+      width: 80px;
+      height: 80px;
+      background: #d1fae5;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .already-submitted .icon svg {
+      width: 40px;
+      height: 40px;
+      stroke: #10b981;
+    }
+    .already-submitted h2 {
+      color: #1e293b;
+      margin-bottom: 10px;
+    }
+    .already-submitted p {
+      color: #64748b;
+    }
+    @media (max-width: 768px) {
+      .survey-section {
+        padding: 80px 16px 40px;
+      }
+      .survey-body {
+        padding: 24px;
+      }
+      .scale-group {
+        gap: 4px;
+      }
+      .scale-option label {
+        padding: 12px 4px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%- include('../partials/nav') %>
+
+  <section class="survey-section">
+    <div class="survey-card">
+      <div class="survey-header">
+        <h1>Pre-Webinar Survey</h1>
+        <p>Student Mental Health Webinar</p>
+      </div>
+
+      <div class="survey-body">
+        <% if (alreadySubmitted) { %>
+          <div class="already-submitted">
+            <div class="icon">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h2>Thank You!</h2>
+            <p>You have already submitted this survey. We appreciate your response!</p>
+            <a href="/" class="btn btn-primary" style="margin-top: 20px; display: inline-block;">Back to Home</a>
+          </div>
+        <% } else { %>
+          <div class="survey-intro">
+            <p>Please take 2 minutes to complete this quick survey. Your responses help us tailor the webinar to your needs.</p>
+          </div>
+
+          <% if (error) { %>
+            <div class="alert-error"><%= error %></div>
+          <% } %>
+
+          <form method="POST" action="/survey/pre-webinar">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input type="hidden" name="token" value="<%= token %>">
+
+            <div class="question-group">
+              <label class="question-label">Email Address</label>
+              <input type="email" name="email" class="input-field readonly-field" value="<%= email %>" readonly>
+            </div>
+
+            <div class="question-group">
+              <label class="question-label">Your Name</label>
+              <input type="text" name="name" class="input-field readonly-field" value="<%= name %>" readonly>
+            </div>
+
+            <div class="question-group">
+              <label class="question-label">1. How would you rate your current knowledge about student mental health? <span class="required">*</span></label>
+              <div class="radio-group">
+                <label class="radio-option">
+                  <input type="radio" name="knowledgeLevel" value="Very Low" required>
+                  <span>Very Low</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="knowledgeLevel" value="Low">
+                  <span>Low</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="knowledgeLevel" value="Moderate">
+                  <span>Moderate</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="knowledgeLevel" value="High">
+                  <span>High</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="knowledgeLevel" value="Very High">
+                  <span>Very High</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="question-group">
+              <label class="question-label">2. Have you or someone you know experienced significant academic stress? <span class="required">*</span></label>
+              <div class="radio-group">
+                <label class="radio-option">
+                  <input type="radio" name="academicStress" value="Yes, personally" required>
+                  <span>Yes, personally</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="academicStress" value="Yes, someone I know">
+                  <span>Yes, someone I know</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="academicStress" value="Both">
+                  <span>Both</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="academicStress" value="No">
+                  <span>No</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="academicStress" value="Prefer not to say">
+                  <span>Prefer not to say</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="question-group">
+              <label class="question-label">3. How comfortable do you feel talking about mental health? <span class="required">*</span></label>
+              <div class="scale-group">
+                <div class="scale-option">
+                  <input type="radio" name="comfortLevel" value="1" id="comfort1" required>
+                  <label for="comfort1">1</label>
+                </div>
+                <div class="scale-option">
+                  <input type="radio" name="comfortLevel" value="2" id="comfort2">
+                  <label for="comfort2">2</label>
+                </div>
+                <div class="scale-option">
+                  <input type="radio" name="comfortLevel" value="3" id="comfort3">
+                  <label for="comfort3">3</label>
+                </div>
+                <div class="scale-option">
+                  <input type="radio" name="comfortLevel" value="4" id="comfort4">
+                  <label for="comfort4">4</label>
+                </div>
+                <div class="scale-option">
+                  <input type="radio" name="comfortLevel" value="5" id="comfort5">
+                  <label for="comfort5">5</label>
+                </div>
+              </div>
+              <div class="scale-labels">
+                <span>Very uncomfortable</span>
+                <span>Very comfortable</span>
+              </div>
+            </div>
+
+            <div class="question-group">
+              <label class="question-label">4. Do you know where to seek mental health support in Nepal? <span class="required">*</span></label>
+              <div class="radio-group">
+                <label class="radio-option">
+                  <input type="radio" name="knowsResources" value="Yes, I know several resources" required>
+                  <span>Yes, I know several resources</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="knowsResources" value="Yes, I know one or two">
+                  <span>Yes, I know one or two</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="knowsResources" value="Not sure">
+                  <span>Not sure</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="knowsResources" value="No">
+                  <span>No</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="question-group">
+              <label class="question-label">5. What do you hope to learn from this webinar?</label>
+              <textarea name="hopesToLearn" class="textarea-field" maxlength="1000" placeholder="Share what topics or skills you'd like to learn about..."></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">Submit Survey</button>
+          </form>
+        <% } %>
+      </div>
+    </div>
+  </section>
+
+  <%- include('../partials/footer') %>
+
+  <script>
+    // Add selected class to radio options
+    document.querySelectorAll('.radio-option input').forEach(input => {
+      input.addEventListener('change', function() {
+        this.closest('.radio-group').querySelectorAll('.radio-option').forEach(opt => {
+          opt.classList.remove('selected');
+        });
+        this.closest('.radio-option').classList.add('selected');
+      });
+    });
+  </script>
+</body>
+</html>

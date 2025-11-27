@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post-Webinar Survey - Student Mental Health Webinar</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .survey-section {
+      min-height: 100vh;
+      padding: 100px 0 60px;
+      background: linear-gradient(135deg, #EEF2FF 0%, #DBEAFE 50%, #E0E7FF 100%);
+    }
+    .survey-card {
+      max-width: 700px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .survey-header {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    .survey-header h1 {
+      font-size: 1.75rem;
+      margin-bottom: 8px;
+    }
+    .survey-header p {
+      opacity: 0.9;
+      font-size: 0.95rem;
+    }
+    .survey-body {
+      padding: 40px;
+    }
+    .survey-intro {
+      text-align: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .survey-intro p {
+      color: #64748b;
+    }
+    .question-group {
+      margin-bottom: 28px;
+    }
+    .question-label {
+      display: block;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 12px;
+      font-size: 1rem;
+    }
+    .question-label span.required {
+      color: #ef4444;
+    }
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .radio-option:hover {
+      border-color: #10b981;
+      background: #ecfdf5;
+    }
+    .radio-option input[type="radio"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #10b981;
+    }
+    .radio-option.selected {
+      border-color: #10b981;
+      background: #ecfdf5;
+    }
+    .scale-group {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .scale-option {
+      flex: 1;
+      text-align: center;
+    }
+    .scale-option input[type="radio"] {
+      display: none;
+    }
+    .scale-option label {
+      display: block;
+      padding: 16px 8px;
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 600;
+      font-size: 1.25rem;
+    }
+    .scale-option input:checked + label {
+      background: #10b981;
+      border-color: #10b981;
+      color: white;
+    }
+    .scale-option label:hover {
+      border-color: #10b981;
+    }
+    .scale-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+    .textarea-field {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 100px;
+      transition: border-color 0.2s;
+    }
+    .textarea-field:focus {
+      outline: none;
+      border-color: #10b981;
+    }
+    .input-field {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+    .input-field:focus {
+      outline: none;
+      border-color: #10b981;
+    }
+    .readonly-field {
+      background: #f1f5f9;
+      color: #64748b;
+      cursor: not-allowed;
+    }
+    .readonly-field:focus {
+      border-color: #e2e8f0;
+    }
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+    }
+    .alert-error {
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      padding: 14px 18px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .already-submitted {
+      text-align: center;
+      padding: 40px;
+    }
+    .already-submitted .icon {
+      width: 80px;
+      height: 80px;
+      background: #d1fae5;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .already-submitted .icon svg {
+      width: 40px;
+      height: 40px;
+      stroke: #10b981;
+    }
+    @media (max-width: 768px) {
+      .survey-section {
+        padding: 80px 16px 40px;
+      }
+      .survey-body {
+        padding: 24px;
+      }
+      .scale-group {
+        gap: 4px;
+      }
+      .scale-option label {
+        padding: 12px 4px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%- include('../partials/nav') %>
+
+  <section class="survey-section">
+    <div class="survey-card">
+      <div class="survey-header">
+        <h1>Post-Webinar Survey</h1>
+        <p>Help us improve future sessions</p>
+      </div>
+
+      <div class="survey-body">
+        <% if (alreadySubmitted) { %>
+          <div class="already-submitted">
+            <div class="icon">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h2>Thank You!</h2>
+            <p>You have already submitted this survey. We appreciate your feedback!</p>
+            <a href="/" class="btn btn-primary" style="margin-top: 20px; display: inline-block;">Back to Home</a>
+          </div>
+        <% } else { %>
+          <div class="survey-intro">
+            <p>Thank you for attending! Please share your feedback to help us improve.</p>
+          </div>
+
+          <% if (error) { %>
+            <div class="alert-error"><%= error %></div>
+          <% } %>
+
+          <form method="POST" action="/survey/post-webinar">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input type="hidden" name="token" value="<%= token %>">
+
+            <div class="question-group">
+              <label class="question-label">Email Address</label>
+              <input type="email" name="email" class="input-field readonly-field" value="<%= email %>" readonly>
+            </div>
+
+            <div class="question-group">
+              <label class="question-label">Your Name</label>
+              <input type="text" name="name" class="input-field readonly-field" value="<%= name %>" readonly>
+            </div>
+
+            <div class="question-group">
+              <label class="question-label">1. Overall, how satisfied were you with this webinar? <span class="required">*</span></label>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="satisfaction" value="Very Dissatisfied" required><span>Very Dissatisfied</span></label>
+                <label class="radio-option"><input type="radio" name="satisfaction" value="Dissatisfied"><span>Dissatisfied</span></label>
+                <label class="radio-option"><input type="radio" name="satisfaction" value="Neutral"><span>Neutral</span></label>
+                <label class="radio-option"><input type="radio" name="satisfaction" value="Satisfied"><span>Satisfied</span></label>
+                <label class="radio-option"><input type="radio" name="satisfaction" value="Very Satisfied"><span>Very Satisfied</span></label>
+              </div>
+            </div>
+
+            <div class="question-group">
+              <label class="question-label">2. How would you rate your knowledge about student mental health NOW? <span class="required">*</span></label>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="knowledgeLevelAfter" value="Very Low" required><span>Very Low</span></label>
+                <label class="radio-option"><input type="radio" name="knowledgeLevelAfter" value="Low"><span>Low</span></label>
+                <label class="radio-option"><input type="radio" name="knowledgeLevelAfter" value="Moderate"><span>Moderate</span></label>
+                <label class="radio-option"><input type="radio" name="knowledgeLevelAfter" value="High"><span>High</span></label>
+                <label class="radio-option"><input type="radio" name="knowledgeLevelAfter" value="Very High"><span>Very High</span></label>
+              </div>
+            </div>
+
+            <div class="question-group">
+              <label class="question-label">3. The content was relevant to my needs <span class="required">*</span></label>
+              <div class="scale-group">
+                <div class="scale-option"><input type="radio" name="contentRelevance" value="1" id="content1" required><label for="content1">1</label></div>
+                <div class="scale-option"><input type="radio" name="contentRelevance" value="2" id="content2"><label for="content2">2</label></div>
+                <div class="scale-option"><input type="radio" name="contentRelevance" value="3" id="content3"><label for="content3">3</label></div>
+                <div class="scale-option"><input type="radio" name="contentRelevance" value="4" id="content4"><label for="content4">4</label></div>
+                <div class="scale-option"><input type="radio" name="contentRelevance" value="5" id="content5"><label for="content5">5</label></div>
+              </div>
+              <div class="scale-labels"><span>Strongly Disagree</span><span>Strongly Agree</span></div>
+            </div>
+
+            <div class="question-group">
+              <label class="question-label">4. The facilitator was knowledgeable and engaging <span class="required">*</span></label>
+              <div class="scale-group">
+                <div class="scale-option"><input type="radio" name="facilitatorRating" value="1" id="fac1" required><label for="fac1">1</label></div>
+                <div class="scale-option"><input type="radio" name="facilitatorRating" value="2" id="fac2"><label for="fac2">2</label></div>
+                <div class="scale-option"><input type="radio" name="facilitatorRating" value="3" id="fac3"><label for="fac3">3</label></div>
+                <div class="scale-option"><input type="radio" name="facilitatorRating" value="4" id="fac4"><label for="fac4">4</label></div>
+                <div class="scale-option"><input type="radio" name="facilitatorRating" value="5" id="fac5"><label for="fac5">5</label></div>
+              </div>
+              <div class="scale-labels"><span>Strongly Disagree</span><span>Strongly Agree</span></div>
+            </div>
+
+            <div class="question-group">
+              <label class="question-label">5. I learned practical strategies I can use immediately <span class="required">*</span></label>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="learnedStrategies" value="Strongly Disagree" required><span>Strongly Disagree</span></label>
+                <label class="radio-option"><input type="radio" name="learnedStrategies" value="Disagree"><span>Disagree</span></label>
+                <label class="radio-option"><input type="radio" name="learnedStrategies" value="Neutral"><span>Neutral</span></label>
+                <label class="radio-option"><input type="radio" name="learnedStrategies" value="Agree"><span>Agree</span></label>
+                <label class="radio-option"><input type="radio" name="learnedStrategies" value="Strongly Agree"><span>Strongly Agree</span></label>
+              </div>
+            </div>
+
+            <div class="question-group">
+              <label class="question-label">6. I feel more comfortable talking about mental health now <span class="required">*</span></label>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="comfortLevelAfter" value="Strongly Disagree" required><span>Strongly Disagree</span></label>
+                <label class="radio-option"><input type="radio" name="comfortLevelAfter" value="Disagree"><span>Disagree</span></label>
+                <label class="radio-option"><input type="radio" name="comfortLevelAfter" value="Neutral"><span>Neutral</span></label>
+                <label class="radio-option"><input type="radio" name="comfortLevelAfter" value="Agree"><span>Agree</span></label>
+                <label class="radio-option"><input type="radio" name="comfortLevelAfter" value="Strongly Agree"><span>Strongly Agree</span></label>
+              </div>
+            </div>
+
+            <div class="question-group">
+              <label class="question-label">7. I now know where to seek mental health support <span class="required">*</span></label>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="knowsResourcesAfter" value="Strongly Disagree" required><span>Strongly Disagree</span></label>
+                <label class="radio-option"><input type="radio" name="knowsResourcesAfter" value="Disagree"><span>Disagree</span></label>
+                <label class="radio-option"><input type="radio" name="knowsResourcesAfter" value="Neutral"><span>Neutral</span></label>
+                <label class="radio-option"><input type="radio" name="knowsResourcesAfter" value="Agree"><span>Agree</span></label>
+                <label class="radio-option"><input type="radio" name="knowsResourcesAfter" value="Strongly Agree"><span>Strongly Agree</span></label>
+              </div>
+            </div>
+
+            <div class="question-group">
+              <label class="question-label">8. What was the most valuable thing you learned?</label>
+              <textarea name="mostValuable" class="textarea-field" maxlength="1000" placeholder="Share what was most helpful..."></textarea>
+            </div>
+
+            <div class="question-group">
+              <label class="question-label">9. What could be improved?</label>
+              <textarea name="improvements" class="textarea-field" maxlength="1000" placeholder="Share your suggestions..."></textarea>
+            </div>
+
+            <div class="question-group">
+              <label class="question-label">10. Would you recommend this webinar to others? <span class="required">*</span></label>
+              <div class="radio-group">
+                <label class="radio-option"><input type="radio" name="wouldRecommend" value="Definitely Not" required><span>Definitely Not</span></label>
+                <label class="radio-option"><input type="radio" name="wouldRecommend" value="Probably Not"><span>Probably Not</span></label>
+                <label class="radio-option"><input type="radio" name="wouldRecommend" value="Maybe"><span>Maybe</span></label>
+                <label class="radio-option"><input type="radio" name="wouldRecommend" value="Probably Yes"><span>Probably Yes</span></label>
+                <label class="radio-option"><input type="radio" name="wouldRecommend" value="Definitely Yes"><span>Definitely Yes</span></label>
+              </div>
+            </div>
+
+            <button type="submit" class="submit-btn">Submit Feedback</button>
+          </form>
+        <% } %>
+      </div>
+    </div>
+  </section>
+
+  <%- include('../partials/footer') %>
+
+  <script>
+    document.querySelectorAll('.radio-option input').forEach(input => {
+      input.addEventListener('change', function() {
+        this.closest('.radio-group').querySelectorAll('.radio-option').forEach(opt => {
+          opt.classList.remove('selected');
+        });
+        this.closest('.radio-option').classList.add('selected');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1991,6 +1991,46 @@ img {
   color: #92400e;
 }
 
+/* Survey Status Indicators */
+.survey-status-cell {
+  text-align: center;
+}
+
+.survey-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.survey-status.completed {
+  background: #d1fae5;
+  color: #059669;
+  text-decoration: none;
+}
+
+.survey-status.completed:hover {
+  background: #a7f3d0;
+}
+
+.survey-status.pending {
+  background: #f3f4f6;
+  color: #9ca3af;
+}
+
+/* Teal icon style for survey stats */
+.stat-icon-teal {
+  background: rgba(20, 184, 166, 0.1);
+}
+
+.stat-icon-teal svg {
+  stroke: #14b8a6;
+}
+
 .actions-cell {
   display: flex;
   gap: 8px;

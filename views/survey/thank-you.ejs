@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thank You - Survey Submitted</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .thank-you-section {
+      min-height: 100vh;
+      padding: 100px 0 60px;
+      background: linear-gradient(135deg, #EEF2FF 0%, #DBEAFE 50%, #E0E7FF 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .thank-you-card {
+      max-width: 550px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+      padding: 50px 40px;
+      text-align: center;
+    }
+    .success-icon {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    .success-icon svg {
+      width: 50px;
+      height: 50px;
+      stroke: white;
+      stroke-width: 3;
+    }
+    .thank-you-card h1 {
+      font-size: 2rem;
+      color: #1e293b;
+      margin-bottom: 12px;
+    }
+    .thank-you-card p {
+      color: #64748b;
+      font-size: 1.1rem;
+      margin-bottom: 30px;
+      line-height: 1.7;
+    }
+    .home-btn {
+      display: inline-block;
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+      color: white;
+      border-radius: 10px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .home-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+      color: white;
+    }
+    @media (max-width: 768px) {
+      .thank-you-section {
+        padding: 80px 16px 40px;
+      }
+      .thank-you-card {
+        padding: 40px 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%- include('../partials/nav') %>
+
+  <section class="thank-you-section">
+    <div class="thank-you-card">
+      <div class="success-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+      <h1>Thank You!</h1>
+      <% if (surveyType === 'pre-webinar') { %>
+        <p>Your pre-webinar survey has been submitted successfully. We appreciate your responses and look forward to seeing you at the webinar!</p>
+      <% } else { %>
+        <p>Your post-webinar survey has been submitted successfully. Thank you for your valuable feedback - it helps us improve future sessions!</p>
+      <% } %>
+      <a href="/" class="home-btn">Back to Home</a>
+    </div>
+  </section>
+
+  <%- include('../partials/footer') %>
+</body>
+</html>

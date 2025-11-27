@@ -17,6 +17,13 @@
         </svg>
         Attendees
       </a>
+      <a href="/admin/surveys" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <path d="M9 11l3 3L22 4"></path>
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+        </svg>
+        Surveys
+      </a>
       <a href="/admin/emails" class="sidebar-link">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
           <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
@@ -124,6 +131,19 @@
           <span class="stat-label">Emails Sent</span>
         </div>
       </div>
+
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-teal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 11l3 3L22 4"></path>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value"><%= stats.preSurveys %> / <%= stats.postSurveys %></span>
+          <span class="stat-label">Surveys (Pre / Post)</span>
+        </div>
+      </div>
     </div>
 
     <!-- Attendees Table -->
@@ -156,6 +176,8 @@
                 <th>How Heard</th>
                 <th>Registered</th>
                 <th>Email Sent</th>
+                <th>Pre-Survey</th>
+                <th>Post-Survey</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -174,6 +196,24 @@
                       <span class="badge badge-success">Sent</span>
                     <% } else { %>
                       <span class="badge badge-warning">Pending</span>
+                    <% } %>
+                  </td>
+                  <td class="survey-status-cell">
+                    <% if (surveyStatusMap[attendee.email]?.pre) { %>
+                      <a href="/admin/surveys/<%= surveyStatusMap[attendee.email].pre.id %>" class="survey-status completed" title="View Pre-Survey Response">
+                        ✓
+                      </a>
+                    <% } else { %>
+                      <span class="survey-status pending" title="Not submitted">✗</span>
+                    <% } %>
+                  </td>
+                  <td class="survey-status-cell">
+                    <% if (surveyStatusMap[attendee.email]?.post) { %>
+                      <a href="/admin/surveys/<%= surveyStatusMap[attendee.email].post.id %>" class="survey-status completed" title="View Post-Survey Response">
+                        ✓
+                      </a>
+                    <% } else { %>
+                      <span class="survey-status pending" title="Not submitted">✗</span>
                     <% } %>
                   </td>
                   <td class="actions-cell">

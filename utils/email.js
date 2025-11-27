@@ -80,6 +80,10 @@ const sendConfirmationEmail = async (attendee, webinar, calendarLinks) => {
 
   const formattedTime = nepalTimeStr + ' / ' + utcTimeStr;
 
+  // Pre-webinar survey link - using token for secure access
+  const siteUrl = process.env.SITE_URL || 'http://localhost:3000';
+  const surveyLink = `${siteUrl}/survey/pre-webinar?token=${attendee.surveyToken}`;
+
   const htmlContent = `
     <!DOCTYPE html>
     <html>
@@ -92,51 +96,71 @@ const sendConfirmationEmail = async (attendee, webinar, calendarLinks) => {
         .details { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #2563eb; }
         .btn { display: inline-block; background: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 5px; }
         .btn-secondary { background: #64748b; }
+        .btn-survey { background: #10b981; }
         .calendar-links { margin: 20px 0; text-align: center; }
         .footer { text-align: center; color: #64748b; font-size: 14px; margin-top: 20px; }
         .highlight { background: #e0f2fe; border: 1px solid #0284c7; padding: 15px; border-radius: 8px; margin: 20px 0; }
+        .expect-list { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .expect-list ul { margin: 0; padding-left: 20px; }
+        .expect-list li { margin: 8px 0; }
+        .next-steps { background: #fef3c7; border: 1px solid #f59e0b; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .next-steps ol { margin: 10px 0; padding-left: 20px; }
+        .next-steps li { margin: 10px 0; }
       </style>
     </head>
     <body>
       <div class="container">
         <div class="header">
           <h1>Thank You for Registering!</h1>
-          <p style="margin: 0; opacity: 0.9;">Your seat is confirmed</p>
+          <p style="margin: 0; opacity: 0.9;">Your seat is confirmed for the Student Mental Health Webinar</p>
         </div>
         <div class="content">
-          <p>Hi ${attendee.name},</p>
-          <p>Thank you so much for registering for our webinar on student mental health. We're truly grateful that you're taking this important step to join the conversation about mental wellbeing.</p>
+          <p>Dear ${attendee.name},</p>
+          <p>Thank you for registering for our Student Mental Health Webinar!</p>
 
           <div class="details">
-            <h3 style="margin-top: 0; color: #2563eb;">${webinar.title}</h3>
-            <p><strong>Date:</strong> ${formattedDate}</p>
-            <p><strong>Time:</strong> ${formattedTime}</p>
-            <p><strong>Duration:</strong> ${webinar.duration} minutes</p>
-            <p><strong>Speaker:</strong> Dr. Aditi Pajiyar</p>
+            <h3 style="margin-top: 0; color: #2563eb;">Webinar Details</h3>
+            <p>📅 <strong>Date:</strong> Sunday, November 30, 2025</p>
+            <p>⏰ <strong>Time:</strong> 6:00 PM - 7:30 PM NST</p>
+            <p>💻 <strong>Platform:</strong> Zoom</p>
           </div>
 
-          ${webinar.meetingLink ? `
-          <p style="text-align: center;">
-            <a href="${webinar.meetingLink}" class="btn">Join Webinar</a>
-          </p>
-          ` : `
-          <div class="highlight">
-            <p style="margin: 0; color: #0369a1;"><strong>Meeting Link Coming Soon!</strong></p>
-            <p style="margin: 10px 0 0 0; color: #0369a1;">We'll send you the meeting link via email before the webinar starts. Keep an eye on your inbox!</p>
+          <div class="expect-list">
+            <h3 style="margin-top: 0; color: #2563eb;">What to Expect:</h3>
+            <ul>
+              <li>Understanding academic stress and mental health</li>
+              <li>Practical coping strategies you can use immediately</li>
+              <li>Resources for seeking help in Nepal</li>
+              <li>Interactive Q&A session</li>
+              <li>Supportive, judgment-free space</li>
+            </ul>
           </div>
-          `}
+
+          <div class="next-steps">
+            <h3 style="margin-top: 0; color: #92400e;">📋 Next Steps:</h3>
+            <ol>
+              <li>We'll send you the <strong>Zoom link on November 29</strong> (one day before)</li>
+              <li>Please complete this quick <a href="${surveyLink}" style="color: #2563eb; font-weight: bold;">pre-webinar survey</a> (takes 2 minutes)</li>
+              <li>Mark your calendar and set a reminder!</li>
+            </ol>
+          </div>
+
+          <p style="text-align: center; margin: 25px 0;">
+            <a href="${surveyLink}" class="btn btn-survey">Complete Pre-Webinar Survey</a>
+          </p>
 
           <div class="calendar-links">
-            <p><strong>Don't forget to add it to your calendar:</strong></p>
+            <p><strong>Add to your calendar:</strong></p>
             <a href="${calendarLinks.google}" class="btn btn-secondary" target="_blank">Google Calendar</a>
             <a href="${calendarLinks.outlook}" class="btn btn-secondary" target="_blank">Outlook</a>
           </div>
 
-          <p style="text-align: center; font-size: 18px; color: #2563eb; margin-top: 25px;"><strong>See you on Sunday!</strong></p>
+          <p style="text-align: center; color: #64748b; margin-top: 20px;">Questions? Reply to this email anytime.</p>
+
+          <p style="text-align: center; font-size: 18px; color: #2563eb; margin-top: 25px;"><strong>Looking forward to seeing you there!</strong></p>
 
           <div class="footer">
-            <p>If you have any questions, feel free to reply to this email.</p>
-            <p style="margin-top: 15px;">Warm regards,<br><strong>Dr. Aditi Pajiyar</strong><br>Mental Health Leadership Fellow, NHAFN</p>
+            <p style="margin-top: 15px;">Warm regards,<br><strong>Dr. Aditi Pajiyar</strong><br>NHAFN Mental Health Fellow</p>
           </div>
         </div>
       </div>
@@ -145,27 +169,36 @@ const sendConfirmationEmail = async (attendee, webinar, calendarLinks) => {
   `;
 
   const textContent = `
-    Thank You for Registering!
+Dear ${attendee.name},
 
-    Hi ${attendee.name},
+Thank you for registering for our Student Mental Health Webinar!
 
-    Thank you so much for registering for our webinar on student mental health. We're truly grateful that you're taking this important step to join the conversation about mental wellbeing.
+WEBINAR DETAILS:
+📅 Date: Sunday, November 30, 2025
+⏰ Time: 6:00 PM - 7:30 PM NST
+💻 Platform: Zoom
 
-    ${webinar.title}
-    Date: ${formattedDate}
-    Time: ${formattedTime}
-    Duration: ${webinar.duration} minutes
-    Speaker: Dr. Aditi Pajiyar
+WHAT TO EXPECT:
+• Understanding academic stress and mental health
+• Practical coping strategies you can use immediately
+• Resources for seeking help in Nepal
+• Interactive Q&A session
+• Supportive, judgment-free space
 
-    ${webinar.meetingLink ? `Join Link: ${webinar.meetingLink}` : 'Meeting Link Coming Soon! We will send you the meeting link via email before the webinar starts. Keep an eye on your inbox!'}
+NEXT STEPS:
+1. We'll send you the Zoom link on November 29 (one day before)
+2. Please complete this quick pre-webinar survey: ${surveyLink} (takes 2 minutes)
+3. Mark your calendar and set a reminder!
 
-    Add to Google Calendar: ${calendarLinks.google}
+Add to Google Calendar: ${calendarLinks.google}
 
-    See you on Sunday!
+Questions? Reply to this email anytime.
 
-    Warm regards,
-    Dr. Aditi Pajiyar
-    Mental Health Leadership Fellow, NHAFN
+Looking forward to seeing you there!
+
+Warm regards,
+Dr. Aditi Pajiyar
+NHAFN Mental Health Fellow
   `;
 
   try {

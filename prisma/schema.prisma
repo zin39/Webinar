@@ -27,6 +27,7 @@ model Attendee {
   howHeard     String?
   registeredAt DateTime @default(now())
   emailSent    Boolean  @default(false)
+  surveyToken  String?  @unique  // Token for secure survey access
 }
 
 model WebinarConfig {
@@ -103,4 +104,37 @@ model EmailLog {
   @@index([status])
   @@index([type])
   @@index([timestamp])
+}
+
+// Survey Responses
+model SurveyResponse {
+  id                    String   @id @default(cuid())
+  email                 String
+  name                  String?
+  surveyType            String   // pre-webinar, post-webinar
+
+  // Pre-webinar questions
+  knowledgeLevel        String?  // Very Low, Low, Moderate, High, Very High
+  academicStress        String?  // Yes personally, Yes someone I know, Both, No, Prefer not to say
+  comfortLevel          Int?     // 1-5 scale
+  knowsResources        String?  // Yes I know several, Yes I know one or two, Not sure, No
+  hopesToLearn          String?  // Open-ended
+
+  // Post-webinar questions
+  satisfaction          String?  // Very Dissatisfied to Very Satisfied
+  knowledgeLevelAfter   String?  // Very Low to Very High
+  contentRelevance      Int?     // 1-5 scale
+  facilitatorRating     Int?     // 1-5 scale
+  learnedStrategies     String?  // Strongly Disagree to Strongly Agree
+  comfortLevelAfter     String?  // Strongly Disagree to Strongly Agree
+  knowsResourcesAfter   String?  // Strongly Disagree to Strongly Agree
+  mostValuable          String?  // Open-ended
+  improvements          String?  // Open-ended
+  wouldRecommend        String?  // Definitely Not to Definitely Yes
+
+  submittedAt           DateTime @default(now())
+
+  @@index([email])
+  @@index([surveyType])
+  @@index([submittedAt])
 }

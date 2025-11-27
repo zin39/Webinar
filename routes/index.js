@@ -1,5 +1,6 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
+const crypto = require('crypto');
 const prisma = require('../config/db');
 const { sendConfirmationEmail } = require('../utils/email');
 const { generateCalendarLinks } = require('../utils/calendar');
@@ -161,6 +162,9 @@ module.exports = function(registerLimiter, csrfProtection) {
         fullPhone = `${countryCode} ${req.body.phone}`;
       }
 
+      // Generate unique survey token
+      const surveyToken = crypto.randomBytes(32).toString('hex');
+
       // Create attendee
       const attendee = await prisma.attendee.create({
         data: {
@@ -169,7 +173,8 @@ module.exports = function(registerLimiter, csrfProtection) {
           company: req.body.company || null,
           jobTitle: req.body.jobTitle || null,
           phone: fullPhone,
-          howHeard: req.body.howHeard || null
+          howHeard: req.body.howHeard || null,
+          surveyToken
         }
       });
 

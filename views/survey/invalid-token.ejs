@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invalid Survey Link - Student Mental Health Webinar</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .error-section {
+      min-height: 100vh;
+      padding: 100px 0 60px;
+      background: linear-gradient(135deg, #EEF2FF 0%, #DBEAFE 50%, #E0E7FF 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .error-card {
+      max-width: 500px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+      padding: 48px;
+      text-align: center;
+    }
+    .error-icon {
+      width: 80px;
+      height: 80px;
+      background: #fee2e2;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+    }
+    .error-icon svg {
+      width: 40px;
+      height: 40px;
+      stroke: #dc2626;
+    }
+    .error-title {
+      font-size: 1.5rem;
+      color: #1e293b;
+      margin-bottom: 12px;
+    }
+    .error-message {
+      color: #64748b;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+    .error-suggestion {
+      background: #f8fafc;
+      padding: 16px;
+      border-radius: 10px;
+      color: #475569;
+      font-size: 0.95rem;
+      margin-bottom: 24px;
+    }
+    .btn-home {
+      display: inline-block;
+      padding: 14px 28px;
+      background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-home:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+    }
+    .btn-register {
+      display: inline-block;
+      padding: 14px 28px;
+      background: #10b981;
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 600;
+      margin-left: 12px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-register:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+    }
+    @media (max-width: 768px) {
+      .error-section {
+        padding: 80px 16px 40px;
+      }
+      .error-card {
+        padding: 32px 24px;
+      }
+      .btn-register {
+        margin-left: 0;
+        margin-top: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%- include('../partials/nav') %>
+
+  <section class="error-section">
+    <div class="error-card">
+      <div class="error-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+        </svg>
+      </div>
+      <h1 class="error-title"><%= message %></h1>
+      <p class="error-message">We couldn't verify your access to this survey.</p>
+      <div class="error-suggestion">
+        <%= suggestion %>
+      </div>
+      <div>
+        <a href="/" class="btn-home">Back to Home</a>
+        <a href="/register" class="btn-register">Register Now</a>
+      </div>
+    </div>
+  </section>
+
+  <%- include('../partials/footer') %>
+</body>
+</html>

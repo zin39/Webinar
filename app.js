@@ -208,6 +208,7 @@ app.use('/', require('./routes/index')(registerLimiter, csrfSynchronisedProtecti
 app.use('/auth', require('./routes/auth')(authLimiter, csrfSynchronisedProtection));
 app.use('/admin', require('./routes/admin')(csrfSynchronisedProtection));
 app.use('/api', require('./routes/api'));
+app.use('/survey', require('./routes/survey')(csrfSynchronisedProtection));
 
 // 404 handler
 app.use((req, res) => {

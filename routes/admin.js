@@ -1,4 +1,5 @@
 const express = require('express');
+const crypto = require('crypto');
 const prisma = require('../config/db');
 const { ensureAuthenticated } = require('../middleware/auth');
 const { getAnalyticsSummary } = require('../middleware/analytics');
@@ -158,6 +159,45 @@ function escapeCSV(field) {
   return str;
 }
 
+// Count responses by field value for analytics
+function countByField(responses, field) {
+  const counts = {};
+  responses.forEach(r => {
+    const value = r[field] || 'Not provided';
+    counts[value] = (counts[value] || 0) + 1;
+  });
+  return counts;
+}
+
+// Compute analytics for survey responses
+function computeSurveyAnalytics(responses) {
+  const preResponses = responses.filter(r => r.surveyType === 'pre-webinar');
+  const postResponses = responses.filter(r => r.surveyType === 'post-webinar');
+
+  return {
+    pre: {
+      knowledgeLevel: countByField(preResponses, 'knowledgeLevel'),
+      academicStress: countByField(preResponses, 'academicStress'),
+      comfortLevel: countByField(preResponses, 'comfortLevel'),
+      knowsResources: countByField(preResponses, 'knowsResources'),
+    },
+    post: {
+      satisfaction: countByField(postResponses, 'satisfaction'),
+      knowledgeLevelAfter: countByField(postResponses, 'knowledgeLevelAfter'),
+      contentRelevance: countByField(postResponses, 'contentRelevance'),
+      facilitatorRating: countByField(postResponses, 'facilitatorRating'),
+      learnedStrategies: countByField(postResponses, 'learnedStrategies'),
+      comfortLevelAfter: countByField(postResponses, 'comfortLevelAfter'),
+      knowsResourcesAfter: countByField(postResponses, 'knowsResourcesAfter'),
+      wouldRecommend: countByField(postResponses, 'wouldRecommend'),
+    },
+    comparison: {
+      knowledgeBefore: countByField(preResponses, 'knowledgeLevel'),
+      knowledgeAfter: countByField(postResponses, 'knowledgeLevelAfter'),
+    }
+  };
+}
+
 module.exports = function(csrfProtection) {
   const router = express.Router();
 
@@ -170,6 +210,28 @@ module.exports = function(csrfProtection) {
       orderBy: { registeredAt: 'desc' }
     });
 
+    // Get all survey responses for status tracking
+    const surveyResponses = await prisma.surveyResponse.findMany({
+      select: { id: true, email: true, surveyType: true, submittedAt: true }
+    });
+
+    // Create lookup map: email → { pre: response|null, post: response|null }
+    const surveyStatusMap = {};
+    surveyResponses.forEach(response => {
+      if (!surveyStatusMap[response.email]) {
+        surveyStatusMap[response.email] = { pre: null, post: null };
+      }
+      if (response.surveyType === 'pre-webinar') {
+        surveyStatusMap[response.email].pre = response;
+      } else if (response.surveyType === 'post-webinar') {
+        surveyStatusMap[response.email].post = response;
+      }
+    });
+
+    // Count survey submissions
+    const preSurveyCount = surveyResponses.filter(r => r.surveyType === 'pre-webinar').length;
+    const postSurveyCount = surveyResponses.filter(r => r.surveyType === 'post-webinar').length;
+
     const stats = {
       total: attendees.length,
       today: attendees.filter(a => {
@@ -177,13 +239,16 @@ module.exports = function(csrfProtection) {
         const regDate = new Date(a.registeredAt);
         return regDate.toDateString() === today.toDateString();
       }).length,
-      emailsSent: attendees.filter(a => a.emailSent).length
+      emailsSent: attendees.filter(a => a.emailSent).length,
+      preSurveys: preSurveyCount,
+      postSurveys: postSurveyCount
     };
 
     res.render('admin/dashboard', {
       title: 'Admin Dashboard',
       attendees,
-      stats
+      stats,
+      surveyStatusMap
     });
   });
 
@@ -228,13 +293,22 @@ module.exports = function(csrfProtection) {
   // Resend confirmation email with CSRF
   router.post('/attendee/:id/resend', csrfProtection, async (req, res) => {
     try {
-      const attendee = await prisma.attendee.findUnique({
+      let attendee = await prisma.attendee.findUnique({
         where: { id: req.params.id }
       });
 
       if (attendee) {
         const { sendConfirmationEmail } = require('../utils/email');
         const { generateCalendarLinks } = require('../utils/calendar');
+
+        // Generate survey token if attendee doesn't have one
+        if (!attendee.surveyToken) {
+          const surveyToken = crypto.randomBytes(32).toString('hex');
+          attendee = await prisma.attendee.update({
+            where: { id: attendee.id },
+            data: { surveyToken }
+          });
+        }
 
         // Get webinar config
         const webinar = await prisma.webinarConfig.findFirst({ where: { isActive: true } }) || {
@@ -452,6 +526,134 @@ module.exports = function(csrfProtection) {
         res.redirect('/admin/settings');
       }
   }
+
+  // Survey responses
+  router.get('/surveys', async (req, res) => {
+    try {
+      const surveyType = req.query.type || 'all';
+
+      const where = {};
+      if (surveyType !== 'all') {
+        where.surveyType = surveyType;
+      }
+
+      // Get filtered responses for table display
+      const responses = await prisma.surveyResponse.findMany({
+        where,
+        orderBy: { submittedAt: 'desc' }
+      });
+
+      // Get all responses for analytics (unfiltered)
+      const allResponses = await prisma.surveyResponse.findMany();
+      const analytics = computeSurveyAnalytics(allResponses);
+
+      const stats = {
+        total: await prisma.surveyResponse.count(),
+        preWebinar: await prisma.surveyResponse.count({ where: { surveyType: 'pre-webinar' } }),
+        postWebinar: await prisma.surveyResponse.count({ where: { surveyType: 'post-webinar' } })
+      };
+
+      res.render('admin/surveys', {
+        title: 'Survey Responses',
+        responses,
+        stats,
+        surveyType,
+        analytics
+      });
+    } catch (error) {
+      console.error('Survey responses error:', error);
+
+      // Check if table doesn't exist
+      if (error.code === 'P2021' || error.message.includes('does not exist')) {
+        return res.render('admin/surveys', {
+          title: 'Survey Responses',
+          responses: [],
+          stats: { total: 0, preWebinar: 0, postWebinar: 0 },
+          surveyType: 'all',
+          migrationNeeded: true,
+          analytics: { pre: {}, post: {}, comparison: {} }
+        });
+      }
+
+      req.flash('error_msg', 'Failed to load survey responses');
+      res.redirect('/admin');
+    }
+  });
+
+  // View individual survey response detail
+  router.get('/surveys/:id', async (req, res) => {
+    try {
+      const response = await prisma.surveyResponse.findUnique({
+        where: { id: req.params.id }
+      });
+
+      if (!response) {
+        req.flash('error_msg', 'Survey response not found');
+        return res.redirect('/admin/surveys');
+      }
+
+      res.render('admin/survey-detail', {
+        title: 'Survey Response',
+        response
+      });
+    } catch (error) {
+      console.error('Error fetching survey response:', error);
+      req.flash('error_msg', 'Failed to load survey response');
+      res.redirect('/admin/surveys');
+    }
+  });
+
+  // Export survey responses as CSV
+  router.get('/surveys/export', async (req, res) => {
+    try {
+      const surveyType = req.query.type || 'all';
+
+      const where = {};
+      if (surveyType !== 'all') {
+        where.surveyType = surveyType;
+      }
+
+      const responses = await prisma.surveyResponse.findMany({
+        where,
+        orderBy: { submittedAt: 'desc' }
+      });
+
+      const headers = ['Email', 'Name', 'Survey Type', 'Knowledge Level', 'Academic Stress', 'Comfort Level', 'Knows Resources', 'Hopes To Learn', 'Satisfaction', 'Knowledge After', 'Content Relevance', 'Facilitator Rating', 'Learned Strategies', 'Comfort After', 'Knows Resources After', 'Most Valuable', 'Improvements', 'Would Recommend', 'Submitted At'];
+
+      const csv = [
+        headers.join(','),
+        ...responses.map(r => [
+          escapeCSV(r.email),
+          escapeCSV(r.name),
+          escapeCSV(r.surveyType),
+          escapeCSV(r.knowledgeLevel),
+          escapeCSV(r.academicStress),
+          r.comfortLevel || '',
+          escapeCSV(r.knowsResources),
+          escapeCSV(r.hopesToLearn),
+          escapeCSV(r.satisfaction),
+          escapeCSV(r.knowledgeLevelAfter),
+          r.contentRelevance || '',
+          r.facilitatorRating || '',
+          escapeCSV(r.learnedStrategies),
+          escapeCSV(r.comfortLevelAfter),
+          escapeCSV(r.knowsResourcesAfter),
+          escapeCSV(r.mostValuable),
+          escapeCSV(r.improvements),
+          escapeCSV(r.wouldRecommend),
+          escapeCSV(r.submittedAt.toISOString())
+        ].join(','))
+      ].join('\n');
+
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', `attachment; filename=survey-responses-${surveyType}.csv`);
+      res.send(csv);
+    } catch (error) {
+      console.error('Survey export error:', error);
+      req.flash('error_msg', 'Failed to export survey responses');
+      res.redirect('/admin/surveys');
+    }
+  });
 
   return router;
 };

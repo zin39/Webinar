@@ -1,0 +1,656 @@
+<%- include('../partials/header') %>
+
+<div class="admin-layout">
+  <!-- Admin Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-header">
+      <h2>Admin Panel</h2>
+      <span class="admin-name"><%= user.name %></span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/admin" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        Attendees
+      </a>
+      <a href="/admin/surveys" class="sidebar-link active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <path d="M9 11l3 3L22 4"></path>
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+        </svg>
+        Surveys
+      </a>
+      <a href="/admin/emails" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+          <polyline points="22,6 12,13 2,6"></polyline>
+        </svg>
+        Email Logs
+      </a>
+      <a href="/admin/analytics" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <line x1="18" y1="20" x2="18" y2="10"></line>
+          <line x1="12" y1="20" x2="12" y2="4"></line>
+          <line x1="6" y1="20" x2="6" y2="14"></line>
+        </svg>
+        Analytics
+      </a>
+      <a href="/admin/settings" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+        Settings
+      </a>
+      <a href="/admin/export" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        Export CSV
+      </a>
+      <a href="/" class="sidebar-link" target="_blank">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <line x1="10" y1="14" x2="21" y2="3"></line>
+        </svg>
+        View Site
+      </a>
+      <a href="/auth/logout" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        Logout
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+    <div class="admin-header">
+      <h1>Survey Responses</h1>
+      <a href="/admin/surveys/export?type=<%= surveyType %>" class="btn btn-primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        Export CSV
+      </a>
+    </div>
+
+    <% if (typeof migrationNeeded !== 'undefined' && migrationNeeded) { %>
+      <div class="alert alert-warning" style="background: #fef3c7; border: 1px solid #f59e0b; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
+        <strong>Migration Required:</strong> The survey responses table doesn't exist yet. Please run <code>npx prisma migrate dev</code> to create it.
+      </div>
+    <% } %>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 11l3 3L22 4"></path>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value"><%= stats.total %></span>
+          <span class="stat-label">Total Responses</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value"><%= stats.preWebinar %></span>
+          <span class="stat-label">Pre-Webinar</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-purple">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value"><%= stats.postWebinar %></span>
+          <span class="stat-label">Post-Webinar</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter -->
+    <div class="filter-bar" style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+      <a href="/admin/surveys" class="btn btn-sm <%= surveyType === 'all' ? 'btn-primary' : 'btn-outline' %>">All</a>
+      <a href="/admin/surveys?type=pre-webinar" class="btn btn-sm <%= surveyType === 'pre-webinar' ? 'btn-primary' : 'btn-outline' %>">Pre-Webinar</a>
+      <a href="/admin/surveys?type=post-webinar" class="btn btn-sm <%= surveyType === 'post-webinar' ? 'btn-primary' : 'btn-outline' %>">Post-Webinar</a>
+    </div>
+
+    <!-- Analytics Section -->
+    <% if (stats.total > 0) { %>
+    <div class="analytics-section">
+      <div class="table-card">
+        <div class="table-header">
+          <h2>Survey Analytics</h2>
+          <div class="chart-toggle">
+            <button class="btn btn-sm btn-primary" id="btn-pre" onclick="showChartSection('pre')">Pre-Webinar</button>
+            <button class="btn btn-sm btn-outline" id="btn-post" onclick="showChartSection('post')">Post-Webinar</button>
+            <button class="btn btn-sm btn-outline" id="btn-comparison" onclick="showChartSection('comparison')">Before vs After</button>
+          </div>
+        </div>
+
+        <!-- Pre-Webinar Charts -->
+        <div id="pre-charts" class="charts-grid">
+          <div class="chart-card">
+            <h3>Knowledge Level</h3>
+            <div id="chart-knowledge-level"></div>
+          </div>
+          <div class="chart-card">
+            <h3>Academic Stress Experience</h3>
+            <div id="chart-academic-stress"></div>
+          </div>
+          <div class="chart-card">
+            <h3>Comfort Discussing Mental Health</h3>
+            <div id="chart-comfort-level"></div>
+          </div>
+          <div class="chart-card">
+            <h3>Awareness of Resources</h3>
+            <div id="chart-knows-resources"></div>
+          </div>
+        </div>
+
+        <!-- Post-Webinar Charts -->
+        <div id="post-charts" class="charts-grid" style="display: none;">
+          <div class="chart-card">
+            <h3>Overall Satisfaction</h3>
+            <div id="chart-satisfaction"></div>
+          </div>
+          <div class="chart-card">
+            <h3>Would Recommend</h3>
+            <div id="chart-recommend"></div>
+          </div>
+          <div class="chart-card">
+            <h3>Content Relevance (1-5)</h3>
+            <div id="chart-content"></div>
+          </div>
+          <div class="chart-card">
+            <h3>Facilitator Rating (1-5)</h3>
+            <div id="chart-facilitator"></div>
+          </div>
+          <div class="chart-card">
+            <h3>Learned Strategies</h3>
+            <div id="chart-learned"></div>
+          </div>
+          <div class="chart-card">
+            <h3>Comfort Level After</h3>
+            <div id="chart-comfort-after"></div>
+          </div>
+        </div>
+
+        <!-- Comparison Charts -->
+        <div id="comparison-charts" class="charts-grid" style="display: none;">
+          <div class="chart-card full-width">
+            <h3>Knowledge Level: Before vs After Webinar</h3>
+            <div id="chart-knowledge-comparison"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- Responses Table -->
+    <div class="table-card">
+      <div class="table-header">
+        <h2>Survey Responses</h2>
+        <span class="table-count"><%= responses.length %> responses</span>
+      </div>
+
+      <% if (responses.length === 0) { %>
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="48" height="48">
+            <path d="M9 11l3 3L22 4"></path>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+          </svg>
+          <p>No survey responses yet. Share the survey link with attendees!</p>
+          <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+            <a href="/survey/pre-webinar" target="_blank" class="btn btn-outline btn-sm">View Pre-Webinar Survey</a>
+            <a href="/survey/post-webinar" target="_blank" class="btn btn-outline btn-sm">View Post-Webinar Survey</a>
+          </div>
+        </div>
+      <% } else { %>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Type</th>
+                <% if (surveyType === 'all' || surveyType === 'pre-webinar') { %>
+                  <th>Knowledge</th>
+                  <th>Academic Stress</th>
+                  <th>Comfort (1-5)</th>
+                  <th>Knows Resources</th>
+                <% } %>
+                <% if (surveyType === 'all' || surveyType === 'post-webinar') { %>
+                  <th>Satisfaction</th>
+                  <th>Content (1-5)</th>
+                  <th>Would Recommend</th>
+                <% } %>
+                <th>Submitted</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% responses.forEach(response => { %>
+                <tr>
+                  <td class="email-cell"><%= response.email %></td>
+                  <td><%= response.name || '-' %></td>
+                  <td>
+                    <span class="badge <%= response.surveyType === 'pre-webinar' ? 'badge-info' : 'badge-success' %>">
+                      <%= response.surveyType === 'pre-webinar' ? 'Pre' : 'Post' %>
+                    </span>
+                  </td>
+                  <% if (surveyType === 'all' || surveyType === 'pre-webinar') { %>
+                    <td><%= response.knowledgeLevel || '-' %></td>
+                    <td><%= response.academicStress || '-' %></td>
+                    <td><%= response.comfortLevel || '-' %></td>
+                    <td><%= response.knowsResources || '-' %></td>
+                  <% } %>
+                  <% if (surveyType === 'all' || surveyType === 'post-webinar') { %>
+                    <td><%= response.satisfaction || '-' %></td>
+                    <td><%= response.contentRelevance || '-' %></td>
+                    <td><%= response.wouldRecommend || '-' %></td>
+                  <% } %>
+                  <td><%= new Date(response.submittedAt).toLocaleDateString() %></td>
+                  <td class="actions-cell">
+                    <button type="button" class="btn btn-sm btn-outline" onclick="showDetails('<%= response.id %>')" title="Quick View">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    </button>
+                    <a href="/admin/surveys/<%= response.id %>" class="btn btn-sm btn-outline" title="Full Details">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                      </svg>
+                    </a>
+                  </td>
+                </tr>
+                <!-- Hidden details row -->
+                <tr id="details-<%= response.id %>" style="display: none;">
+                  <td colspan="12" style="background: #f8fafc; padding: 20px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                      <% if (response.surveyType === 'pre-webinar') { %>
+                        <div><strong>Knowledge Level:</strong> <%= response.knowledgeLevel || '-' %></div>
+                        <div><strong>Academic Stress:</strong> <%= response.academicStress || '-' %></div>
+                        <div><strong>Comfort Level:</strong> <%= response.comfortLevel || '-' %>/5</div>
+                        <div><strong>Knows Resources:</strong> <%= response.knowsResources || '-' %></div>
+                        <div style="grid-column: 1 / -1;"><strong>Hopes to Learn:</strong><br><%= response.hopesToLearn || 'Not provided' %></div>
+                      <% } else { %>
+                        <div><strong>Satisfaction:</strong> <%= response.satisfaction || '-' %></div>
+                        <div><strong>Knowledge After:</strong> <%= response.knowledgeLevelAfter || '-' %></div>
+                        <div><strong>Content Relevance:</strong> <%= response.contentRelevance || '-' %>/5</div>
+                        <div><strong>Facilitator Rating:</strong> <%= response.facilitatorRating || '-' %>/5</div>
+                        <div><strong>Learned Strategies:</strong> <%= response.learnedStrategies || '-' %></div>
+                        <div><strong>Comfort After:</strong> <%= response.comfortLevelAfter || '-' %></div>
+                        <div><strong>Knows Resources After:</strong> <%= response.knowsResourcesAfter || '-' %></div>
+                        <div><strong>Would Recommend:</strong> <%= response.wouldRecommend || '-' %></div>
+                        <div style="grid-column: 1 / -1;"><strong>Most Valuable:</strong><br><%= response.mostValuable || 'Not provided' %></div>
+                        <div style="grid-column: 1 / -1;"><strong>Improvements:</strong><br><%= response.improvements || 'Not provided' %></div>
+                      <% } %>
+                    </div>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- Survey Links -->
+    <div class="table-card" style="margin-top: 20px;">
+      <div class="table-header">
+        <h2>Survey Links</h2>
+      </div>
+      <div style="padding: 20px;">
+        <p style="margin-bottom: 15px; color: #64748b;">Share these links with your attendees:</p>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <strong>Pre-Webinar:</strong>
+            <code style="background: #f1f5f9; padding: 8px 12px; border-radius: 6px; font-size: 14px; word-break: break-all;"><%= siteUrl %>/survey/pre-webinar</code>
+            <button onclick="copyLink('<%= siteUrl %>/survey/pre-webinar')" class="btn btn-sm btn-outline">Copy</button>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <strong>Post-Webinar:</strong>
+            <code style="background: #f1f5f9; padding: 8px 12px; border-radius: 6px; font-size: 14px; word-break: break-all;"><%= siteUrl %>/survey/post-webinar</code>
+            <button onclick="copyLink('<%= siteUrl %>/survey/post-webinar')" class="btn btn-sm btn-outline">Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<style>
+  .badge-info {
+    background: #dbeafe;
+    color: #1d4ed8;
+  }
+
+  .analytics-section {
+    margin-bottom: 24px;
+  }
+
+  .charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .chart-card {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  .chart-card h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #475569;
+    margin: 0 0 12px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .chart-card.full-width {
+    grid-column: 1 / -1;
+  }
+
+  .chart-toggle {
+    display: flex;
+    gap: 8px;
+  }
+
+  @media (max-width: 768px) {
+    .charts-grid {
+      grid-template-columns: 1fr;
+    }
+    .chart-toggle {
+      flex-wrap: wrap;
+    }
+  }
+</style>
+
+<!-- ApexCharts CDN -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+<script>
+  function showDetails(id) {
+    const row = document.getElementById('details-' + id);
+    if (row.style.display === 'none') {
+      row.style.display = 'table-row';
+    } else {
+      row.style.display = 'none';
+    }
+  }
+
+  function copyLink(link) {
+    navigator.clipboard.writeText(link).then(() => {
+      alert('Link copied to clipboard!');
+    });
+  }
+
+  // Analytics data from server
+  const analyticsData = <%- JSON.stringify(analytics || { pre: {}, post: {}, comparison: {} }) %>;
+
+  // Chart color palette
+  const colors = {
+    primary: '#2563eb',
+    success: '#10b981',
+    warning: '#f59e0b',
+    danger: '#ef4444',
+    purple: '#8b5cf6',
+    teal: '#14b8a6',
+    gray: '#94a3b8'
+  };
+
+  const chartInstances = {};
+
+  // Helper function to check if data exists
+  function hasData(obj) {
+    return obj && Object.keys(obj).length > 0 && !Object.keys(obj).every(k => k === 'Not provided');
+  }
+
+  // Toggle chart sections
+  function showChartSection(section) {
+    document.getElementById('pre-charts').style.display = 'none';
+    document.getElementById('post-charts').style.display = 'none';
+    document.getElementById('comparison-charts').style.display = 'none';
+
+    document.getElementById('btn-pre').className = 'btn btn-sm btn-outline';
+    document.getElementById('btn-post').className = 'btn btn-sm btn-outline';
+    document.getElementById('btn-comparison').className = 'btn btn-sm btn-outline';
+
+    document.getElementById(section + '-charts').style.display = 'grid';
+    document.getElementById('btn-' + section).className = 'btn btn-sm btn-primary';
+  }
+
+  // Render Pre-Webinar Charts
+  function renderPreCharts() {
+    if (!analyticsData.pre) return;
+
+    // Knowledge Level - Horizontal Bar
+    if (hasData(analyticsData.pre.knowledgeLevel)) {
+      const knowledgeOrder = ['Very Low', 'Low', 'Moderate', 'High', 'Very High'];
+      const sortedKnowledge = {};
+      knowledgeOrder.forEach(k => {
+        if (analyticsData.pre.knowledgeLevel[k]) {
+          sortedKnowledge[k] = analyticsData.pre.knowledgeLevel[k];
+        }
+      });
+      Object.keys(analyticsData.pre.knowledgeLevel).forEach(k => {
+        if (!sortedKnowledge[k]) sortedKnowledge[k] = analyticsData.pre.knowledgeLevel[k];
+      });
+
+      chartInstances.knowledgeLevel = new ApexCharts(document.querySelector("#chart-knowledge-level"), {
+        chart: { type: 'bar', height: 250, toolbar: { show: false } },
+        series: [{ name: 'Responses', data: Object.values(sortedKnowledge) }],
+        xaxis: { categories: Object.keys(sortedKnowledge) },
+        plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '60%' } },
+        colors: [colors.primary],
+        dataLabels: { enabled: true, formatter: (val) => val + ' responses' }
+      });
+      chartInstances.knowledgeLevel.render();
+    }
+
+    // Academic Stress - Donut
+    if (hasData(analyticsData.pre.academicStress)) {
+      chartInstances.academicStress = new ApexCharts(document.querySelector("#chart-academic-stress"), {
+        chart: { type: 'donut', height: 280, toolbar: { show: false } },
+        series: Object.values(analyticsData.pre.academicStress),
+        labels: Object.keys(analyticsData.pre.academicStress),
+        colors: [colors.primary, colors.teal, colors.purple, colors.gray, colors.warning],
+        legend: { position: 'bottom' },
+        dataLabels: { enabled: true, formatter: (val) => val.toFixed(1) + '%' }
+      });
+      chartInstances.academicStress.render();
+    }
+
+    // Comfort Level - Bar Distribution
+    if (hasData(analyticsData.pre.comfortLevel)) {
+      const comfortData = [1, 2, 3, 4, 5].map(n => analyticsData.pre.comfortLevel[n] || analyticsData.pre.comfortLevel[String(n)] || 0);
+      chartInstances.comfortLevel = new ApexCharts(document.querySelector("#chart-comfort-level"), {
+        chart: { type: 'bar', height: 250, toolbar: { show: false } },
+        series: [{ name: 'Responses', data: comfortData }],
+        xaxis: { categories: ['1 (Very Low)', '2', '3', '4', '5 (Very High)'] },
+        colors: [colors.teal],
+        plotOptions: { bar: { borderRadius: 4 } },
+        dataLabels: { enabled: true }
+      });
+      chartInstances.comfortLevel.render();
+    }
+
+    // Knows Resources - Donut
+    if (hasData(analyticsData.pre.knowsResources)) {
+      chartInstances.knowsResources = new ApexCharts(document.querySelector("#chart-knows-resources"), {
+        chart: { type: 'donut', height: 280, toolbar: { show: false } },
+        series: Object.values(analyticsData.pre.knowsResources),
+        labels: Object.keys(analyticsData.pre.knowsResources),
+        colors: [colors.success, colors.teal, colors.warning, colors.danger],
+        legend: { position: 'bottom' },
+        dataLabels: { enabled: true, formatter: (val) => val.toFixed(1) + '%' }
+      });
+      chartInstances.knowsResources.render();
+    }
+  }
+
+  // Render Post-Webinar Charts
+  function renderPostCharts() {
+    if (!analyticsData.post) return;
+
+    // Satisfaction - Horizontal Bar
+    if (hasData(analyticsData.post.satisfaction)) {
+      const satOrder = ['Very Dissatisfied', 'Dissatisfied', 'Neutral', 'Satisfied', 'Very Satisfied'];
+      const sortedSat = {};
+      satOrder.forEach(k => {
+        if (analyticsData.post.satisfaction[k]) sortedSat[k] = analyticsData.post.satisfaction[k];
+      });
+      Object.keys(analyticsData.post.satisfaction).forEach(k => {
+        if (!sortedSat[k]) sortedSat[k] = analyticsData.post.satisfaction[k];
+      });
+
+      chartInstances.satisfaction = new ApexCharts(document.querySelector("#chart-satisfaction"), {
+        chart: { type: 'bar', height: 250, toolbar: { show: false } },
+        series: [{ name: 'Responses', data: Object.values(sortedSat) }],
+        xaxis: { categories: Object.keys(sortedSat) },
+        plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '60%' } },
+        colors: [colors.success],
+        dataLabels: { enabled: true }
+      });
+      chartInstances.satisfaction.render();
+    }
+
+    // Would Recommend - Donut
+    if (hasData(analyticsData.post.wouldRecommend)) {
+      chartInstances.wouldRecommend = new ApexCharts(document.querySelector("#chart-recommend"), {
+        chart: { type: 'donut', height: 280, toolbar: { show: false } },
+        series: Object.values(analyticsData.post.wouldRecommend),
+        labels: Object.keys(analyticsData.post.wouldRecommend),
+        colors: [colors.danger, colors.warning, colors.gray, colors.teal, colors.success],
+        legend: { position: 'bottom' },
+        dataLabels: { enabled: true, formatter: (val) => val.toFixed(1) + '%' }
+      });
+      chartInstances.wouldRecommend.render();
+    }
+
+    // Content Relevance - Bar
+    if (hasData(analyticsData.post.contentRelevance)) {
+      const contentData = [1, 2, 3, 4, 5].map(n => analyticsData.post.contentRelevance[n] || analyticsData.post.contentRelevance[String(n)] || 0);
+      chartInstances.contentRelevance = new ApexCharts(document.querySelector("#chart-content"), {
+        chart: { type: 'bar', height: 250, toolbar: { show: false } },
+        series: [{ name: 'Responses', data: contentData }],
+        xaxis: { categories: ['1', '2', '3', '4', '5'] },
+        colors: [colors.purple],
+        plotOptions: { bar: { borderRadius: 4 } },
+        dataLabels: { enabled: true }
+      });
+      chartInstances.contentRelevance.render();
+    }
+
+    // Facilitator Rating - Bar
+    if (hasData(analyticsData.post.facilitatorRating)) {
+      const facData = [1, 2, 3, 4, 5].map(n => analyticsData.post.facilitatorRating[n] || analyticsData.post.facilitatorRating[String(n)] || 0);
+      chartInstances.facilitatorRating = new ApexCharts(document.querySelector("#chart-facilitator"), {
+        chart: { type: 'bar', height: 250, toolbar: { show: false } },
+        series: [{ name: 'Responses', data: facData }],
+        xaxis: { categories: ['1', '2', '3', '4', '5'] },
+        colors: [colors.warning],
+        plotOptions: { bar: { borderRadius: 4 } },
+        dataLabels: { enabled: true }
+      });
+      chartInstances.facilitatorRating.render();
+    }
+
+    // Learned Strategies - Horizontal Bar
+    if (hasData(analyticsData.post.learnedStrategies)) {
+      chartInstances.learnedStrategies = new ApexCharts(document.querySelector("#chart-learned"), {
+        chart: { type: 'bar', height: 250, toolbar: { show: false } },
+        series: [{ name: 'Responses', data: Object.values(analyticsData.post.learnedStrategies) }],
+        xaxis: { categories: Object.keys(analyticsData.post.learnedStrategies) },
+        plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '60%' } },
+        colors: [colors.teal],
+        dataLabels: { enabled: true }
+      });
+      chartInstances.learnedStrategies.render();
+    }
+
+    // Comfort Level After - Horizontal Bar
+    if (hasData(analyticsData.post.comfortLevelAfter)) {
+      chartInstances.comfortLevelAfter = new ApexCharts(document.querySelector("#chart-comfort-after"), {
+        chart: { type: 'bar', height: 250, toolbar: { show: false } },
+        series: [{ name: 'Responses', data: Object.values(analyticsData.post.comfortLevelAfter) }],
+        xaxis: { categories: Object.keys(analyticsData.post.comfortLevelAfter) },
+        plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '60%' } },
+        colors: [colors.primary],
+        dataLabels: { enabled: true }
+      });
+      chartInstances.comfortLevelAfter.render();
+    }
+  }
+
+  // Render Comparison Chart
+  function renderComparisonChart() {
+    if (!analyticsData.comparison) return;
+
+    const categories = ['Very Low', 'Low', 'Moderate', 'High', 'Very High'];
+    const beforeData = categories.map(c => analyticsData.comparison.knowledgeBefore?.[c] || 0);
+    const afterData = categories.map(c => analyticsData.comparison.knowledgeAfter?.[c] || 0);
+
+    if (beforeData.some(v => v > 0) || afterData.some(v => v > 0)) {
+      chartInstances.comparison = new ApexCharts(document.querySelector("#chart-knowledge-comparison"), {
+        chart: { type: 'bar', height: 350, toolbar: { show: false } },
+        series: [
+          { name: 'Before Webinar', data: beforeData },
+          { name: 'After Webinar', data: afterData }
+        ],
+        xaxis: { categories },
+        colors: [colors.gray, colors.success],
+        plotOptions: { bar: { borderRadius: 4 } },
+        dataLabels: { enabled: true },
+        legend: { position: 'top' }
+      });
+      chartInstances.comparison.render();
+    }
+  }
+
+  // Initialize charts on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof analyticsData !== 'undefined' && analyticsData) {
+      renderPreCharts();
+      renderPostCharts();
+      renderComparisonChart();
+    }
+  });
+</script>
+
+<%- include('../partials/footer') %>
