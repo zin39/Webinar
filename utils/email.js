@@ -38,7 +38,7 @@ const logEmailAttempt = async (data) => {
 };
 
 const sendConfirmationEmail = async (attendee, webinar, calendarLinks) => {
-  const subject = `You're registered: ${webinar.title}`;
+  const subject = `⏰ Student Mental Health Webinar is TOMORROW - You're In!`;
 
   // Skip if SMTP not configured
   if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
@@ -88,132 +88,201 @@ const sendConfirmationEmail = async (attendee, webinar, calendarLinks) => {
     <!DOCTYPE html>
     <html>
     <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #1e293b; margin: 0; padding: 0; }
-        .container { max-width: 600px; margin: 0 auto; }
-        .header { background: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%); color: white; padding: 35px 30px; text-align: center; }
-        .header h1 { margin: 0 0 8px 0; font-size: 26px; }
-        .header p { margin: 0; opacity: 0.9; font-size: 15px; }
-        .urgent-badge { display: inline-block; background: #fbbf24; color: #92400e; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; margin-bottom: 15px; }
-        .content { background: #f8fafc; padding: 30px; }
-        .webinar-card { background: white; border-radius: 12px; padding: 25px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-        .webinar-title { color: #1e293b; font-size: 20px; font-weight: 700; margin: 0 0 5px 0; }
-        .webinar-subtitle { color: #64748b; font-size: 14px; margin: 0 0 20px 0; }
-        .detail-row { display: flex; margin: 12px 0; font-size: 15px; }
-        .detail-icon { width: 24px; margin-right: 10px; }
-        .zoom-box { background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%); border: 2px solid #3b82f6; border-radius: 12px; padding: 20px; margin: 20px 0; }
-        .zoom-title { color: #1e40af; font-size: 16px; font-weight: 700; margin: 0 0 15px 0; }
-        .zoom-link { word-break: break-all; }
-        .zoom-link a { color: #2563eb; text-decoration: none; font-weight: 600; }
-        .zoom-details { margin-top: 12px; font-size: 14px; color: #475569; }
-        .zoom-details p { margin: 5px 0; }
-        .speakers-section { background: white; border-radius: 12px; padding: 20px; margin: 20px 0; }
-        .speakers-title { color: #7c3aed; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 15px 0; }
-        .speaker { padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
-        .speaker:last-child { border-bottom: none; }
-        .speaker-name { font-weight: 700; color: #1e293b; margin: 0; font-size: 15px; }
-        .speaker-role { color: #64748b; font-size: 13px; margin: 2px 0 0 0; }
-        .survey-box { background: linear-gradient(135deg, #dcfce7 0%, #d1fae5 100%); border: 2px solid #10b981; border-radius: 12px; padding: 20px; margin: 25px 0; text-align: center; }
-        .survey-title { color: #065f46; font-size: 16px; font-weight: 700; margin: 0 0 10px 0; }
-        .survey-text { color: #047857; font-size: 14px; margin: 0 0 15px 0; }
-        .btn { display: inline-block; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px; }
-        .btn-primary { background: #2563eb; color: white; }
-        .btn-survey { background: #10b981; color: white; }
-        .btn-calendar { background: #64748b; color: white; margin: 5px; padding: 10px 20px; font-size: 13px; }
-        .calendar-section { text-align: center; margin: 25px 0; }
-        .calendar-label { color: #64748b; font-size: 13px; margin-bottom: 10px; }
-        .tips-box { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 15px 20px; margin: 20px 0; border-radius: 0 8px 8px 0; }
-        .tips-title { color: #92400e; font-size: 14px; font-weight: 700; margin: 0 0 10px 0; }
-        .tips-list { margin: 0; padding-left: 20px; color: #78350f; font-size: 14px; }
-        .tips-list li { margin: 6px 0; }
-        .footer { text-align: center; padding: 25px; color: #64748b; font-size: 14px; }
-        .footer-name { font-weight: 700; color: #1e293b; }
-        .divider { height: 1px; background: #e2e8f0; margin: 20px 0; }
+        body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; line-height: 1.6; color: #1e293b; margin: 0; padding: 0; background: #f1f5f9; }
+        .wrapper { max-width: 600px; margin: 0 auto; background: #ffffff; }
+        .header { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%); color: white; padding: 40px 30px; text-align: center; }
+        .countdown-badge { display: inline-block; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); color: white; padding: 8px 20px; border-radius: 30px; font-size: 13px; font-weight: 600; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.3); letter-spacing: 1px; }
+        .header h1 { margin: 0 0 10px 0; font-size: 28px; font-weight: 700; line-height: 1.2; }
+        .header-subtitle { margin: 0; opacity: 0.95; font-size: 16px; font-weight: 400; }
+        .content { padding: 35px 30px; }
+        .greeting { font-size: 17px; margin-bottom: 20px; }
+        .hero-message { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 16px; padding: 25px; margin: 25px 0; text-align: center; border: 2px solid #fbbf24; }
+        .hero-message p { margin: 0; font-size: 15px; color: #92400e; }
+        .hero-message strong { color: #78350f; }
+        .event-card { background: #ffffff; border-radius: 16px; padding: 0; margin: 25px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; overflow: hidden; }
+        .event-header { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); color: white; padding: 20px 25px; }
+        .event-title { font-size: 18px; font-weight: 700; margin: 0 0 5px 0; }
+        .event-tagline { font-size: 13px; opacity: 0.85; margin: 0; }
+        .event-details { padding: 25px; }
+        .detail-item { display: flex; align-items: center; margin: 15px 0; font-size: 15px; }
+        .detail-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-right: 15px; font-size: 18px; }
+        .detail-text strong { display: block; color: #1e293b; font-size: 15px; }
+        .detail-text span { color: #64748b; font-size: 13px; }
+        .zoom-section { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 16px; padding: 25px; margin: 25px 0; border: 2px solid #3b82f6; }
+        .zoom-header { display: flex; align-items: center; margin-bottom: 15px; }
+        .zoom-icon { font-size: 24px; margin-right: 10px; }
+        .zoom-title { color: #1e40af; font-size: 18px; font-weight: 700; margin: 0; }
+        .zoom-btn { display: block; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; text-decoration: none; padding: 16px 24px; border-radius: 12px; font-weight: 700; font-size: 16px; text-align: center; margin: 15px 0; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); }
+        .zoom-credentials { background: rgba(255,255,255,0.7); border-radius: 10px; padding: 15px; margin-top: 15px; }
+        .zoom-credentials p { margin: 5px 0; font-size: 14px; color: #1e40af; }
+        .zoom-tip { font-size: 13px; color: #1e40af; margin-top: 15px; font-style: italic; }
+        .speakers-section { margin: 30px 0; }
+        .section-title { color: #6366f1; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; text-align: center; }
+        .speakers-grid { display: table; width: 100%; }
+        .speaker-row { display: table-row; }
+        .speaker { display: table-cell; width: 50%; padding: 10px; vertical-align: top; }
+        .speaker-card { background: #f8fafc; border-radius: 12px; padding: 15px; text-align: center; border: 1px solid #e2e8f0; }
+        .speaker-avatar { width: 50px; height: 50px; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 18px; }
+        .speaker-name { font-weight: 700; color: #1e293b; font-size: 14px; margin: 0 0 3px 0; }
+        .speaker-role { color: #64748b; font-size: 11px; margin: 0; }
+        .survey-section { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 16px; padding: 30px; margin: 30px 0; text-align: center; border: 2px solid #10b981; }
+        .survey-emoji { font-size: 40px; margin-bottom: 15px; }
+        .survey-title { color: #065f46; font-size: 20px; font-weight: 700; margin: 0 0 10px 0; }
+        .survey-subtitle { color: #047857; font-size: 15px; margin: 0 0 8px 0; }
+        .survey-reward { background: #ffffff; border-radius: 8px; padding: 10px 15px; display: inline-block; margin: 15px 0; font-size: 13px; color: #065f46; border: 1px solid #a7f3d0; }
+        .survey-btn { display: inline-block; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; text-decoration: none; padding: 16px 40px; border-radius: 12px; font-weight: 700; font-size: 16px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); margin-top: 10px; }
+        .tips-section { background: #fffbeb; border-radius: 16px; padding: 25px; margin: 25px 0; border-left: 4px solid #f59e0b; }
+        .tips-title { color: #92400e; font-size: 16px; font-weight: 700; margin: 0 0 15px 0; }
+        .tips-list { margin: 0; padding-left: 0; list-style: none; }
+        .tips-list li { padding: 8px 0; color: #78350f; font-size: 14px; padding-left: 25px; position: relative; }
+        .tips-list li:before { content: "✓"; position: absolute; left: 0; color: #f59e0b; font-weight: bold; }
+        .calendar-section { text-align: center; margin: 30px 0; padding: 20px; background: #f8fafc; border-radius: 12px; }
+        .calendar-label { color: #64748b; font-size: 14px; margin-bottom: 15px; }
+        .calendar-btn { display: inline-block; background: #64748b; color: white; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; margin: 5px; }
+        .footer { background: #1e1b4b; color: white; padding: 30px; text-align: center; }
+        .footer-cta { font-size: 22px; font-weight: 700; margin: 0 0 20px 0; }
+        .footer-name { font-size: 16px; margin: 5px 0; }
+        .footer-org { font-size: 14px; opacity: 0.8; margin: 5px 0; }
+        .footer-contact { margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2); }
+        .footer-contact a { color: #a5b4fc; text-decoration: none; font-size: 14px; }
       </style>
     </head>
     <body>
-      <div class="container">
+      <div class="wrapper">
         <div class="header">
-          <div class="urgent-badge">HAPPENING TOMORROW!</div>
-          <h1>Student Mental Health: Thriving Beyond Grades</h1>
-          <p>Your registration is confirmed!</p>
+          <div class="countdown-badge">⏰ HAPPENING TOMORROW!</div>
+          <h1>Student Mental Health:<br>Thriving Beyond Grades</h1>
+          <p class="header-subtitle">Your seat is confirmed for this FREE webinar</p>
         </div>
 
         <div class="content">
-          <p style="font-size: 16px;">Dear <strong>${attendee.name}</strong>,</p>
-          <p>Thank you for registering! We're excited to have you join this important conversation about student mental health.</p>
+          <p class="greeting">Hi <strong>${attendee.name}</strong>! 👋</p>
 
-          <div class="webinar-card">
-            <div class="webinar-title">Webinar Details</div>
-            <div class="webinar-subtitle">An honest conversation about academic stress</div>
-            <div class="detail-row">📅 <strong style="margin-left: 8px;">Sunday, November 30, 2025</strong></div>
-            <div class="detail-row">⏰ <strong style="margin-left: 8px;">6:00 PM NPT</strong> (Nepal Time)</div>
-            <div class="detail-row">⏱️ <strong style="margin-left: 8px;">Duration:</strong> ~90 minutes</div>
+          <p>Great news - you're registered for tomorrow's webinar on student mental health!</p>
+
+          <div class="hero-message">
+            <p><strong>Did you know?</strong> 1 in 4 students struggle with academic stress, but most don't know where to turn. Tomorrow, we change that. <strong>You're taking an important step!</strong></p>
           </div>
 
-          <div class="zoom-box">
-            <div class="zoom-title">🎥 Join Zoom Meeting</div>
-            <div class="zoom-link">
-              <a href="https://us06web.zoom.us/j/84978475078?pwd=EZIf1n9Pjy7bcozayzob4m1H9nlZTF.1">Click here to join the webinar</a>
+          <div class="event-card">
+            <div class="event-header">
+              <p class="event-title">📚 Student Mental Health Webinar</p>
+              <p class="event-tagline">An honest conversation about academic stress & thriving</p>
             </div>
-            <div class="zoom-details">
+            <div class="event-details">
+              <div class="detail-item">
+                <div class="detail-icon">📅</div>
+                <div class="detail-text">
+                  <strong>Sunday, November 30, 2025</strong>
+                  <span>Mark your calendar!</span>
+                </div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-icon">⏰</div>
+                <div class="detail-text">
+                  <strong>6:00 PM NPT</strong>
+                  <span>Nepal Time (60 minutes)</span>
+                </div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-icon">💻</div>
+                <div class="detail-text">
+                  <strong>Live on Zoom</strong>
+                  <span>Interactive session with Q&A</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="zoom-section">
+            <div class="zoom-header">
+              <span class="zoom-icon">🎥</span>
+              <p class="zoom-title">Your Zoom Access</p>
+            </div>
+            <a href="https://us06web.zoom.us/j/84978475078?pwd=EZIf1n9Pjy7bcozayzob4m1H9nlZTF.1" class="zoom-btn">
+              👉 Click Here to Join Tomorrow
+            </a>
+            <div class="zoom-credentials">
               <p><strong>Meeting ID:</strong> 849 7847 5078</p>
               <p><strong>Passcode:</strong> 090152</p>
             </div>
-            <p style="font-size: 13px; color: #3b82f6; margin: 15px 0 0 0;">💡 <em>Bookmark this link now so you don't miss it!</em></p>
+            <p class="zoom-tip">💡 Pro tip: Bookmark this link now so you don't miss the session!</p>
           </div>
 
           <div class="speakers-section">
-            <div class="speakers-title">Featured Speakers</div>
-            <div class="speaker">
-              <p class="speaker-name">Dr. Aditi Pajiyar</p>
-              <p class="speaker-role">Mental Health Fellow, NHAFN (Host)</p>
-            </div>
-            <div class="speaker">
-              <p class="speaker-name">Dr. Amit Jha</p>
-              <p class="speaker-role">Child & Adolescent Psychiatrist</p>
-            </div>
-            <div class="speaker">
-              <p class="speaker-name">Nikita Pradhan</p>
-              <p class="speaker-role">Clinical Psychologist</p>
-            </div>
-            <div class="speaker">
-              <p class="speaker-name">Gopal Mahaseth</p>
-              <p class="speaker-role">Educator</p>
-            </div>
+            <p class="section-title">✨ Learn From Expert Speakers</p>
+            <table class="speakers-grid" cellpadding="0" cellspacing="0" width="100%">
+              <tr>
+                <td style="width: 50%; padding: 8px; vertical-align: top;">
+                  <div class="speaker-card">
+                    <div class="speaker-avatar">AP</div>
+                    <p class="speaker-name">Dr. Aditi Pajiyar</p>
+                    <p class="speaker-role">Mental Health Fellow, NHAFN<br>(Host)</p>
+                  </div>
+                </td>
+                <td style="width: 50%; padding: 8px; vertical-align: top;">
+                  <div class="speaker-card">
+                    <div class="speaker-avatar">AJ</div>
+                    <p class="speaker-name">Dr. Amit Jha</p>
+                    <p class="speaker-role">Child & Adolescent<br>Psychiatrist</p>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="width: 50%; padding: 8px; vertical-align: top;">
+                  <div class="speaker-card">
+                    <div class="speaker-avatar">NP</div>
+                    <p class="speaker-name">Nikita Pradhan</p>
+                    <p class="speaker-role">Clinical<br>Psychologist</p>
+                  </div>
+                </td>
+                <td style="width: 50%; padding: 8px; vertical-align: top;">
+                  <div class="speaker-card">
+                    <div class="speaker-avatar">GM</div>
+                    <p class="speaker-name">Gopal Mahaseth</p>
+                    <p class="speaker-role">Educator</p>
+                  </div>
+                </td>
+              </tr>
+            </table>
           </div>
 
-          <div class="survey-box">
-            <div class="survey-title">📋 Quick Pre-Webinar Survey</div>
-            <div class="survey-text">Help us personalize the session for you! Takes only 2 minutes.</div>
-            <a href="${surveyLink}" class="btn btn-survey">Complete Survey Now</a>
+          <div class="survey-section">
+            <div class="survey-emoji">📋</div>
+            <p class="survey-title">Help Us Help You Better!</p>
+            <p class="survey-subtitle">Take our 2-minute pre-webinar survey</p>
+            <div class="survey-reward">🎯 Your responses help us address YOUR specific concerns during the session!</div>
+            <br>
+            <a href="${surveyLink}" class="survey-btn">Complete Quick Survey →</a>
           </div>
 
-          <div class="tips-box">
-            <div class="tips-title">📝 Before the Webinar:</div>
+          <div class="tips-section">
+            <p class="tips-title">📝 Get Ready for Tomorrow:</p>
             <ul class="tips-list">
-              <li>Test your Zoom app and internet connection</li>
+              <li>Test your Zoom app & internet connection</li>
               <li>Find a quiet, comfortable space</li>
-              <li>Prepare any questions you'd like to ask</li>
-              <li>Keep a notebook handy for notes</li>
+              <li>Have a notebook ready for insights</li>
+              <li>Think of questions you'd like answered</li>
             </ul>
           </div>
 
           <div class="calendar-section">
-            <p class="calendar-label">Add to your calendar:</p>
-            <a href="${calendarLinks.google}" class="btn btn-calendar" target="_blank">Google Calendar</a>
-            <a href="${calendarLinks.outlook}" class="btn btn-calendar" target="_blank">Outlook</a>
+            <p class="calendar-label">📆 Add to your calendar so you don't forget:</p>
+            <a href="${calendarLinks.google}" class="calendar-btn" target="_blank">Google Calendar</a>
+            <a href="${calendarLinks.outlook}" class="calendar-btn" target="_blank">Outlook</a>
           </div>
+        </div>
 
-          <div class="divider"></div>
-
-          <p style="text-align: center; color: #64748b;">Questions? Contact us at <a href="mailto:mentalwellbeing1008@gmail.com" style="color: #2563eb;">mentalwellbeing1008@gmail.com</a></p>
-
-          <div class="footer">
-            <p style="font-size: 16px; color: #7c3aed; margin-bottom: 15px;"><strong>See you tomorrow!</strong></p>
-            <p class="footer-name">Dr. Aditi Pajiyar</p>
-            <p style="margin: 5px 0;">NHAFN Mental Health Fellow</p>
-            <p style="margin: 5px 0;">National Health Action Force Nepal</p>
+        <div class="footer">
+          <p class="footer-cta">See you tomorrow! 🌟</p>
+          <p class="footer-name"><strong>Dr. Aditi Pajiyar</strong></p>
+          <p class="footer-org">NHAFN Mental Health Fellow</p>
+          <p class="footer-org">National Health Action Force Nepal</p>
+          <div class="footer-contact">
+            <a href="mailto:mentalwellbeing1008@gmail.com">📧 mentalwellbeing1008@gmail.com</a>
           </div>
         </div>
       </div>
@@ -237,7 +306,7 @@ An honest conversation about academic stress
 
 📅 Date: Sunday, November 30, 2025
 ⏰ Time: 6:00 PM NPT (Nepal Time)
-⏱️ Duration: ~90 minutes
+⏱️ Duration: 60 minutes
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🎥 JOIN ZOOM MEETING
