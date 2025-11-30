@@ -28,6 +28,10 @@ model Attendee {
   registeredAt DateTime @default(now())
   emailSent    Boolean  @default(false)
   surveyToken  String?  @unique  // Token for secure survey access
+  reminder1Sent Boolean @default(false)
+  reminder2Sent Boolean @default(false)
+  reminder3Sent Boolean @default(false)
+  postWebinarSent Boolean @default(false)
 }
 
 model WebinarConfig {
@@ -137,4 +141,17 @@ model SurveyResponse {
   @@index([email])
   @@index([surveyType])
   @@index([submittedAt])
+}
+
+// Scheduled Email Configuration
+model ScheduledEmail {
+  id            String    @id @default(cuid())
+  slot          Int       @unique  // 1, 2, or 3
+  scheduledTime DateTime? // When to send (stored in UTC)
+  subject       String?   // Custom subject line
+  enabled       Boolean   @default(false)
+  lastRun       DateTime? // Last execution time
+  status        String    @default("pending") // pending, running, completed
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }

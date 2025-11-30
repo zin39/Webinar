@@ -11,6 +11,7 @@ const morgan = require('morgan');
 const fs = require('fs');
 const logger = require('./utils/logger');
 const { analyticsMiddleware } = require('./middleware/analytics');
+const { initScheduler, initDefaultSchedules } = require('./utils/scheduler');
 
 // Valid OG image filename pattern (only our generated filenames)
 const VALID_OG_IMAGE_PATTERN = /^og-share-\d+\.(png|jpg|jpeg)$/i;
@@ -257,7 +258,7 @@ process.on('SIGTERM', () => {
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`
 ╔═══════════════════════════════════════════════════╗
 ║         Webinar Registration Server               ║
@@ -267,4 +268,13 @@ app.listen(PORT, () => {
 ║  URL: http://localhost:${String(PORT).padEnd(25)} ║
 ╚═══════════════════════════════════════════════════╝
   `);
+
+  // Initialize email scheduler
+  try {
+    await initDefaultSchedules();
+    initScheduler();
+    console.log('Email scheduler initialized');
+  } catch (err) {
+    console.error('Failed to initialize email scheduler:', err);
+  }
 });

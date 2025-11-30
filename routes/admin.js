@@ -3,6 +3,8 @@ const crypto = require('crypto');
 const prisma = require('../config/db');
 const { ensureAuthenticated } = require('../middleware/auth');
 const { getAnalyticsSummary } = require('../middleware/analytics');
+const { getSchedulerStatus, updateSchedule, triggerScheduledEmail, resetSchedule, initDefaultSchedules } = require('../utils/scheduler');
+const { formatNptDateTime } = require('../utils/brevoEmail');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -958,6 +960,166 @@ module.exports = function(csrfProtection) {
       console.error('Survey export error:', error);
       req.flash('error_msg', 'Failed to export survey responses');
       res.redirect('/admin/surveys');
+    }
+  });
+
+  // =====================================================
+  // Email Scheduler Routes
+  // =====================================================
+
+  // Email scheduler page
+  router.get('/email-scheduler', csrfProtection, async (req, res) => {
+    try {
+      // Initialize default schedules if they don't exist
+      await initDefaultSchedules();
+
+      const status = await getSchedulerStatus();
+
+      // Get total attendee count
+      const attendeeCount = await prisma.attendee.count();
+
+      // Get reminder stats (slots 1-3 are pre-webinar, slot 4 is post-webinar)
+      const reminder1Pending = await prisma.attendee.count({ where: { reminder1Sent: false } });
+      const reminder2Pending = await prisma.attendee.count({ where: { reminder2Sent: false } });
+      const reminder3Pending = await prisma.attendee.count({ where: { reminder3Sent: false } });
+      const postWebinarPending = await prisma.attendee.count({ where: { postWebinarSent: false } });
+
+      res.render('admin/email-scheduler', {
+        title: 'Email Scheduler',
+        schedulerStatus: status,
+        attendeeCount,
+        reminderStats: {
+          slot1: { pending: reminder1Pending, sent: attendeeCount - reminder1Pending },
+          slot2: { pending: reminder2Pending, sent: attendeeCount - reminder2Pending },
+          slot3: { pending: reminder3Pending, sent: attendeeCount - reminder3Pending },
+          slot4: { pending: postWebinarPending, sent: attendeeCount - postWebinarPending }
+        }
+      });
+    } catch (error) {
+      console.error('Email scheduler error:', error);
+      req.flash('error_msg', 'Failed to load email scheduler');
+      res.redirect('/admin');
+    }
+  });
+
+  // Update schedule settings
+  router.post('/email-scheduler', csrfProtection, async (req, res) => {
+    try {
+      const { slot, scheduledTimeNpt, subject, enabled } = req.body;
+
+      const slotNum = parseInt(slot);
+      if (![1, 2, 3, 4].includes(slotNum)) {
+        req.flash('error_msg', 'Invalid slot number');
+        return res.redirect('/admin/email-scheduler');
+      }
+
+      const updateData = {
+        subject: subject || null,
+        enabled: enabled === 'true' || enabled === true
+      };
+
+      // Parse and convert NPT time to UTC if provided
+      if (scheduledTimeNpt) {
+        updateData.scheduledTimeNpt = scheduledTimeNpt;
+      }
+
+      await updateSchedule(slotNum, updateData);
+
+      req.flash('success_msg', `Schedule slot ${slotNum} updated successfully`);
+      res.redirect('/admin/email-scheduler');
+    } catch (error) {
+      console.error('Update schedule error:', error);
+      req.flash('error_msg', 'Failed to update schedule');
+      res.redirect('/admin/email-scheduler');
+    }
+  });
+
+  // Send now - manually trigger a scheduled email
+  router.post('/email-scheduler/send-now/:slot', csrfProtection, async (req, res) => {
+    try {
+      const slotNum = parseInt(req.params.slot);
+      if (![1, 2, 3, 4].includes(slotNum)) {
+        req.flash('error_msg', 'Invalid slot number');
+        return res.redirect('/admin/email-scheduler');
+      }
+
+      // Trigger the scheduled email
+      await triggerScheduledEmail(slotNum);
+
+      req.flash('success_msg', `Reminder emails for slot ${slotNum} are being sent`);
+      res.redirect('/admin/email-scheduler');
+    } catch (error) {
+      console.error('Send now error:', error);
+      req.flash('error_msg', `Failed to send emails: ${error.message}`);
+      res.redirect('/admin/email-scheduler');
+    }
+  });
+
+  // Reset schedule status to pending
+  router.post('/email-scheduler/reset/:slot', csrfProtection, async (req, res) => {
+    try {
+      const slotNum = parseInt(req.params.slot);
+      if (![1, 2, 3, 4].includes(slotNum)) {
+        req.flash('error_msg', 'Invalid slot number');
+        return res.redirect('/admin/email-scheduler');
+      }
+
+      await resetSchedule(slotNum);
+
+      req.flash('success_msg', `Schedule slot ${slotNum} reset to pending`);
+      res.redirect('/admin/email-scheduler');
+    } catch (error) {
+      console.error('Reset schedule error:', error);
+      req.flash('error_msg', 'Failed to reset schedule');
+      res.redirect('/admin/email-scheduler');
+    }
+  });
+
+  // Send test email for a slot
+  router.post('/email-scheduler/test/:slot', csrfProtection, async (req, res) => {
+    try {
+      const slotNum = parseInt(req.params.slot);
+      if (![1, 2, 3, 4].includes(slotNum)) {
+        req.flash('error_msg', 'Invalid slot number');
+        return res.redirect('/admin/email-scheduler');
+      }
+
+      const { sendReminderEmail, sendPostWebinarEmail } = require('../utils/email');
+
+      // Get current user's email for test
+      const testAttendee = {
+        id: 'test',
+        name: req.user.name || 'Test User',
+        email: req.user.email,
+        surveyToken: 'test-token-' + Date.now()
+      };
+
+      // Get schedule for subject
+      const schedule = await prisma.scheduledEmail.findUnique({
+        where: { slot: slotNum }
+      });
+
+      // Use different email function based on slot type
+      let result;
+      if (slotNum === 4) {
+        result = await sendPostWebinarEmail(testAttendee, schedule?.subject);
+      } else {
+        result = await sendReminderEmail(testAttendee, slotNum, schedule?.subject);
+      }
+
+      if (result.success) {
+        req.flash('success_msg', `Test email sent to ${req.user.email}`);
+      } else if (result.skipped) {
+        req.flash('warning_msg', 'Email sending is not configured. Please add BREVO_API_KEY to your .env file.');
+      } else {
+        req.flash('error_msg', `Failed to send test email: ${result.error}`);
+      }
+
+      res.redirect('/admin/email-scheduler');
+    } catch (error) {
+      console.error('Test email error:', error);
+      req.flash('error_msg', 'Failed to send test email');
+      res.redirect('/admin/email-scheduler');
     }
   });
 

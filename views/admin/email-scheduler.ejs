@@ -1,0 +1,618 @@
+<%- include('../partials/header') %>
+
+<div class="admin-layout">
+  <!-- Admin Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-header">
+      <h2>Admin Panel</h2>
+      <span class="admin-name"><%= user.name %></span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/admin" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        Attendees
+      </a>
+      <a href="/admin/surveys" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <path d="M9 11l3 3L22 4"></path>
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+        </svg>
+        Surveys
+      </a>
+      <a href="/admin/emails" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+          <polyline points="22,6 12,13 2,6"></polyline>
+        </svg>
+        Email Logs
+      </a>
+      <a href="/admin/email-scheduler" class="sidebar-link active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        Email Scheduler
+      </a>
+      <a href="/admin/analytics" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <line x1="18" y1="20" x2="18" y2="10"></line>
+          <line x1="12" y1="20" x2="12" y2="4"></line>
+          <line x1="6" y1="20" x2="6" y2="14"></line>
+        </svg>
+        Analytics
+      </a>
+      <a href="/admin/settings" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+        Settings
+      </a>
+      <a href="/admin/export" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        Export CSV
+      </a>
+      <a href="/" class="sidebar-link" target="_blank">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <line x1="10" y1="14" x2="21" y2="3"></line>
+        </svg>
+        View Site
+      </a>
+      <a href="/auth/logout" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        Logout
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+    <div class="admin-header">
+      <h1>Email Scheduler</h1>
+      <div class="scheduler-status">
+        <span class="status-indicator <%= schedulerStatus.isRunning ? 'status-active' : 'status-inactive' %>"></span>
+        <span>Scheduler: <%= schedulerStatus.isRunning ? 'Running' : 'Stopped' %></span>
+        <span class="current-time">Current Time (NPT): <%= schedulerStatus.currentTimeNpt %></span>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value"><%= attendeeCount %></span>
+          <span class="stat-label">Total Attendees</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value"><%= reminderStats.slot1.sent %></span>
+          <span class="stat-label">Reminder 1 Sent</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-purple">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value"><%= reminderStats.slot2.sent %></span>
+          <span class="stat-label">Reminder 2 Sent</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-teal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value"><%= reminderStats.slot3.sent %></span>
+          <span class="stat-label">Reminder 3 Sent</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-orange">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 11l3 3L22 4"></path>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value"><%= reminderStats.slot4.sent %></span>
+          <span class="stat-label">Post-Survey Sent</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pre-Webinar Reminder Schedule Cards -->
+    <h2 class="section-title">Pre-Webinar Reminders</h2>
+    <div class="schedule-cards">
+      <% schedulerStatus.schedules.filter(s => s.slot <= 3).forEach((schedule, index) => { %>
+        <div class="schedule-card">
+          <div class="schedule-header">
+            <h3>Reminder Slot <%= schedule.slot %></h3>
+            <span class="schedule-status status-<%= schedule.status %>"><%= schedule.status.charAt(0).toUpperCase() + schedule.status.slice(1) %></span>
+          </div>
+
+          <form action="/admin/email-scheduler" method="POST" class="schedule-form">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input type="hidden" name="slot" value="<%= schedule.slot %>">
+
+            <div class="form-group">
+              <label for="subject<%= schedule.slot %>">Email Subject</label>
+              <input type="text" id="subject<%= schedule.slot %>" name="subject" value="<%= schedule.subject || '' %>" placeholder="Enter custom subject line" class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label for="time<%= schedule.slot %>">Scheduled Time (NPT)</label>
+              <input type="datetime-local" id="time<%= schedule.slot %>" name="scheduledTimeNpt" value="<%= schedule.scheduledTime ? new Date(schedule.scheduledTime.getTime() + (5 * 60 + 45) * 60 * 1000).toISOString().slice(0, 16) : '' %>" class="form-control">
+              <% if (schedule.scheduledTimeNpt) { %>
+                <small class="form-text">Currently set to: <%= schedule.scheduledTimeNpt %></small>
+              <% } %>
+            </div>
+
+            <div class="form-group toggle-group">
+              <label class="toggle-label">
+                <input type="checkbox" name="enabled" value="true" <%= schedule.enabled ? 'checked' : '' %>>
+                <span class="toggle-slider"></span>
+                <span class="toggle-text">Enable this schedule</span>
+              </label>
+            </div>
+
+            <div class="schedule-info">
+              <% if (schedule.lastRun) { %>
+                <p><strong>Last Run:</strong> <%= new Date(schedule.lastRun).toLocaleString() %></p>
+              <% } %>
+              <p><strong>Pending:</strong> <%= reminderStats['slot' + schedule.slot].pending %> attendees</p>
+            </div>
+
+            <div class="schedule-actions">
+              <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+          </form>
+
+          <div class="schedule-buttons">
+            <form action="/admin/email-scheduler/test/<%= schedule.slot %>" method="POST" class="inline-form">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button type="submit" class="btn btn-outline btn-sm">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                Send Test
+              </button>
+            </form>
+            <form action="/admin/email-scheduler/send-now/<%= schedule.slot %>" method="POST" class="inline-form" data-confirm="Are you sure you want to send emails to all pending attendees now?">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button type="submit" class="btn btn-secondary btn-sm">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+                Send Now
+              </button>
+            </form>
+            <form action="/admin/email-scheduler/reset/<%= schedule.slot %>" method="POST" class="inline-form">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button type="submit" class="btn btn-outline btn-sm">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                  <polyline points="23 4 23 10 17 10"></polyline>
+                  <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                </svg>
+                Reset
+              </button>
+            </form>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+
+    <!-- Post-Webinar Survey Email Section -->
+    <h2 class="section-title section-title-post">Post-Webinar Survey Email</h2>
+    <div class="schedule-cards post-webinar-section">
+      <% const postWebinarSchedule = schedulerStatus.schedules.find(s => s.slot === 4); %>
+      <% if (postWebinarSchedule) { %>
+        <div class="schedule-card post-webinar-card">
+          <div class="schedule-header">
+            <h3>Post-Webinar Survey</h3>
+            <span class="schedule-status status-<%= postWebinarSchedule.status %>"><%= postWebinarSchedule.status.charAt(0).toUpperCase() + postWebinarSchedule.status.slice(1) %></span>
+          </div>
+
+          <form action="/admin/email-scheduler" method="POST" class="schedule-form">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input type="hidden" name="slot" value="4">
+
+            <div class="form-group">
+              <label for="subject4">Email Subject</label>
+              <input type="text" id="subject4" name="subject" value="<%= postWebinarSchedule.subject || '' %>" placeholder="Enter custom subject line" class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label for="time4">Scheduled Time (NPT)</label>
+              <input type="datetime-local" id="time4" name="scheduledTimeNpt" value="<%= postWebinarSchedule.scheduledTime ? new Date(postWebinarSchedule.scheduledTime.getTime() + (5 * 60 + 45) * 60 * 1000).toISOString().slice(0, 16) : '' %>" class="form-control">
+              <% if (postWebinarSchedule.scheduledTimeNpt) { %>
+                <small class="form-text">Currently set to: <%= postWebinarSchedule.scheduledTimeNpt %></small>
+              <% } %>
+            </div>
+
+            <div class="form-group toggle-group">
+              <label class="toggle-label">
+                <input type="checkbox" name="enabled" value="true" <%= postWebinarSchedule.enabled ? 'checked' : '' %>>
+                <span class="toggle-slider"></span>
+                <span class="toggle-text">Enable this schedule</span>
+              </label>
+            </div>
+
+            <div class="schedule-info">
+              <% if (postWebinarSchedule.lastRun) { %>
+                <p><strong>Last Run:</strong> <%= new Date(postWebinarSchedule.lastRun).toLocaleString() %></p>
+              <% } %>
+              <p><strong>Pending:</strong> <%= reminderStats.slot4.pending %> attendees</p>
+            </div>
+
+            <div class="schedule-actions">
+              <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+          </form>
+
+          <div class="schedule-buttons">
+            <form action="/admin/email-scheduler/test/4" method="POST" class="inline-form">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button type="submit" class="btn btn-outline btn-sm">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                Send Test
+              </button>
+            </form>
+            <form action="/admin/email-scheduler/send-now/4" method="POST" class="inline-form" data-confirm="Are you sure you want to send post-webinar survey emails to all pending attendees now?">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button type="submit" class="btn btn-secondary btn-sm">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+                Send Now
+              </button>
+            </form>
+            <form action="/admin/email-scheduler/reset/4" method="POST" class="inline-form">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button type="submit" class="btn btn-outline btn-sm">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                  <polyline points="23 4 23 10 17 10"></polyline>
+                  <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                </svg>
+                Reset
+              </button>
+            </form>
+          </div>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- Info Box -->
+    <div class="info-box">
+      <h4>How Email Scheduling Works</h4>
+      <ul>
+        <li>Set the scheduled time in Nepal Time (NPT = UTC+5:45)</li>
+        <li>When enabled, emails will be automatically sent at the scheduled time</li>
+        <li>Each slot sends to attendees who haven't received that reminder yet</li>
+        <li>Use "Send Test" to preview the email (sent to your admin email)</li>
+        <li>Use "Send Now" to manually trigger sending to all pending attendees</li>
+        <li>Use "Reset" to change status back to pending (allows re-triggering)</li>
+      </ul>
+    </div>
+  </main>
+</div>
+
+<style>
+.scheduler-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.status-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.status-active {
+  background-color: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+
+.status-inactive {
+  background-color: #ef4444;
+}
+
+.current-time {
+  margin-left: 20px;
+  padding-left: 20px;
+  border-left: 1px solid var(--border-color);
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 2rem 0 0 0;
+  color: var(--text-primary);
+}
+
+.section-title-post {
+  color: #ea580c;
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 2px solid #fed7aa;
+}
+
+.stat-icon-orange {
+  background-color: #ffedd5;
+  color: #ea580c;
+}
+
+.post-webinar-section {
+  margin-top: 1rem;
+}
+
+.post-webinar-card {
+  border-color: #fdba74;
+  background: linear-gradient(to bottom right, #fff7ed, #ffffff);
+}
+
+.post-webinar-card .schedule-header {
+  border-bottom-color: #fed7aa;
+}
+
+.post-webinar-card .schedule-header h3 {
+  color: #ea580c;
+}
+
+.schedule-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.schedule-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+.schedule-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.schedule-header h3 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.schedule-status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.status-pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status-running {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.status-completed {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.schedule-form .form-group {
+  margin-bottom: 1rem;
+}
+
+.schedule-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.schedule-form .form-control {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+}
+
+.schedule-form .form-text {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.toggle-group {
+  margin: 1rem 0;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+}
+
+.toggle-label input {
+  display: none;
+}
+
+.toggle-slider {
+  width: 44px;
+  height: 24px;
+  background-color: #e5e7eb;
+  border-radius: 9999px;
+  position: relative;
+  transition: background-color 0.2s;
+}
+
+.toggle-slider::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.toggle-label input:checked + .toggle-slider {
+  background-color: var(--primary-color);
+}
+
+.toggle-label input:checked + .toggle-slider::after {
+  transform: translateX(20px);
+}
+
+.toggle-text {
+  font-size: 0.875rem;
+}
+
+.schedule-info {
+  background: var(--bg-secondary, #f9fafb);
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  margin: 1rem 0;
+  font-size: 0.875rem;
+}
+
+.schedule-info p {
+  margin: 0.25rem 0;
+}
+
+.schedule-actions {
+  margin-top: 1rem;
+}
+
+.schedule-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.inline-form {
+  display: inline;
+}
+
+.btn-sm {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.75rem;
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color, #6366f1);
+  color: white;
+  border: none;
+}
+
+.btn-secondary:hover {
+  background-color: #4f46e5;
+}
+
+.info-box {
+  background: var(--bg-secondary, #f0f9ff);
+  border: 1px solid #bae6fd;
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.info-box h4 {
+  margin: 0 0 0.75rem 0;
+  color: #0369a1;
+  font-size: 0.875rem;
+}
+
+.info-box ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  font-size: 0.875rem;
+  color: #0c4a6e;
+}
+
+.info-box li {
+  margin: 0.25rem 0;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Confirmation for send now
+  document.querySelectorAll('form[data-confirm]').forEach(function(form) {
+    form.addEventListener('submit', function(e) {
+      if (!confirm(this.dataset.confirm)) {
+        e.preventDefault();
+      }
+    });
+  });
+});
+</script>
+
+<%- include('../partials/footer') %>

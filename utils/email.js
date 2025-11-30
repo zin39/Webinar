@@ -1,67 +1,52 @@
-const nodemailer = require('nodemailer');
+/**
+ * Email utility for sending webinar emails
+ * Uses Brevo API for transactional emails
+ */
+
+const { sendEmail, logEmailAttempt } = require('./brevoEmail');
 const prisma = require('../config/db');
 
-// Create transporter
-const createTransporter = () => {
-  return nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: parseInt(process.env.SMTP_PORT) || 587,
-    secure: false,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS
-    }
-  });
-};
-
-// Helper function to log email attempts
-const logEmailAttempt = async (data) => {
-  try {
-    await prisma.emailLog.create({
-      data: {
-        toEmail: data.toEmail,
-        toName: data.toName || null,
-        subject: data.subject,
-        type: data.type,
-        status: data.status,
-        errorMessage: data.errorMessage || null,
-        errorCode: data.errorCode || null,
-        smtpResponse: data.smtpResponse || null,
-        attendeeId: data.attendeeId || null,
-        retryCount: data.retryCount || 0,
-        metadata: data.metadata ? JSON.stringify(data.metadata) : null
-      }
-    });
-  } catch (err) {
-    console.error('Failed to log email attempt:', err);
+// Email type configurations
+const EMAIL_TYPES = {
+  confirmation: {
+    type: 'confirmation',
+    defaultSubject: `⏰ Student Mental Health Webinar is TOMORROW - You're In!`,
+    badge: 'HAPPENING TOMORROW!',
+    greeting: "Great news - you're registered for tomorrow's webinar on student mental health!"
+  },
+  reminder1: {
+    type: 'reminder',
+    defaultSubject: '📅 Reminder: Student Mental Health Webinar Tomorrow!',
+    badge: 'HAPPENING TOMORROW!',
+    greeting: "Just a friendly reminder - the Student Mental Health webinar is happening tomorrow!"
+  },
+  reminder2: {
+    type: 'reminder',
+    defaultSubject: '⏰ Starting in a Few Hours: Student Mental Health Webinar',
+    badge: 'STARTING SOON!',
+    greeting: "Get ready! The Student Mental Health webinar starts in just a few hours!"
+  },
+  reminder3: {
+    type: 'reminder',
+    defaultSubject: '🚀 Starting NOW: Join the Student Mental Health Webinar!',
+    badge: 'STARTING NOW!',
+    greeting: "The moment is here! The Student Mental Health webinar is about to begin!"
+  },
+  postWebinar: {
+    type: 'postWebinar',
+    defaultSubject: '📝 Share Your Feedback: Student Mental Health Webinar Survey',
+    badge: 'YOUR FEEDBACK MATTERS!',
+    greeting: 'Thank you for attending the Student Mental Health Webinar! We hope you found it valuable and informative.'
   }
 };
 
-const sendConfirmationEmail = async (attendee, webinar, calendarLinks) => {
-  const subject = `⏰ Student Mental Health Webinar is TOMORROW - You're In!`;
+/**
+ * Generate HTML email content
+ */
+const generateHtmlContent = (attendee, surveyLink, calendarLinks, emailType, customSubject) => {
+  const config = EMAIL_TYPES[emailType] || EMAIL_TYPES.confirmation;
 
-  // Skip if SMTP not configured
-  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    console.log('SMTP not configured, skipping email');
-    await logEmailAttempt({
-      toEmail: attendee.email,
-      toName: attendee.name,
-      subject: subject,
-      type: 'confirmation',
-      status: 'skipped',
-      errorMessage: 'SMTP not configured',
-      attendeeId: attendee.id
-    });
-    return;
-  }
-
-  const transporter = createTransporter();
-
-  // Pre-webinar survey link - using token for secure access
-  const siteUrl = process.env.SITE_URL || 'http://localhost:3000';
-  const surveyLink = `${siteUrl}/survey/pre-webinar?token=${attendee.surveyToken}`;
-
-  const htmlContent = `
+  return `
     <!DOCTYPE html>
     <html>
     <head>
@@ -119,7 +104,7 @@ const sendConfirmationEmail = async (attendee, webinar, calendarLinks) => {
     <body>
       <div class="wrapper">
         <div class="header">
-          <div class="countdown-badge">HAPPENING TOMORROW!</div>
+          <div class="countdown-badge">${config.badge}</div>
           <h1>Student Mental Health:<br>Thriving Beyond Grades</h1>
           <p class="header-subtitle">Your seat is confirmed for this FREE webinar</p>
         </div>
@@ -127,7 +112,7 @@ const sendConfirmationEmail = async (attendee, webinar, calendarLinks) => {
         <div class="content">
           <p class="greeting">Hi <strong>${attendee.name}</strong>,</p>
 
-          <p class="intro-text">Great news - you're registered for tomorrow's webinar on student mental health!</p>
+          <p class="intro-text">${config.greeting}</p>
 
           <div class="event-card">
             <p class="event-title">Webinar Details</p>
@@ -156,7 +141,7 @@ const sendConfirmationEmail = async (attendee, webinar, calendarLinks) => {
 
           <div class="zoom-section">
             <p class="zoom-title">🎥 Your Zoom Access</p>
-            <a href="https://us06web.zoom.us/j/84978475078?pwd=EZIf1n9Pjy7bcozayzob4m1H9nlZTF.1" class="zoom-btn">Click Here to Join Tomorrow</a>
+            <a href="https://us06web.zoom.us/j/84978475078?pwd=EZIf1n9Pjy7bcozayzob4m1H9nlZTF.1" class="zoom-btn">Click Here to Join</a>
             <div class="zoom-credentials">
               <p><strong>Meeting ID:</strong> 849 7847 5078</p>
               <p><strong>Passcode:</strong> 090152</p>
@@ -182,7 +167,7 @@ const sendConfirmationEmail = async (attendee, webinar, calendarLinks) => {
           </div>
 
           <div class="tips-section">
-            <p class="tips-title">📝 Get Ready for Tomorrow:</p>
+            <p class="tips-title">📝 Get Ready:</p>
             <ul class="tips-list">
               <li>Test your Zoom app & internet connection</li>
               <li>Find a quiet, comfortable space</li>
@@ -191,11 +176,13 @@ const sendConfirmationEmail = async (attendee, webinar, calendarLinks) => {
             </ul>
           </div>
 
+          ${calendarLinks ? `
           <div class="calendar-section">
             <p class="calendar-label">📆 Add to your calendar:</p>
             <a href="${calendarLinks.google}" class="calendar-btn" target="_blank">Google Calendar</a>
             <a href="${calendarLinks.outlook}" class="calendar-btn" target="_blank">Outlook</a>
           </div>
+          ` : ''}
 
           <div class="divider"></div>
 
@@ -203,7 +190,7 @@ const sendConfirmationEmail = async (attendee, webinar, calendarLinks) => {
         </div>
 
         <div class="footer">
-          <p class="footer-cta">See you tomorrow! 🌟</p>
+          <p class="footer-cta">See you soon! 🌟</p>
           <p class="footer-name">Dr. Aditi Pajiyar</p>
           <p class="footer-org">NHAFN Mental Health Fellow</p>
           <p class="footer-org">National Health Action Force Nepal</p>
@@ -215,13 +202,20 @@ const sendConfirmationEmail = async (attendee, webinar, calendarLinks) => {
     </body>
     </html>
   `;
+};
 
-  const textContent = `
-HAPPENING TOMORROW!
+/**
+ * Generate plain text email content
+ */
+const generateTextContent = (attendee, surveyLink, calendarLinks, emailType) => {
+  const config = EMAIL_TYPES[emailType] || EMAIL_TYPES.confirmation;
+
+  return `
+${config.badge}
 
 Hi ${attendee.name},
 
-Great news - you're registered for tomorrow's webinar on student mental health!
+${config.greeting}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 WEBINAR DETAILS
@@ -259,7 +253,7 @@ FEATURED SPEAKERS
 • Gopal Mahaseth - Educator
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📝 GET READY FOR TOMORROW
+📝 GET READY
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 • Test your Zoom app & internet connection
@@ -269,64 +263,265 @@ FEATURED SPEAKERS
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Add to Google Calendar: ${calendarLinks.google}
+${calendarLinks ? `Add to Google Calendar: ${calendarLinks.google}` : ''}
 
 Questions? Contact us at mentalwellbeing1008@gmail.com
 
-See you tomorrow! 🌟
+See you soon! 🌟
 
 Dr. Aditi Pajiyar
 NHAFN Mental Health Fellow
 National Health Action Force Nepal
   `;
-
-  try {
-    const result = await transporter.sendMail({
-      from: process.env.EMAIL_FROM || process.env.SMTP_USER,
-      to: attendee.email,
-      subject: subject,
-      text: textContent,
-      html: htmlContent
-    });
-
-    // Update attendee record
-    await prisma.attendee.update({
-      where: { id: attendee.id },
-      data: { emailSent: true }
-    });
-
-    // Log successful email
-    await logEmailAttempt({
-      toEmail: attendee.email,
-      toName: attendee.name,
-      subject: subject,
-      type: 'confirmation',
-      status: 'sent',
-      smtpResponse: result.response || null,
-      attendeeId: attendee.id,
-      metadata: { messageId: result.messageId }
-    });
-
-    console.log(`Confirmation email sent to ${attendee.email}`);
-  } catch (error) {
-    console.error('Email send error:', error);
-
-    // Log failed email
-    await logEmailAttempt({
-      toEmail: attendee.email,
-      toName: attendee.name,
-      subject: subject,
-      type: 'confirmation',
-      status: 'failed',
-      errorMessage: error.message || 'Unknown error',
-      errorCode: error.code || null,
-      smtpResponse: error.response || null,
-      attendeeId: attendee.id,
-      metadata: { stack: error.stack }
-    });
-
-    throw error;
-  }
 };
 
-module.exports = { sendConfirmationEmail };
+/**
+ * Send confirmation email (original registration email)
+ */
+const sendConfirmationEmail = async (attendee, webinar, calendarLinks) => {
+  return sendWebinarEmail(attendee, calendarLinks, 'confirmation');
+};
+
+/**
+ * Send webinar email with customizable type
+ * @param {Object} attendee - Attendee object with name, email, surveyToken
+ * @param {Object} calendarLinks - Optional calendar links
+ * @param {string} emailType - Type of email: confirmation, reminder1, reminder2, reminder3
+ * @param {string} customSubject - Optional custom subject line
+ */
+const sendWebinarEmail = async (attendee, calendarLinks, emailType = 'confirmation', customSubject = null) => {
+  const config = EMAIL_TYPES[emailType] || EMAIL_TYPES.confirmation;
+  const subject = customSubject || config.defaultSubject;
+
+  // Generate survey link
+  const siteUrl = process.env.SITE_URL || 'http://localhost:3000';
+  const surveyLink = `${siteUrl}/survey/pre-webinar?token=${attendee.surveyToken}`;
+
+  // Generate email content
+  const htmlContent = generateHtmlContent(attendee, surveyLink, calendarLinks, emailType, customSubject);
+  const textContent = generateTextContent(attendee, surveyLink, calendarLinks, emailType);
+
+  // Send via Brevo API
+  const result = await sendEmail({
+    to: attendee.email,
+    toName: attendee.name,
+    subject: subject,
+    htmlContent: htmlContent,
+    textContent: textContent,
+    type: config.type,
+    attendeeId: attendee.id
+  });
+
+  // Update attendee record if successful
+  if (result.success) {
+    const updateData = { emailSent: true };
+
+    // Also update reminder flags based on type
+    if (emailType === 'reminder1') updateData.reminder1Sent = true;
+    if (emailType === 'reminder2') updateData.reminder2Sent = true;
+    if (emailType === 'reminder3') updateData.reminder3Sent = true;
+
+    await prisma.attendee.update({
+      where: { id: attendee.id },
+      data: updateData
+    });
+  }
+
+  return result;
+};
+
+/**
+ * Send reminder email to an attendee
+ * @param {Object} attendee - Attendee object
+ * @param {number} reminderSlot - Reminder slot number (1, 2, or 3)
+ * @param {string} customSubject - Optional custom subject
+ */
+const sendReminderEmail = async (attendee, reminderSlot, customSubject = null) => {
+  const emailType = `reminder${reminderSlot}`;
+  return sendWebinarEmail(attendee, null, emailType, customSubject);
+};
+
+/**
+ * Generate HTML content for post-webinar survey email
+ */
+const generatePostWebinarHtmlContent = (attendee, surveyLink, customSubject) => {
+  const config = EMAIL_TYPES.postWebinar;
+
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <style>
+        body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; line-height: 1.6; color: #1e293b; margin: 0; padding: 0; background: #f1f5f9; }
+        .wrapper { max-width: 600px; margin: 0 auto; background: #ffffff; }
+        .header { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 40px 30px; text-align: center; }
+        .countdown-badge { display: inline-block; background: rgba(255,255,255,0.2); color: white; padding: 8px 20px; border-radius: 30px; font-size: 13px; font-weight: 600; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.3); letter-spacing: 1px; }
+        .header h1 { margin: 0 0 10px 0; font-size: 28px; font-weight: 700; line-height: 1.2; }
+        .header-subtitle { margin: 0; opacity: 0.95; font-size: 16px; font-weight: 400; }
+        .content { padding: 35px 30px; background: #ffffff; }
+        .greeting { font-size: 17px; margin-bottom: 15px; color: #1e293b; }
+        .intro-text { color: #374151; font-size: 15px; margin-bottom: 25px; }
+        .survey-section { background: #f0fdf4; border-radius: 16px; padding: 30px; margin: 25px 0; text-align: center; border: 1px solid #bbf7d0; }
+        .survey-title { color: #166534; font-size: 20px; font-weight: 700; margin: 0 0 10px 0; }
+        .survey-subtitle { color: #15803d; font-size: 15px; margin: 0 0 8px 0; }
+        .survey-note { color: #166534; font-size: 14px; margin: 15px 0; }
+        .survey-btn { display: inline-block; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; text-decoration: none; padding: 16px 40px; border-radius: 10px; font-weight: 700; font-size: 16px; margin: 10px 0; }
+        .time-estimate { display: inline-block; background: #ecfdf5; color: #047857; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; margin-top: 15px; }
+        .why-section { background: #fffbeb; border-radius: 16px; padding: 20px 25px; margin: 25px 0; border-left: 4px solid #f59e0b; }
+        .why-title { color: #92400e; font-size: 15px; font-weight: 700; margin: 0 0 12px 0; }
+        .why-list { margin: 0; padding-left: 20px; color: #92400e; }
+        .why-list li { padding: 4px 0; font-size: 14px; }
+        .divider { height: 1px; background: #e5e7eb; margin: 25px 0; }
+        .footer { background: #1e1b4b; color: white; padding: 30px; text-align: center; }
+        .footer-cta { font-size: 20px; font-weight: 700; margin: 0 0 15px 0; }
+        .footer-name { font-size: 16px; margin: 5px 0; font-weight: 600; }
+        .footer-org { font-size: 14px; opacity: 0.8; margin: 3px 0; }
+        .footer-contact { margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.2); }
+        .footer-contact a { color: #a5b4fc; text-decoration: none; font-size: 14px; }
+      </style>
+    </head>
+    <body>
+      <div class="wrapper">
+        <div class="header">
+          <div class="countdown-badge">${config.badge}</div>
+          <h1>Thank You for Attending!</h1>
+          <p class="header-subtitle">Student Mental Health: Thriving Beyond Grades</p>
+        </div>
+
+        <div class="content">
+          <p class="greeting">Hi <strong>${attendee.name}</strong>,</p>
+
+          <p class="intro-text">${config.greeting}</p>
+
+          <p class="intro-text">Your feedback is incredibly important to us. It helps us understand what worked well and how we can improve future sessions to better serve our community.</p>
+
+          <div class="survey-section">
+            <p class="survey-title">Share Your Experience</p>
+            <p class="survey-subtitle">Complete our post-webinar survey</p>
+            <p class="survey-note">Your honest feedback helps us improve future webinars and better support student mental health initiatives.</p>
+            <a href="${surveyLink}" class="survey-btn">Complete Survey</a>
+            <p class="time-estimate">Takes only 3-5 minutes</p>
+          </div>
+
+          <div class="why-section">
+            <p class="why-title">Why Your Feedback Matters:</p>
+            <ul class="why-list">
+              <li>Helps us improve future webinar content</li>
+              <li>Ensures we address topics that matter to you</li>
+              <li>Supports our mission for student mental health awareness</li>
+              <li>Guides the development of more helpful resources</li>
+            </ul>
+          </div>
+
+          <div class="divider"></div>
+
+          <p style="text-align: center; color: #6b7280; font-size: 14px;">Questions? Contact us at <a href="mailto:mentalwellbeing1008@gmail.com" style="color: #10b981;">mentalwellbeing1008@gmail.com</a></p>
+        </div>
+
+        <div class="footer">
+          <p class="footer-cta">Thank you for your support!</p>
+          <p class="footer-name">Dr. Aditi Pajiyar</p>
+          <p class="footer-org">NHAFN Mental Health Fellow</p>
+          <p class="footer-org">National Health Action Force Nepal</p>
+          <div class="footer-contact">
+            <a href="mailto:mentalwellbeing1008@gmail.com">mentalwellbeing1008@gmail.com</a>
+          </div>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+};
+
+/**
+ * Generate plain text content for post-webinar survey email
+ */
+const generatePostWebinarTextContent = (attendee, surveyLink) => {
+  const config = EMAIL_TYPES.postWebinar;
+
+  return `
+${config.badge}
+
+Hi ${attendee.name},
+
+${config.greeting}
+
+Your feedback is incredibly important to us. It helps us understand what worked well and how we can improve future sessions to better serve our community.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SHARE YOUR FEEDBACK
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Complete our post-webinar survey: ${surveyLink}
+
+Takes only 3-5 minutes
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WHY YOUR FEEDBACK MATTERS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• Helps us improve future webinar content
+• Ensures we address topics that matter to you
+• Supports our mission for student mental health awareness
+• Guides the development of more helpful resources
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Questions? Contact us at mentalwellbeing1008@gmail.com
+
+Thank you for your support!
+
+Dr. Aditi Pajiyar
+NHAFN Mental Health Fellow
+National Health Action Force Nepal
+  `;
+};
+
+/**
+ * Send post-webinar survey email to an attendee
+ * @param {Object} attendee - Attendee object with name, email, surveyToken
+ * @param {string} customSubject - Optional custom subject line
+ */
+const sendPostWebinarEmail = async (attendee, customSubject = null) => {
+  const config = EMAIL_TYPES.postWebinar;
+  const subject = customSubject || config.defaultSubject;
+
+  // Generate post-webinar survey link (different from pre-webinar)
+  const siteUrl = process.env.SITE_URL || 'http://localhost:3000';
+  const surveyLink = `${siteUrl}/survey/post-webinar?token=${attendee.surveyToken}`;
+
+  // Generate email content
+  const htmlContent = generatePostWebinarHtmlContent(attendee, surveyLink, customSubject);
+  const textContent = generatePostWebinarTextContent(attendee, surveyLink);
+
+  // Send via Brevo API
+  const result = await sendEmail({
+    to: attendee.email,
+    toName: attendee.name,
+    subject: subject,
+    htmlContent: htmlContent,
+    textContent: textContent,
+    type: config.type,
+    attendeeId: attendee.id
+  });
+
+  // Update attendee record if successful
+  if (result.success) {
+    await prisma.attendee.update({
+      where: { id: attendee.id },
+      data: { postWebinarSent: true }
+    });
+  }
+
+  return result;
+};
+
+module.exports = {
+  sendConfirmationEmail,
+  sendWebinarEmail,
+  sendReminderEmail,
+  sendPostWebinarEmail,
+  EMAIL_TYPES
+};
