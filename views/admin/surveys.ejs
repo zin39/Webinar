@@ -156,9 +156,9 @@
         <div class="table-header">
           <h2>Survey Analytics</h2>
           <div class="chart-toggle">
-            <button class="btn btn-sm btn-primary" id="btn-pre" onclick="showChartSection('pre')">Pre-Webinar</button>
-            <button class="btn btn-sm btn-outline" id="btn-post" onclick="showChartSection('post')">Post-Webinar</button>
-            <button class="btn btn-sm btn-outline" id="btn-comparison" onclick="showChartSection('comparison')">Before vs After</button>
+            <button type="button" class="btn btn-sm btn-primary" id="btn-pre" onclick="showChartSection('pre')">Pre-Webinar</button>
+            <button type="button" class="btn btn-sm btn-outline" id="btn-post" onclick="showChartSection('post')">Post-Webinar</button>
+            <button type="button" class="btn btn-sm btn-outline" id="btn-comparison" onclick="showChartSection('comparison')">Before vs After</button>
           </div>
         </div>
 
@@ -403,6 +403,12 @@
     gap: 8px;
   }
 
+  .chart-toggle button {
+    position: relative;
+    z-index: 10;
+    cursor: pointer;
+  }
+
   @media (max-width: 768px) {
     .charts-grid {
       grid-template-columns: 1fr;
@@ -500,6 +506,16 @@
 
     document.getElementById(section + '-charts').style.display = 'grid';
     document.getElementById('btn-' + section).className = 'btn btn-sm btn-primary';
+
+    // Resize charts in the visible section after a small delay
+    // ApexCharts may not render properly in hidden containers
+    setTimeout(() => {
+      Object.keys(chartInstances).forEach(key => {
+        if (chartInstances[key] && typeof chartInstances[key].resize === 'function') {
+          chartInstances[key].resize();
+        }
+      });
+    }, 50);
   }
 
   // Render Pre-Webinar Charts

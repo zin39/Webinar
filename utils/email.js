@@ -14,6 +14,12 @@ const EMAIL_TYPES = {
     badge: 'HAPPENING TOMORROW!',
     greeting: "Great news - you're registered for tomorrow's webinar on student mental health!"
   },
+  subscription: {
+    type: 'subscription',
+    defaultSubject: `Welcome to Mental Health Awareness Initiative!`,
+    badge: 'SUBSCRIPTION CONFIRMED',
+    greeting: "Thank you for subscribing to our Mental Health Awareness Initiative! We're excited to have you join our community focused on student mental health and wellbeing."
+  },
   reminder1: {
     type: 'reminder',
     defaultSubject: '📅 Reminder: Student Mental Health Webinar Tomorrow!',
@@ -34,9 +40,9 @@ const EMAIL_TYPES = {
   },
   postWebinar: {
     type: 'postWebinar',
-    defaultSubject: '📝 Share Your Feedback: Student Mental Health Webinar Survey',
-    badge: 'YOUR FEEDBACK MATTERS!',
-    greeting: 'Thank you for attending the Student Mental Health Webinar! We hope you found it valuable and informative.'
+    defaultSubject: 'Thank You - Student Mental Health Webinar Resources',
+    badge: '',
+    greeting: 'Thank you for being part of our Student Mental Health: Thriving Beyond Grades webinar. We hope the discussion with Dr. Amit Jha, Nikita Pradhan, and Gopal Mahaseth provided valuable insights for you.'
   }
 };
 
@@ -343,8 +349,9 @@ const sendReminderEmail = async (attendee, reminderSlot, customSubject = null) =
 
 /**
  * Generate HTML content for post-webinar survey email
+ * Simple, personal design to avoid Promotions folder
  */
-const generatePostWebinarHtmlContent = (attendee, surveyLink, customSubject) => {
+const generatePostWebinarHtmlContent = (attendee, postSurveyLink, preSurveyLink, pptLink) => {
   const config = EMAIL_TYPES.postWebinar;
 
   return `
@@ -354,79 +361,65 @@ const generatePostWebinarHtmlContent = (attendee, surveyLink, customSubject) => 
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <style>
-        body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; line-height: 1.6; color: #1e293b; margin: 0; padding: 0; background: #f1f5f9; }
-        .wrapper { max-width: 600px; margin: 0 auto; background: #ffffff; }
-        .header { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 40px 30px; text-align: center; }
-        .countdown-badge { display: inline-block; background: rgba(255,255,255,0.2); color: white; padding: 8px 20px; border-radius: 30px; font-size: 13px; font-weight: 600; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.3); letter-spacing: 1px; }
-        .header h1 { margin: 0 0 10px 0; font-size: 28px; font-weight: 700; line-height: 1.2; }
-        .header-subtitle { margin: 0; opacity: 0.95; font-size: 16px; font-weight: 400; }
-        .content { padding: 35px 30px; background: #ffffff; }
-        .greeting { font-size: 17px; margin-bottom: 15px; color: #1e293b; }
-        .intro-text { color: #374151; font-size: 15px; margin-bottom: 25px; }
-        .survey-section { background: #f0fdf4; border-radius: 16px; padding: 30px; margin: 25px 0; text-align: center; border: 1px solid #bbf7d0; }
-        .survey-title { color: #166534; font-size: 20px; font-weight: 700; margin: 0 0 10px 0; }
-        .survey-subtitle { color: #15803d; font-size: 15px; margin: 0 0 8px 0; }
-        .survey-note { color: #166534; font-size: 14px; margin: 15px 0; }
-        .survey-btn { display: inline-block; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; text-decoration: none; padding: 16px 40px; border-radius: 10px; font-weight: 700; font-size: 16px; margin: 10px 0; }
-        .time-estimate { display: inline-block; background: #ecfdf5; color: #047857; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; margin-top: 15px; }
-        .why-section { background: #fffbeb; border-radius: 16px; padding: 20px 25px; margin: 25px 0; border-left: 4px solid #f59e0b; }
-        .why-title { color: #92400e; font-size: 15px; font-weight: 700; margin: 0 0 12px 0; }
-        .why-list { margin: 0; padding-left: 20px; color: #92400e; }
-        .why-list li { padding: 4px 0; font-size: 14px; }
-        .divider { height: 1px; background: #e5e7eb; margin: 25px 0; }
-        .footer { background: #1e1b4b; color: white; padding: 30px; text-align: center; }
-        .footer-cta { font-size: 20px; font-weight: 700; margin: 0 0 15px 0; }
-        .footer-name { font-size: 16px; margin: 5px 0; font-weight: 600; }
-        .footer-org { font-size: 14px; opacity: 0.8; margin: 3px 0; }
-        .footer-contact { margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.2); }
-        .footer-contact a { color: #a5b4fc; text-decoration: none; font-size: 14px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.7; color: #333333; margin: 0; padding: 0; background: #ffffff; }
+        .wrapper { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .content { padding: 20px 0; }
+        p { margin: 0 0 16px 0; font-size: 15px; }
+        .greeting { margin-bottom: 20px; }
+        .section { margin: 24px 0; padding: 20px; background: #f9fafb; border-radius: 8px; }
+        .section-primary { margin: 24px 0; padding: 20px; background: #eff6ff; border-radius: 8px; border: 1px solid #bfdbfe; }
+        .section-title { font-size: 15px; font-weight: 600; color: #1f2937; margin: 0 0 12px 0; }
+        .link { color: #2563eb; text-decoration: none; }
+        .link:hover { text-decoration: underline; }
+        .download-btn { display: inline-block; background: #2563eb; color: #ffffff !important; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600; margin-top: 8px; }
+        ul { margin: 12px 0; padding-left: 20px; }
+        li { margin: 8px 0; font-size: 15px; }
+        .youtube-note { background: #f0fdf4; padding: 16px; border-radius: 8px; margin: 20px 0; font-size: 14px; color: #166534; border: 1px solid #bbf7d0; }
+        .certificate-note { background: #fef3c7; padding: 16px; border-radius: 8px; margin: 20px 0; font-size: 14px; color: #92400e; border: 1px solid #fcd34d; }
+        .survey-section { margin: 20px 0; padding: 16px; background: #f9fafb; border-radius: 8px; }
+        .survey-section p { font-size: 14px; color: #6b7280; margin-bottom: 12px; }
+        .signature { margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; }
+        .signature p { margin: 4px 0; font-size: 14px; color: #6b7280; }
+        .signature .name { color: #1f2937; font-weight: 600; font-size: 15px; }
       </style>
     </head>
     <body>
       <div class="wrapper">
-        <div class="header">
-          <div class="countdown-badge">${config.badge}</div>
-          <h1>Thank You for Attending!</h1>
-          <p class="header-subtitle">Student Mental Health: Thriving Beyond Grades</p>
-        </div>
-
         <div class="content">
-          <p class="greeting">Hi <strong>${attendee.name}</strong>,</p>
+          <p class="greeting">Hi ${attendee.name},</p>
 
-          <p class="intro-text">${config.greeting}</p>
+          <p>${config.greeting}</p>
 
-          <p class="intro-text">Your feedback is incredibly important to us. It helps us understand what worked well and how we can improve future sessions to better serve our community.</p>
-
-          <div class="survey-section">
-            <p class="survey-title">Share Your Experience</p>
-            <p class="survey-subtitle">Complete our post-webinar survey</p>
-            <p class="survey-note">Your honest feedback helps us improve future webinars and better support student mental health initiatives.</p>
-            <a href="${surveyLink}" class="survey-btn">Complete Survey</a>
-            <p class="time-estimate">Takes only 3-5 minutes</p>
+          <div class="section-primary">
+            <p class="section-title">Webinar Presentation</p>
+            <p style="margin-bottom: 8px;">Here is the presentation from today's session. Feel free to download and share with others who might benefit:</p>
+            <a href="${pptLink}" class="download-btn">Download Presentation</a>
           </div>
 
-          <div class="why-section">
-            <p class="why-title">Why Your Feedback Matters:</p>
-            <ul class="why-list">
-              <li>Helps us improve future webinar content</li>
-              <li>Ensures we address topics that matter to you</li>
-              <li>Supports our mission for student mental health awareness</li>
-              <li>Guides the development of more helpful resources</li>
+          <div class="youtube-note">
+            <strong>Missed the live session?</strong> Don't worry! The full webinar recording will be published on our YouTube channel soon. Keep an eye out!
+          </div>
+
+          <div class="certificate-note">
+            <strong>Certificate of Participation:</strong> To receive your certificate, please ensure you've completed both the pre-webinar and post-webinar surveys.
+          </div>
+
+          <div class="survey-section">
+            <p>If you haven't already, please take a few minutes to complete our surveys:</p>
+            <ul style="margin: 0;">
+              <li><a href="${preSurveyLink}" class="link">Pre-webinar survey</a></li>
+              <li><a href="${postSurveyLink}" class="link">Post-webinar feedback survey</a></li>
             </ul>
           </div>
 
-          <div class="divider"></div>
+          <p>Thank you for supporting student mental health awareness. Your participation means a lot to us!</p>
 
-          <p style="text-align: center; color: #6b7280; font-size: 14px;">Questions? Contact us at <a href="mailto:mentalwellbeing1008@gmail.com" style="color: #10b981;">mentalwellbeing1008@gmail.com</a></p>
-        </div>
+          <p>If you have any questions, feel free to reach out at <a href="mailto:mentalwellbeing1008@gmail.com" class="link">mentalwellbeing1008@gmail.com</a></p>
 
-        <div class="footer">
-          <p class="footer-cta">Thank you for your support!</p>
-          <p class="footer-name">Dr. Aditi Pajiyar</p>
-          <p class="footer-org">NHAFN Mental Health Fellow</p>
-          <p class="footer-org">National Health Action Force Nepal</p>
-          <div class="footer-contact">
-            <a href="mailto:mentalwellbeing1008@gmail.com">mentalwellbeing1008@gmail.com</a>
+          <div class="signature">
+            <p class="name">Dr. Aditi Pajiyar</p>
+            <p>NHAFN Mental Health Fellow</p>
+            <p>National Health Action Force Nepal</p>
           </div>
         </div>
       </div>
@@ -437,41 +430,45 @@ const generatePostWebinarHtmlContent = (attendee, surveyLink, customSubject) => 
 
 /**
  * Generate plain text content for post-webinar survey email
+ * Simple, personal format to match HTML version
  */
-const generatePostWebinarTextContent = (attendee, surveyLink) => {
+const generatePostWebinarTextContent = (attendee, postSurveyLink, preSurveyLink, pptLink) => {
   const config = EMAIL_TYPES.postWebinar;
 
-  return `
-${config.badge}
-
-Hi ${attendee.name},
+  return `Hi ${attendee.name},
 
 ${config.greeting}
 
-Your feedback is incredibly important to us. It helps us understand what worked well and how we can improve future sessions to better serve our community.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SHARE YOUR FEEDBACK
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WEBINAR PRESENTATION
+--------------------
+Here is the presentation from today's session. Feel free to download and share with others who might benefit:
+${pptLink}
 
-Complete our post-webinar survey: ${surveyLink}
 
-Takes only 3-5 minutes
+MISSED THE LIVE SESSION?
+------------------------
+Don't worry! The full webinar recording will be published on our YouTube channel soon. Keep an eye out!
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-WHY YOUR FEEDBACK MATTERS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-• Helps us improve future webinar content
-• Ensures we address topics that matter to you
-• Supports our mission for student mental health awareness
-• Guides the development of more helpful resources
+CERTIFICATE OF PARTICIPATION
+----------------------------
+To receive your certificate, please ensure you've completed both the pre-webinar and post-webinar surveys.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Questions? Contact us at mentalwellbeing1008@gmail.com
+SURVEY LINKS
+------------
+If you haven't already, please take a few minutes to complete our surveys:
+- Pre-webinar survey: ${preSurveyLink}
+- Post-webinar feedback survey: ${postSurveyLink}
 
-Thank you for your support!
+
+Thank you for supporting student mental health awareness. Your participation means a lot to us!
+
+If you have any questions, feel free to reach out at mentalwellbeing1008@gmail.com
+
+
+Warm regards,
 
 Dr. Aditi Pajiyar
 NHAFN Mental Health Fellow
@@ -488,13 +485,17 @@ const sendPostWebinarEmail = async (attendee, customSubject = null) => {
   const config = EMAIL_TYPES.postWebinar;
   const subject = customSubject || config.defaultSubject;
 
-  // Generate post-webinar survey link (different from pre-webinar)
+  // Generate survey links
   const siteUrl = process.env.SITE_URL || 'http://localhost:3000';
-  const surveyLink = `${siteUrl}/survey/post-webinar?token=${attendee.surveyToken}`;
+  const postSurveyLink = `${siteUrl}/survey/post-webinar?token=${attendee.surveyToken}`;
+  const preSurveyLink = `${siteUrl}/survey/pre-webinar?token=${attendee.surveyToken}`;
 
-  // Generate email content
-  const htmlContent = generatePostWebinarHtmlContent(attendee, surveyLink, customSubject);
-  const textContent = generatePostWebinarTextContent(attendee, surveyLink);
+  // PPT link - webinar presentation file
+  const pptLink = process.env.POST_WEBINAR_PPT_URL || `${siteUrl}/Webinar_ppt.pptx`;
+
+  // Generate email content with both survey links and PPT link
+  const htmlContent = generatePostWebinarHtmlContent(attendee, postSurveyLink, preSurveyLink, pptLink);
+  const textContent = generatePostWebinarTextContent(attendee, postSurveyLink, preSurveyLink, pptLink);
 
   // Send via Brevo API
   const result = await sendEmail({
@@ -518,10 +519,166 @@ const sendPostWebinarEmail = async (attendee, customSubject = null) => {
   return result;
 };
 
+/**
+ * Generate HTML content for subscription confirmation email
+ * Simple, personal design for future event subscribers
+ */
+const generateSubscriptionHtmlContent = (attendee) => {
+  const config = EMAIL_TYPES.subscription;
+
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.7; color: #333333; margin: 0; padding: 0; background: #ffffff; }
+        .wrapper { max-width: 600px; margin: 0 auto; }
+        .header { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%); color: white; padding: 40px 30px; text-align: center; }
+        .badge { display: inline-block; background: rgba(255,255,255,0.2); color: white; padding: 8px 20px; border-radius: 30px; font-size: 12px; font-weight: 600; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.3); letter-spacing: 1px; }
+        .header h1 { margin: 0; font-size: 24px; font-weight: 700; }
+        .content { padding: 30px; }
+        p { margin: 0 0 16px 0; font-size: 15px; }
+        .greeting { font-size: 16px; margin-bottom: 20px; }
+        .highlight-box { background: #f0fdf4; border-radius: 12px; padding: 20px; margin: 25px 0; border-left: 4px solid #22c55e; }
+        .highlight-title { font-size: 15px; font-weight: 600; color: #166534; margin: 0 0 10px 0; }
+        .highlight-list { margin: 10px 0; padding-left: 20px; }
+        .highlight-list li { margin: 8px 0; font-size: 14px; color: #166534; }
+        .info-box { background: #f8fafc; border-radius: 12px; padding: 20px; margin: 25px 0; }
+        .info-title { font-size: 15px; font-weight: 600; color: #1f2937; margin: 0 0 10px 0; }
+        .info-text { font-size: 14px; color: #6b7280; margin: 0; }
+        .signature { margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; }
+        .signature p { margin: 4px 0; font-size: 14px; color: #6b7280; }
+        .signature .name { color: #1f2937; font-weight: 600; font-size: 15px; }
+        .footer { background: #f8fafc; padding: 20px 30px; text-align: center; border-top: 1px solid #e5e7eb; }
+        .footer p { font-size: 13px; color: #6b7280; margin: 5px 0; }
+        .footer a { color: #6366f1; text-decoration: none; }
+      </style>
+    </head>
+    <body>
+      <div class="wrapper">
+        <div class="header">
+          <div class="badge">${config.badge}</div>
+          <h1>Mental Health Awareness Initiative</h1>
+        </div>
+
+        <div class="content">
+          <p class="greeting">Hi <strong>${attendee.name}</strong>,</p>
+
+          <p>${config.greeting}</p>
+
+          <div class="highlight-box">
+            <p class="highlight-title">What you'll receive:</p>
+            <ul class="highlight-list">
+              <li>Notifications about upcoming webinars and workshops</li>
+              <li>Mental health resources and tips</li>
+              <li>Expert insights on student wellbeing</li>
+              <li>Early access to register for future events</li>
+            </ul>
+          </div>
+
+          <div class="info-box">
+            <p class="info-title">Our Recent Webinar</p>
+            <p class="info-text">We recently hosted "Student Mental Health: Thriving Beyond Grades" featuring Dr. Amit Jha (Child & Adolescent Psychiatrist), Nikita Pradhan (Clinical Psychologist), and Gopal Mahaseth (Educator). Stay tuned for upcoming events!</p>
+          </div>
+
+          <p>We're committed to supporting student mental health awareness and creating meaningful conversations around wellbeing. Your interest in joining our community means a lot to us.</p>
+
+          <p>If you have any questions or suggestions for future topics, feel free to reach out at <a href="mailto:mentalwellbeing1008@gmail.com" style="color: #6366f1; text-decoration: none;">mentalwellbeing1008@gmail.com</a></p>
+
+          <div class="signature">
+            <p class="name">Dr. Aditi Pajiyar</p>
+            <p>NHAFN Mental Health Fellow</p>
+            <p>National Health Action Force Nepal</p>
+          </div>
+        </div>
+
+        <div class="footer">
+          <p>Thank you for supporting mental health awareness!</p>
+          <p><a href="mailto:mentalwellbeing1008@gmail.com">mentalwellbeing1008@gmail.com</a></p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+};
+
+/**
+ * Generate plain text content for subscription confirmation email
+ */
+const generateSubscriptionTextContent = (attendee) => {
+  const config = EMAIL_TYPES.subscription;
+
+  return `Hi ${attendee.name},
+
+${config.greeting}
+
+WHAT YOU'LL RECEIVE
+-------------------
+- Notifications about upcoming webinars and workshops
+- Mental health resources and tips
+- Expert insights on student wellbeing
+- Early access to register for future events
+
+
+OUR RECENT WEBINAR
+------------------
+We recently hosted "Student Mental Health: Thriving Beyond Grades" featuring Dr. Amit Jha (Child & Adolescent Psychiatrist), Nikita Pradhan (Clinical Psychologist), and Gopal Mahaseth (Educator). Stay tuned for upcoming events!
+
+
+We're committed to supporting student mental health awareness and creating meaningful conversations around wellbeing. Your interest in joining our community means a lot to us.
+
+If you have any questions or suggestions for future topics, feel free to reach out at mentalwellbeing1008@gmail.com
+
+
+Warm regards,
+
+Dr. Aditi Pajiyar
+NHAFN Mental Health Fellow
+National Health Action Force Nepal
+  `;
+};
+
+/**
+ * Send subscription confirmation email to new subscribers
+ * @param {Object} attendee - Attendee object with name, email
+ */
+const sendSubscriptionEmail = async (attendee) => {
+  const config = EMAIL_TYPES.subscription;
+  const subject = config.defaultSubject;
+
+  // Generate email content
+  const htmlContent = generateSubscriptionHtmlContent(attendee);
+  const textContent = generateSubscriptionTextContent(attendee);
+
+  // Send via Brevo API
+  const result = await sendEmail({
+    to: attendee.email,
+    toName: attendee.name,
+    subject: subject,
+    htmlContent: htmlContent,
+    textContent: textContent,
+    type: config.type,
+    attendeeId: attendee.id
+  });
+
+  // Update attendee record if successful
+  if (result.success) {
+    await prisma.attendee.update({
+      where: { id: attendee.id },
+      data: { emailSent: true }
+    });
+  }
+
+  return result;
+};
+
 module.exports = {
   sendConfirmationEmail,
   sendWebinarEmail,
   sendReminderEmail,
   sendPostWebinarEmail,
+  sendSubscriptionEmail,
   EMAIL_TYPES
 };

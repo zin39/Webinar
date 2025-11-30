@@ -32,79 +32,32 @@
           <circle cx="155" cy="45" r="2" fill="#2563eb"/>
         </svg>
       </div>
-      <h1 class="hero-title"><%= webinar.title %></h1>
-      <p class="hero-subtitle"><%= webinar.subtitle %></p>
+      <!-- Main Page Title -->
+      <h1 class="hero-title" style="margin-bottom: 12px;">Mental Health Awareness Initiative</h1>
+      <p class="hero-subtitle" style="font-size: 18px; color: #6b7280; margin-bottom: 30px;">By Dr. Aditi Pajiyar | NHAFN Mental Health Fellow</p>
 
-      <div class="hero-meta">
-        <div class="meta-item">
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-            <line x1="16" y1="2" x2="16" y2="6"></line>
-            <line x1="8" y1="2" x2="8" y2="6"></line>
-            <line x1="3" y1="10" x2="21" y2="10"></line>
-          </svg>
-          <span id="webinar-date"><%= new Date(webinar.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }) %></span>
+      <!-- Recent Webinar Card -->
+      <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1px solid #86efac; border-radius: 16px; padding: 24px; max-width: 600px; margin: 0 auto 30px; text-align: center;">
+        <div style="display: inline-block; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 12px; letter-spacing: 1px;">
+          RECENT WEBINAR
         </div>
-        <div class="meta-item">
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <polyline points="12 6 12 12 16 14"></polyline>
-          </svg>
-          <span>
-            <%
-              const utcDate = new Date(webinar.date);
-              const nepalOffset = 5 * 60 + 45; // Nepal is UTC+5:45
-              const nepalDate = new Date(utcDate.getTime() + nepalOffset * 60 * 1000);
-              const nepalHours = nepalDate.getUTCHours();
-              const nepalMinutes = nepalDate.getUTCMinutes();
-              const nepalAmPm = nepalHours >= 12 ? 'PM' : 'AM';
-              const nepalHour12 = nepalHours % 12 || 12;
-              const nepalTimeStr = nepalHour12 + ':' + (nepalMinutes < 10 ? '0' : '') + nepalMinutes + ' ' + nepalAmPm + ' NPT';
-            %>
-            <%= nepalTimeStr %> / <%= utcDate.getUTCHours() %>:<%= utcDate.getUTCMinutes() < 10 ? '0' : '' %><%= utcDate.getUTCMinutes() %> UTC
-          </span>
-        </div>
-        <div class="meta-item">
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="8" x2="12" y2="12"></line>
-            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-          </svg>
-          <span><%= webinar.duration %> minutes</span>
-        </div>
+        <h2 style="font-size: 20px; color: #1f2937; margin: 0 0 8px 0;"><%= webinar.title %></h2>
+        <p style="color: #059669; font-size: 14px; margin: 0;">Successfully completed! Thank you to all attendees.</p>
       </div>
 
-      <a href="/register" class="btn btn-primary btn-lg">Register Now - It's Free</a>
+      <p style="color: #6b7280; font-size: 16px; max-width: 600px; margin: 0 auto 30px; line-height: 1.6;">
+        Want to be part of our next event? Subscribe below to stay informed about upcoming webinars, workshops, and mental health resources.
+      </p>
 
-      <!-- Countdown Timer -->
-      <div class="countdown" id="countdown" data-date="<%= new Date(webinar.date).toISOString() %>">
-        <div class="countdown-item">
-          <span class="countdown-value" id="days">00</span>
-          <span class="countdown-label">Days</span>
-        </div>
-        <div class="countdown-item">
-          <span class="countdown-value" id="hours">00</span>
-          <span class="countdown-label">Hours</span>
-        </div>
-        <div class="countdown-item">
-          <span class="countdown-value" id="minutes">00</span>
-          <span class="countdown-label">Minutes</span>
-        </div>
-        <div class="countdown-item">
-          <span class="countdown-value" id="seconds">00</span>
-          <span class="countdown-label">Seconds</span>
-        </div>
-      </div>
+      <a href="/register" class="btn btn-primary btn-lg">Subscribe for Future Events</a>
 
-      <!-- Social Proof -->
-      <div class="social-proof">
-        <div class="avatars">
-          <div class="avatar"></div>
-          <div class="avatar"></div>
-          <div class="avatar"></div>
-          <div class="avatar"></div>
-        </div>
-        <span><strong id="attendee-count"><%= attendeeCount %></strong> people have already registered</span>
+      <!-- Subscribe Info -->
+      <div class="social-proof" style="margin-top: 30px;">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px; color: #10b981;">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        <span>We'll notify you about upcoming events - no spam, just valuable content!</span>
       </div>
     </div>
   </div>
@@ -113,8 +66,8 @@
 <!-- About Section -->
 <section class="section" id="about">
   <div class="container">
-    <h2 class="section-title">What You'll Learn</h2>
-    <p class="section-subtitle"><%= webinar.description %></p>
+    <h2 class="section-title">What We Covered</h2>
+    <p class="section-subtitle">Key topics discussed in our recent webinar on student mental health</p>
 
     <div class="features-grid">
       <div class="feature-card">
@@ -125,8 +78,8 @@
             <polyline points="22 4 12 14.01 9 11.01"></polyline>
           </svg>
         </div>
-        <h3>Recognize <span class="highlight">Stress Signs</span></h3>
-        <p>Learn to identify signs of <strong>academic stress</strong> and burnout in yourself and others.</p>
+        <h3>Recognizing <span class="highlight">Stress Signs</span></h3>
+        <p>We discussed how to identify signs of <strong>academic stress</strong> and burnout in yourself and others.</p>
       </div>
 
       <div class="feature-card">
@@ -137,7 +90,7 @@
           </svg>
         </div>
         <h3>Healthy <span class="highlight">Study Habits</span></h3>
-        <p>Discover practical <strong>study techniques</strong> and self-care strategies you can use immediately.</p>
+        <p>Practical <strong>study techniques</strong> and self-care strategies that can be used immediately.</p>
       </div>
 
       <div class="feature-card">
@@ -151,7 +104,7 @@
           </svg>
         </div>
         <h3>When to <span class="highlight">Seek Help</span></h3>
-        <p>Understand when and how to ask for <strong>professional support</strong> - it's a sign of strength.</p>
+        <p>Understanding when and how to ask for <strong>professional support</strong> - it's a sign of strength.</p>
       </div>
 
       <div class="feature-card">
@@ -163,14 +116,14 @@
             <line x1="12" y1="15" x2="12" y2="3"></line>
           </svg>
         </div>
-        <h3>Build <span class="highlight">Resilience</span></h3>
-        <p>Develop <strong>self-compassion</strong> and emotional resilience for your academic journey.</p>
+        <h3>Building <span class="highlight">Resilience</span></h3>
+        <p>Developing <strong>self-compassion</strong> and emotional resilience for your academic journey.</p>
       </div>
     </div>
 
     <!-- Agenda -->
     <div class="agenda">
-      <h3>Session Agenda (60 minutes)</h3>
+      <h3>Session Overview (60 minutes)</h3>
       <div class="agenda-list">
         <div class="agenda-item">
           <span class="agenda-time">0:00</span>
@@ -233,8 +186,8 @@
 <!-- Speaker Section -->
 <section class="section section-gray" id="speaker">
   <div class="container">
-    <h2 class="section-title">Meet Your Speakers</h2>
-    <p class="section-subtitle" style="margin-bottom: 48px;">A powerful panel of mental health experts and educators committed to student wellbeing</p>
+    <h2 class="section-title">Our Speakers</h2>
+    <p class="section-subtitle" style="margin-bottom: 48px;">The expert panel who led our discussion on student mental health</p>
 
     <!-- Featured Host -->
     <div class="featured-speaker">
@@ -391,18 +344,18 @@
 <section class="section section-gray" id="share">
   <div class="container">
     <h2 class="section-title">Share With Friends</h2>
-    <p class="section-subtitle">Know someone who would benefit from this webinar? Help spread the word!</p>
+    <p class="section-subtitle">Know someone interested in student mental health? Share this page so they can subscribe for future events!</p>
 
     <div class="share-buttons" style="justify-content: center; flex-wrap: wrap;">
       <%
-        const shareText = "Check out this FREE webinar on Student Mental Health by Dr. Aditi Pajiyar! Learn practical strategies for thriving beyond grades. Register now:";
+        const shareText = "Great webinar on Student Mental Health by Dr. Aditi Pajiyar just concluded! Subscribe for updates on future events:";
         const shareUrl = siteUrl;
-        const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}&hashtags=MentalHealth,StudentWellness,Webinar`;
+        const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}&hashtags=MentalHealth,StudentWellness`;
         const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
         const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
-        const whatsappText = `Hey! Check out this FREE webinar on Student Mental Health by Dr. Aditi Pajiyar. It's happening this Sunday! You should register: ${shareUrl}`;
+        const whatsappText = `Hey! The Student Mental Health webinar by Dr. Aditi Pajiyar just concluded. You can subscribe here for future events: ${shareUrl}`;
         const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(whatsappText)}`;
-        const instagramText = `Check out this FREE webinar on Student Mental Health! Learn practical strategies for thriving beyond grades. Register at: ${shareUrl} #MentalHealth #StudentWellness #Webinar`;
+        const instagramText = `Student Mental Health webinar just concluded! Subscribe for future events and mental health resources: ${shareUrl} #MentalHealth #StudentWellness`;
       %>
       <a href="<%= facebookUrl %>" target="_blank" class="btn btn-share btn-facebook">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
@@ -446,73 +399,73 @@
     <div class="faq-list">
       <div class="faq-item">
         <button class="faq-question">
-          Is this webinar really free?
+          What happens when I subscribe?
           <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </button>
         <div class="faq-answer">
-          <p>Yes, this webinar is completely free. No credit card required, no hidden fees.</p>
+          <p>You'll receive email notifications about upcoming webinars, workshops, and mental health resources. We respect your inbox - no spam, just valuable content about student mental health.</p>
         </div>
       </div>
 
       <div class="faq-item">
         <button class="faq-question">
-          Will there be a recording?
+          Will there be more webinars in the future?
           <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </button>
         <div class="faq-answer">
-          <p>Yes, all registered attendees will receive a recording of the webinar within 24 hours after the live session.</p>
+          <p>Yes! We're planning more webinars and events focused on student mental health. Subscribe to be the first to know when new events are announced.</p>
         </div>
       </div>
 
       <div class="faq-item">
         <button class="faq-question">
-          What if I can't attend live?
+          Can I access resources from the past webinar?
           <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </button>
         <div class="faq-answer">
-          <p>No problem! Register anyway and we'll send you the recording. However, we encourage live attendance for the Q&A session.</p>
+          <p>Registered attendees have received links to the presentation materials. If you missed this webinar, subscribe to receive resources and recordings from future events.</p>
         </div>
       </div>
 
       <div class="faq-item">
         <button class="faq-question">
-          What platform will the webinar be on?
+          Who were the speakers?
           <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </button>
         <div class="faq-answer">
-          <p>The webinar will be hosted on Zoom. You'll receive the join link before the session starts.</p>
+          <p>The webinar featured Dr. Aditi Pajiyar (Host), Dr. Amit Jha (Child & Adolescent Psychiatrist), Nikita Pradhan (Clinical Psychologist), and Gopal Mahaseth (Educator). See the speakers section above for more details.</p>
         </div>
       </div>
 
       <div class="faq-item">
         <button class="faq-question">
-          Who is this webinar for?
+          Who are these events for?
           <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </button>
         <div class="faq-answer">
-          <p>This webinar is for students (high school and college), parents wanting to support their children, educators, and anyone interested in understanding student mental health.</p>
+          <p>Our events are for students (high school and college), parents wanting to support their children, educators, and anyone interested in understanding and promoting student mental health.</p>
         </div>
       </div>
 
       <div class="faq-item">
         <button class="faq-question">
-          Will my privacy be protected?
+          Is subscribing free?
           <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </button>
         <div class="faq-answer">
-          <p>Absolutely. Cameras are optional, and you can participate as you're comfortable. All discussions are confidential and judgment-free.</p>
+          <p>Yes, subscribing is completely free. You can unsubscribe at any time. Our goal is to spread mental health awareness, not to sell anything.</p>
         </div>
       </div>
     </div>
@@ -524,19 +477,18 @@
   <div class="container">
     <div class="cta-icon">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
       </svg>
     </div>
-    <h2>Let's Prioritize Mental Health Together</h2>
-    <p>Join others who have already registered. Your wellbeing matters!</p>
+    <h2>Stay Connected for Future Events</h2>
+    <p>Subscribe to be notified about upcoming webinars, workshops, and mental health resources.</p>
     <a href="/register" class="btn btn-primary btn-lg">
       <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-        <circle cx="8.5" cy="7" r="4"></circle>
-        <line x1="20" y1="8" x2="20" y2="14"></line>
-        <line x1="23" y1="11" x2="17" y2="11"></line>
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+        <polyline points="22,6 12,13 2,6"></polyline>
       </svg>
-      Register Now - It's Free
+      Subscribe for Future Events
     </a>
   </div>
 </section>

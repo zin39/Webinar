@@ -2,7 +2,7 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const crypto = require('crypto');
 const prisma = require('../config/db');
-const { sendConfirmationEmail } = require('../utils/email');
+const { sendSubscriptionEmail } = require('../utils/email');
 const { generateCalendarLinks } = require('../utils/calendar');
 const path = require('path');
 const fs = require('fs');
@@ -181,8 +181,8 @@ module.exports = function(registerLimiter, csrfProtection) {
       // Generate calendar links
       const calendarLinks = generateCalendarLinks(webinar);
 
-      // Send confirmation email (async, don't wait)
-      sendConfirmationEmail(attendee, webinar, calendarLinks).catch(console.error);
+      // Send subscription confirmation email (async, don't wait)
+      sendSubscriptionEmail(attendee).catch(console.error);
 
       // Redirect to success page
       res.redirect(`/success?email=${encodeURIComponent(attendee.email)}`);

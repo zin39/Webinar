@@ -964,6 +964,32 @@ module.exports = function(csrfProtection) {
   });
 
   // =====================================================
+  // Report Generation Route
+  // =====================================================
+
+  // Generate PDF Report
+  router.get('/report/generate', async (req, res) => {
+    try {
+      const { generateReport } = require('../utils/reportGenerator');
+
+      // Generate the PDF report
+      const pdf = await generateReport();
+
+      // Set response headers for PDF download
+      const filename = `webinar-report-${new Date().toISOString().split('T')[0]}.pdf`;
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.setHeader('Content-Length', pdf.length);
+
+      res.send(pdf);
+    } catch (error) {
+      console.error('Report generation error:', error);
+      req.flash('error_msg', 'Failed to generate report. Please try again.');
+      res.redirect('/admin');
+    }
+  });
+
+  // =====================================================
   // Email Scheduler Routes
   // =====================================================
 

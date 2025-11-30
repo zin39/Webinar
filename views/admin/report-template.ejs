@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Webinar Report</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #1f2937;
+      line-height: 1.5;
+      background: #fff;
+      font-size: 12px;
+    }
+
+    .page {
+      padding: 0;
+      max-width: 100%;
+    }
+
+    /* Header */
+    .report-header {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: white;
+      padding: 30px;
+      margin-bottom: 25px;
+      border-radius: 0 0 12px 12px;
+    }
+
+    .report-header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .report-header .subtitle {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .report-header .generated-at {
+      font-size: 11px;
+      opacity: 0.8;
+      margin-top: 10px;
+    }
+
+    /* Section styling */
+    .section {
+      margin-bottom: 25px;
+      page-break-inside: avoid;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title .icon {
+      width: 24px;
+      height: 24px;
+      background: #6366f1;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 12px;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .stat-card.primary {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: white;
+      border: none;
+    }
+
+    .stat-card.success {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      border: none;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.8;
+    }
+
+    /* Two column layout */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .chart-box {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 15px;
+    }
+
+    .chart-box h3 {
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 12px;
+    }
+
+    /* Bar Chart */
+    .bar-chart {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .bar-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .bar-label {
+      width: 100px;
+      font-size: 10px;
+      color: #6b7280;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .bar-container {
+      flex: 1;
+      height: 18px;
+      background: #e5e7eb;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 8px;
+      font-size: 10px;
+      font-weight: 600;
+      color: white;
+      min-width: 30px;
+    }
+
+    .bar-fill.purple { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
+    .bar-fill.green { background: linear-gradient(90deg, #10b981, #059669); }
+    .bar-fill.blue { background: linear-gradient(90deg, #3b82f6, #2563eb); }
+    .bar-fill.orange { background: linear-gradient(90deg, #f59e0b, #d97706); }
+    .bar-fill.pink { background: linear-gradient(90deg, #ec4899, #db2777); }
+
+    /* Rating Display */
+    .rating-display {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 10px 0;
+    }
+
+    .rating-value {
+      font-size: 36px;
+      font-weight: 700;
+      color: #6366f1;
+    }
+
+    .rating-scale {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .rating-bar {
+      flex: 1;
+      height: 12px;
+      background: #e5e7eb;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .rating-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #6366f1, #8b5cf6);
+      border-radius: 6px;
+    }
+
+    /* Comparison Section */
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .comparison-box {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 15px;
+    }
+
+    .comparison-box h4 {
+      font-size: 12px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .comparison-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .comparison-row:last-child {
+      border-bottom: none;
+    }
+
+    .comparison-label {
+      font-size: 10px;
+      color: #6b7280;
+    }
+
+    .comparison-values {
+      display: flex;
+      gap: 15px;
+    }
+
+    .comparison-value {
+      text-align: center;
+    }
+
+    .comparison-value span {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .comparison-value small {
+      font-size: 9px;
+      color: #6b7280;
+    }
+
+    .before { color: #6b7280; }
+    .after { color: #10b981; }
+
+    /* Traffic Section */
+    .traffic-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    /* Table */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+
+    .data-table th {
+      text-align: left;
+      padding: 8px 10px;
+      background: #f3f4f6;
+      font-weight: 600;
+      color: #374151;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .data-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #e5e7eb;
+      color: #4b5563;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Footer */
+    .report-footer {
+      margin-top: 30px;
+      padding-top: 15px;
+      border-top: 2px solid #e5e7eb;
+      text-align: center;
+      font-size: 10px;
+      color: #9ca3af;
+    }
+
+    /* Page break helpers */
+    .page-break {
+      page-break-before: always;
+    }
+
+    /* No data message */
+    .no-data {
+      text-align: center;
+      padding: 20px;
+      color: #9ca3af;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- Header -->
+    <div class="report-header">
+      <h1>Student Mental Health Webinar Report</h1>
+      <div class="subtitle">Thriving Beyond Grades - Comprehensive Analytics</div>
+      <div class="generated-at">Generated: <%= summary.generatedAt %></div>
+    </div>
+
+    <!-- Executive Summary -->
+    <div class="section">
+      <div class="section-title">
+        <span class="icon">1</span>
+        Executive Summary
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card primary">
+          <div class="stat-value"><%= summary.totalRegistrations %></div>
+          <div class="stat-label">Total Registrations</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value"><%= summary.emailsSent %></div>
+          <div class="stat-label">Emails Sent</div>
+        </div>
+        <div class="stat-card success">
+          <div class="stat-value"><%= summary.preSurveyCount %></div>
+          <div class="stat-label">Pre-Survey Responses</div>
+        </div>
+        <div class="stat-card success">
+          <div class="stat-value"><%= summary.postSurveyCount %></div>
+          <div class="stat-label">Post-Survey Responses</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="chart-box">
+          <h3>Pre-Survey Completion Rate</h3>
+          <div class="rating-display">
+            <div class="rating-value"><%= summary.preSurveyRate %>%</div>
+            <div class="rating-bar">
+              <div class="rating-bar-fill" style="width: <%= Math.min(summary.preSurveyRate, 100) %>%"></div>
+            </div>
+          </div>
+        </div>
+        <div class="chart-box">
+          <h3>Post-Survey Completion Rate</h3>
+          <div class="rating-display">
+            <div class="rating-value"><%= summary.postSurveyRate %>%</div>
+            <div class="rating-bar">
+              <div class="rating-bar-fill" style="width: <%= Math.min(summary.postSurveyRate, 100) %>%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Traffic & Conversion -->
+    <div class="section">
+      <div class="section-title">
+        <span class="icon">2</span>
+        Traffic & Conversion
+      </div>
+
+      <div class="traffic-grid">
+        <div class="stat-card">
+          <div class="stat-value"><%= traffic.totalPageViews.toLocaleString() %></div>
+          <div class="stat-label">Total Page Views</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value"><%= traffic.uniqueVisitors.toLocaleString() %></div>
+          <div class="stat-label">Unique Visitors</div>
+        </div>
+        <div class="stat-card primary">
+          <div class="stat-value"><%= traffic.conversionRate %>%</div>
+          <div class="stat-label">Conversion Rate</div>
+        </div>
+      </div>
+
+      <% if (traffic.topPages && traffic.topPages.length > 0) { %>
+      <div class="chart-box" style="margin-top: 15px;">
+        <h3>Top Pages</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Page</th>
+              <th>Views</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% traffic.topPages.forEach(function(page) { %>
+            <tr>
+              <td><%= page.page %></td>
+              <td><%= page.views %></td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+      <% } %>
+
+      <% if ((traffic.deviceStats && traffic.deviceStats.length > 0) || (traffic.browserStats && traffic.browserStats.length > 0)) { %>
+      <div class="two-col" style="margin-top: 15px;">
+        <% if (traffic.deviceStats && traffic.deviceStats.length > 0) { %>
+        <div class="chart-box">
+          <h3>Device Distribution</h3>
+          <div class="bar-chart">
+            <%
+              var maxDeviceViews = Math.max(...traffic.deviceStats.map(d => d.views));
+              traffic.deviceStats.forEach(function(device, index) {
+                var colors = ['purple', 'green', 'blue', 'orange', 'pink'];
+                var color = colors[index % colors.length];
+            %>
+            <div class="bar-item">
+              <div class="bar-label"><%= device.device %></div>
+              <div class="bar-container">
+                <div class="bar-fill <%= color %>" style="width: <%= (device.views / maxDeviceViews * 100) %>%">
+                  <%= device.views %>
+                </div>
+              </div>
+            </div>
+            <% }); %>
+          </div>
+        </div>
+        <% } %>
+
+        <% if (traffic.browserStats && traffic.browserStats.length > 0) { %>
+        <div class="chart-box">
+          <h3>Browser Distribution</h3>
+          <div class="bar-chart">
+            <%
+              var maxBrowserViews = Math.max(...traffic.browserStats.map(b => b.views));
+              traffic.browserStats.forEach(function(browser, index) {
+                var colors = ['blue', 'orange', 'purple', 'green', 'pink'];
+                var color = colors[index % colors.length];
+            %>
+            <div class="bar-item">
+              <div class="bar-label"><%= browser.browser %></div>
+              <div class="bar-container">
+                <div class="bar-fill <%= color %>" style="width: <%= (browser.views / maxBrowserViews * 100) %>%">
+                  <%= browser.views %>
+                </div>
+              </div>
+            </div>
+            <% }); %>
+          </div>
+        </div>
+        <% } %>
+      </div>
+      <% } %>
+    </div>
+
+    <!-- Page Break before Surveys -->
+    <div class="page-break"></div>
+
+    <!-- Pre-Webinar Survey Results -->
+    <div class="section">
+      <div class="section-title">
+        <span class="icon">3</span>
+        Pre-Webinar Survey Results
+      </div>
+
+      <% if (preSurvey.knowledgeLevel.length === 0 && preSurvey.academicStress.length === 0) { %>
+      <div class="no-data">No pre-webinar survey responses yet</div>
+      <% } else { %>
+
+      <div class="two-col">
+        <div class="chart-box">
+          <h3>Mental Health Knowledge Level</h3>
+          <% if (preSurvey.knowledgeLevel.length > 0) { %>
+          <div class="bar-chart">
+            <%
+              var maxKnowledge = Math.max(...preSurvey.knowledgeLevel.map(k => k.value));
+              preSurvey.knowledgeLevel.forEach(function(item, index) {
+            %>
+            <div class="bar-item">
+              <div class="bar-label"><%= item.label %></div>
+              <div class="bar-container">
+                <div class="bar-fill purple" style="width: <%= (item.value / maxKnowledge * 100) %>%">
+                  <%= item.value %>
+                </div>
+              </div>
+            </div>
+            <% }); %>
+          </div>
+          <% } else { %>
+          <div class="no-data">No responses</div>
+          <% } %>
+        </div>
+
+        <div class="chart-box">
+          <h3>Academic Stress Experience</h3>
+          <% if (preSurvey.academicStress.length > 0) { %>
+          <div class="bar-chart">
+            <%
+              var maxStress = Math.max(...preSurvey.academicStress.map(s => s.value));
+              preSurvey.academicStress.forEach(function(item, index) {
+            %>
+            <div class="bar-item">
+              <div class="bar-label"><%= item.label %></div>
+              <div class="bar-container">
+                <div class="bar-fill green" style="width: <%= (item.value / maxStress * 100) %>%">
+                  <%= item.value %>
+                </div>
+              </div>
+            </div>
+            <% }); %>
+          </div>
+          <% } else { %>
+          <div class="no-data">No responses</div>
+          <% } %>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top: 15px;">
+        <div class="chart-box">
+          <h3>Comfort Level Discussing Mental Health</h3>
+          <div class="rating-display">
+            <div class="rating-value"><%= preSurvey.comfortLevelAvg %></div>
+            <div class="rating-scale">out of 5</div>
+            <div class="rating-bar">
+              <div class="rating-bar-fill" style="width: <%= (preSurvey.comfortLevelAvg / 5 * 100) %>%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-box">
+          <h3>Awareness of Mental Health Resources</h3>
+          <% if (preSurvey.knowsResources.length > 0) { %>
+          <div class="bar-chart">
+            <%
+              var maxResources = Math.max(...preSurvey.knowsResources.map(r => r.value));
+              preSurvey.knowsResources.forEach(function(item, index) {
+            %>
+            <div class="bar-item">
+              <div class="bar-label"><%= item.label %></div>
+              <div class="bar-container">
+                <div class="bar-fill blue" style="width: <%= (item.value / maxResources * 100) %>%">
+                  <%= item.value %>
+                </div>
+              </div>
+            </div>
+            <% }); %>
+          </div>
+          <% } else { %>
+          <div class="no-data">No responses</div>
+          <% } %>
+        </div>
+      </div>
+      <% } %>
+    </div>
+
+    <!-- Post-Webinar Survey Results -->
+    <div class="section">
+      <div class="section-title">
+        <span class="icon">4</span>
+        Post-Webinar Survey Results
+      </div>
+
+      <% if (postSurvey.satisfaction.length === 0) { %>
+      <div class="no-data">No post-webinar survey responses yet</div>
+      <% } else { %>
+
+      <div class="two-col">
+        <div class="chart-box">
+          <h3>Overall Satisfaction</h3>
+          <div class="bar-chart">
+            <%
+              var maxSat = Math.max(...postSurvey.satisfaction.map(s => s.value));
+              postSurvey.satisfaction.forEach(function(item) {
+            %>
+            <div class="bar-item">
+              <div class="bar-label"><%= item.label %></div>
+              <div class="bar-container">
+                <div class="bar-fill purple" style="width: <%= (item.value / maxSat * 100) %>%">
+                  <%= item.value %>
+                </div>
+              </div>
+            </div>
+            <% }); %>
+          </div>
+        </div>
+
+        <div class="chart-box">
+          <h3>Would Recommend</h3>
+          <div class="bar-chart">
+            <%
+              var maxRec = Math.max(...postSurvey.wouldRecommend.map(r => r.value));
+              postSurvey.wouldRecommend.forEach(function(item) {
+            %>
+            <div class="bar-item">
+              <div class="bar-label"><%= item.label %></div>
+              <div class="bar-container">
+                <div class="bar-fill green" style="width: <%= (item.value / maxRec * 100) %>%">
+                  <%= item.value %>
+                </div>
+              </div>
+            </div>
+            <% }); %>
+          </div>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top: 15px;">
+        <div class="chart-box">
+          <h3>Content Relevance</h3>
+          <div class="rating-display">
+            <div class="rating-value"><%= postSurvey.contentRelevanceAvg %></div>
+            <div class="rating-scale">out of 5</div>
+            <div class="rating-bar">
+              <div class="rating-bar-fill" style="width: <%= (postSurvey.contentRelevanceAvg / 5 * 100) %>%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-box">
+          <h3>Facilitator Rating</h3>
+          <div class="rating-display">
+            <div class="rating-value"><%= postSurvey.facilitatorRatingAvg %></div>
+            <div class="rating-scale">out of 5</div>
+            <div class="rating-bar">
+              <div class="rating-bar-fill" style="width: <%= (postSurvey.facilitatorRatingAvg / 5 * 100) %>%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top: 15px;">
+        <div class="chart-box">
+          <h3>Knowledge Level After Webinar</h3>
+          <% if (postSurvey.knowledgeLevelAfter.length > 0) { %>
+          <div class="bar-chart">
+            <%
+              var maxKnowledgeAfter = Math.max(...postSurvey.knowledgeLevelAfter.map(k => k.value));
+              postSurvey.knowledgeLevelAfter.forEach(function(item) {
+            %>
+            <div class="bar-item">
+              <div class="bar-label"><%= item.label %></div>
+              <div class="bar-container">
+                <div class="bar-fill blue" style="width: <%= (item.value / maxKnowledgeAfter * 100) %>%">
+                  <%= item.value %>
+                </div>
+              </div>
+            </div>
+            <% }); %>
+          </div>
+          <% } else { %>
+          <div class="no-data">No responses</div>
+          <% } %>
+        </div>
+
+        <div class="chart-box">
+          <h3>Learned New Strategies</h3>
+          <% if (postSurvey.learnedStrategies.length > 0) { %>
+          <div class="bar-chart">
+            <%
+              var maxStrategies = Math.max(...postSurvey.learnedStrategies.map(s => s.value));
+              postSurvey.learnedStrategies.forEach(function(item) {
+            %>
+            <div class="bar-item">
+              <div class="bar-label"><%= item.label %></div>
+              <div class="bar-container">
+                <div class="bar-fill orange" style="width: <%= (item.value / maxStrategies * 100) %>%">
+                  <%= item.value %>
+                </div>
+              </div>
+            </div>
+            <% }); %>
+          </div>
+          <% } else { %>
+          <div class="no-data">No responses</div>
+          <% } %>
+        </div>
+      </div>
+      <% } %>
+    </div>
+
+    <!-- Before vs After Comparison -->
+    <div class="section">
+      <div class="section-title">
+        <span class="icon">5</span>
+        Before vs After Comparison
+      </div>
+
+      <% if (comparison.knowledgeBefore.length === 0 && comparison.knowledgeAfter.length === 0) { %>
+      <div class="no-data">Insufficient data for comparison</div>
+      <% } else { %>
+
+      <div class="comparison-grid">
+        <div class="comparison-box">
+          <h4>Knowledge Level</h4>
+          <%
+            var knowledgeLabels = ['Very Low', 'Low', 'Moderate', 'High', 'Very High'];
+            knowledgeLabels.forEach(function(label) {
+              var beforeItem = comparison.knowledgeBefore.find(k => k.label === label);
+              var afterItem = comparison.knowledgeAfter.find(k => k.label === label);
+              var beforeValue = beforeItem ? beforeItem.value : 0;
+              var afterValue = afterItem ? afterItem.value : 0;
+          %>
+          <div class="comparison-row">
+            <div class="comparison-label"><%= label %></div>
+            <div class="comparison-values">
+              <div class="comparison-value before">
+                <span><%= beforeValue %></span>
+                <small>Before</small>
+              </div>
+              <div class="comparison-value after">
+                <span><%= afterValue %></span>
+                <small>After</small>
+              </div>
+            </div>
+          </div>
+          <% }); %>
+        </div>
+
+        <div class="comparison-box">
+          <h4>Comfort Level (Average)</h4>
+          <div style="display: flex; justify-content: space-around; padding: 20px 0;">
+            <div style="text-align: center;">
+              <div style="font-size: 36px; font-weight: 700; color: #6b7280;"><%= comparison.comfortBefore %></div>
+              <div style="font-size: 11px; color: #9ca3af;">Before</div>
+            </div>
+            <div style="font-size: 24px; color: #d1d5db; align-self: center;">→</div>
+            <div style="text-align: center;">
+              <div style="font-size: 36px; font-weight: 700; color: #10b981;"><%= comparison.comfortAfter %></div>
+              <div style="font-size: 11px; color: #9ca3af;">After</div>
+            </div>
+          </div>
+          <div style="text-align: center; font-size: 11px; color: #6b7280;">
+            Scale: 1 (Not comfortable) to 5 (Very comfortable)
+          </div>
+        </div>
+      </div>
+      <% } %>
+    </div>
+
+    <!-- Footer -->
+    <div class="report-footer">
+      <p>This report was automatically generated for the Student Mental Health Webinar</p>
+      <p>Organized by Dr. Aditi Pajiyar | NHAFN Mental Health Fellow</p>
+    </div>
+  </div>
+</body>
+</html>

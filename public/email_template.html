@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post-Webinar Email Template Preview</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #e5e7eb;
+      margin: 0;
+      padding: 20px;
+    }
+    .preview-header {
+      max-width: 640px;
+      margin: 0 auto 20px;
+      background: #1f2937;
+      color: white;
+      padding: 20px;
+      border-radius: 8px 8px 0 0;
+    }
+    .preview-header h1 {
+      margin: 0 0 10px 0;
+      font-size: 18px;
+    }
+    .preview-header p {
+      margin: 5px 0;
+      font-size: 14px;
+      color: #9ca3af;
+    }
+    .email-container {
+      max-width: 640px;
+      margin: 0 auto;
+      border: 1px solid #d1d5db;
+      border-radius: 0 0 8px 8px;
+      overflow: hidden;
+    }
+    /* Email styles */
+    .email-wrapper {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #ffffff;
+    }
+    .email-content {
+      padding: 20px 0;
+    }
+    .email-content p {
+      margin: 0 0 16px 0;
+      font-size: 15px;
+      line-height: 1.7;
+      color: #333333;
+    }
+    .greeting {
+      margin-bottom: 20px;
+    }
+    .section {
+      margin: 24px 0;
+      padding: 20px;
+      background: #f9fafb;
+      border-radius: 8px;
+    }
+    .section-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1f2937;
+      margin: 0 0 12px 0;
+    }
+    .link {
+      color: #2563eb;
+      text-decoration: none;
+    }
+    .link:hover {
+      text-decoration: underline;
+    }
+    ul {
+      margin: 12px 0;
+      padding-left: 20px;
+    }
+    li {
+      margin: 8px 0;
+      font-size: 15px;
+      line-height: 1.7;
+      color: #333333;
+    }
+    .certificate-note {
+      background: #fef3c7;
+      padding: 16px;
+      border-radius: 8px;
+      margin: 20px 0;
+      font-size: 14px;
+      color: #92400e;
+    }
+    .signature {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #e5e7eb;
+    }
+    .signature p {
+      margin: 4px 0;
+      font-size: 14px;
+      color: #6b7280;
+    }
+    .signature .name {
+      color: #1f2937;
+      font-weight: 600;
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="preview-header">
+    <h1>Post-Webinar Email Template Preview</h1>
+    <p><strong>Subject:</strong> Thank You - Student Mental Health Webinar Resources</p>
+    <p><strong>From:</strong> Dr. Aditi Pajiyar &lt;mentalwellbeing1008@gmail.com&gt;</p>
+  </div>
+
+  <div class="email-container">
+    <div class="email-wrapper">
+      <div class="email-content">
+        <p class="greeting">Hi Sample Attendee,</p>
+
+        <p>Thank you for being part of our Student Mental Health: Thriving Beyond Grades webinar. We hope the discussion with Dr. Amit Jha, Nikita Pradhan, and Gopal Mahaseth provided valuable insights for you.</p>
+
+        <div class="section">
+          <p class="section-title">Webinar Resources</p>
+          <p style="margin-bottom: 0;">Here is the presentation from today's session:</p>
+          <p><a href="/Webinar_ppt.pptx" class="link">http://localhost:3000/Webinar_ppt.pptx</a></p>
+        </div>
+
+        <div class="section">
+          <p class="section-title">Complete Your Surveys</p>
+          <p>To help us improve and receive your certificate of participation, please complete both surveys:</p>
+          <ul>
+            <li><a href="/survey/pre-webinar?token=sample-token" class="link">Pre-webinar survey</a> (if not already completed)</li>
+            <li><a href="/survey/post-webinar?token=sample-token" class="link">Post-webinar feedback survey</a></li>
+          </ul>
+        </div>
+
+        <div class="certificate-note">
+          <strong>Certificate:</strong> Certificates of participation will be sent to attendees who complete both the pre-webinar and post-webinar surveys.
+        </div>
+
+        <p>Thank you for supporting student mental health awareness. Your participation and feedback are truly appreciated.</p>
+
+        <p>If you have any questions, feel free to reach out at <a href="mailto:mentalwellbeing1008@gmail.com" class="link">mentalwellbeing1008@gmail.com</a></p>
+
+        <div class="signature">
+          <p class="name">Dr. Aditi Pajiyar</p>
+          <p>NHAFN Mental Health Fellow</p>
+          <p>National Health Action Force Nepal</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
