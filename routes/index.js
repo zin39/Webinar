@@ -227,5 +227,116 @@ module.exports = function(registerLimiter, csrfProtection) {
     });
   });
 
+  // Subscribe page (general subscription for future events)
+  router.get('/subscribe', csrfProtection, (req, res) => {
+    res.render('subscribe', {
+      title: 'Subscribe - MindWell',
+      csrfToken: req.csrfToken(),
+      errors: [],
+      formData: {}
+    });
+  });
+
+  // Handle subscription
+  router.post('/subscribe', registerLimiter, csrfProtection, [
+    body('name').trim().notEmpty().withMessage('Name is required').isLength({ max: 100 }).withMessage('Name too long'),
+    body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
+    body('company').optional().trim().isLength({ max: 100 }),
+    body('jobTitle').optional().trim().isLength({ max: 100 }),
+    body('phone').optional().trim().isLength({ max: 15 }).matches(/^[0-9]*$/).withMessage('Phone number should only contain digits'),
+    body('countryCode').optional().trim().isLength({ max: 6 }),
+    body('howHeard').optional().trim().isLength({ max: 50 })
+  ], async (req, res) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.render('subscribe', {
+        title: 'Subscribe - MindWell',
+        csrfToken: req.csrfToken(),
+        errors: errors.array(),
+        formData: req.body
+      });
+    }
+
+    try {
+      // Check if already subscribed
+      const existing = await prisma.attendee.findUnique({
+        where: { email: req.body.email.toLowerCase() }
+      });
+
+      if (existing) {
+        return res.render('subscribe', {
+          title: 'Subscribe - MindWell',
+          csrfToken: req.csrfToken(),
+          errors: [{ msg: 'This email is already subscribed!' }],
+          formData: req.body
+        });
+      }
+
+      // Combine country code with phone number
+      let fullPhone = null;
+      if (req.body.phone) {
+        const countryCode = req.body.countryCode || '+977';
+        fullPhone = `${countryCode} ${req.body.phone}`;
+      }
+
+      // Generate unique survey token
+      const surveyToken = crypto.randomBytes(32).toString('hex');
+
+      // Create subscriber
+      const subscriber = await prisma.attendee.create({
+        data: {
+          name: req.body.name,
+          email: req.body.email.toLowerCase(),
+          company: req.body.company || null,
+          jobTitle: req.body.jobTitle || null,
+          phone: fullPhone,
+          howHeard: req.body.howHeard || null,
+          surveyToken
+        }
+      });
+
+      // Send subscription confirmation email (async, don't wait)
+      sendSubscriptionEmail(subscriber).catch(console.error);
+
+      // Redirect to subscribe success page
+      res.redirect(`/subscribe-success?email=${encodeURIComponent(subscriber.email)}`);
+
+    } catch (error) {
+      console.error('Subscription error:', error);
+      res.render('subscribe', {
+        title: 'Subscribe - MindWell',
+        csrfToken: req.csrfToken(),
+        errors: [{ msg: 'Something went wrong. Please try again.' }],
+        formData: req.body
+      });
+    }
+  });
+
+  // Subscribe success page
+  router.get('/subscribe-success', async (req, res) => {
+    const email = req.query.email;
+
+    // Validate that email is provided
+    if (!email) {
+      return res.redirect('/subscribe');
+    }
+
+    // Check if this email is actually subscribed
+    const subscriber = await prisma.attendee.findUnique({
+      where: { email: email }
+    }).catch(() => null);
+
+    if (!subscriber) {
+      return res.redirect('/subscribe');
+    }
+
+    res.render('subscribe-success', {
+      title: 'Subscription Successful - MindWell',
+      email: subscriber.email,
+      siteUrl: process.env.SITE_URL || 'https://mindwell.com.np'
+    });
+  });
+
   return router;
 };

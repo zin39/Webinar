@@ -105,10 +105,9 @@ img {
 }
 
 .nav-logo-icon {
-  width: 28px;
-  height: 28px;
-  stroke: var(--primary);
-  fill: none;
+  width: 32px;
+  height: 32px;
+  fill: #ef4444;
 }
 
 .nav-logo-img {
@@ -1321,6 +1320,12 @@ img {
   object-fit: cover;
 }
 
+.footer-logo-icon {
+  width: 32px;
+  height: 32px;
+  fill: #ef4444;
+}
+
 .footer p {
   font-size: 0.875rem;
 }
@@ -1586,6 +1591,126 @@ img {
   font-size: 0.875rem;
   color: var(--text-muted);
   text-align: center;
+}
+
+/* ===== Subscribe Page ===== */
+.subscribe-section {
+  padding: 120px 0 80px;
+  min-height: 100vh;
+  background: var(--bg-light);
+}
+
+.subscribe-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: start;
+}
+
+.subscribe-info h1 {
+  font-size: 2.5rem;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+
+.subscribe-subtitle {
+  color: var(--text-secondary);
+  font-size: 1.125rem;
+  margin-bottom: 32px;
+}
+
+.subscribe-benefits h3 {
+  margin-bottom: 16px;
+}
+
+.subscribe-benefits ul {
+  list-style: none;
+}
+
+.subscribe-benefits li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  color: var(--text-secondary);
+}
+
+.subscribe-benefits svg {
+  width: 20px;
+  height: 20px;
+  stroke: var(--success);
+  flex-shrink: 0;
+}
+
+.subscribe-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.subscribe-form-container {
+  position: sticky;
+  top: 100px;
+}
+
+/* Animated Heart */
+.subscribe-heart-container {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.subscribe-heart {
+  display: inline-block;
+  color: #ef4444;
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+.subscribe-heart svg {
+  width: 80px;
+  height: 80px;
+}
+
+.subscribe-heart-success svg {
+  width: 100px;
+  height: 100px;
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  14% {
+    transform: scale(1.2);
+  }
+  28% {
+    transform: scale(1);
+  }
+  42% {
+    transform: scale(1.15);
+  }
+  70% {
+    transform: scale(1);
+  }
+}
+
+/* Success page heart container */
+.success-card .subscribe-heart-container {
+  margin-bottom: 24px;
+}
+
+/* Success next section with check icons */
+.success-next li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.success-next .check-icon {
+  width: 20px;
+  height: 20px;
+  stroke: var(--success);
+  flex-shrink: 0;
+  margin-top: 2px;
 }
 
 /* ===== Success Page ===== */

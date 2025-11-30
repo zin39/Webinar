@@ -1,0 +1,192 @@
+<%- include('partials/header') %>
+<%- include('partials/nav') %>
+
+<section class="subscribe-section">
+  <div class="container">
+    <div class="subscribe-grid">
+      <!-- Left: Subscribe Info with Animated Heart -->
+      <div class="subscribe-info">
+        <a href="/" class="back-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Back to Home
+        </a>
+
+        <div class="subscribe-heart-container">
+          <div class="subscribe-heart">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+          </div>
+        </div>
+
+        <h1>Stay Connected</h1>
+        <p class="subscribe-subtitle">Subscribe to be notified about upcoming webinars, workshops, and mental health resources from MindWell.</p>
+
+        <div class="subscribe-benefits">
+          <h3>What you'll get:</h3>
+          <ul>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Early access to webinar registrations
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Mental health resources and tips
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Workshop announcements
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Exclusive content and recordings
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Right: Subscription Form -->
+      <div class="subscribe-form-container">
+        <div class="form-card">
+          <h2>Join Our Community</h2>
+          <p>Fill in your details below to subscribe for future events.</p>
+
+          <% if (typeof errors !== 'undefined' && errors && errors.length > 0) { %>
+            <div class="alert alert-error">
+              <% errors.forEach(error => { %>
+                <p><%= error.msg %></p>
+              <% }); %>
+            </div>
+          <% } %>
+
+          <form action="/subscribe" method="POST" class="subscribe-form">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <div class="form-group">
+              <label for="name">Full Name *</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value="<%= typeof formData !== 'undefined' && formData.name ? formData.name : '' %>"
+                placeholder="John Doe"
+                required
+              >
+              <span class="field-error" id="name-error"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email Address *</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value="<%= typeof formData !== 'undefined' && formData.email ? formData.email : '' %>"
+                placeholder="john@example.com"
+                required
+              >
+              <span class="field-error" id="email-error"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="phone">Phone Number (Optional)</label>
+              <div class="phone-input-group">
+                <select id="countryCode" name="countryCode" class="country-code-select">
+                  <option value="+977" <%= typeof formData !== 'undefined' && formData.countryCode === '+977' ? 'selected' : '' %>>+977 (Nepal)</option>
+                  <option value="+91" <%= typeof formData !== 'undefined' && formData.countryCode === '+91' ? 'selected' : '' %>>+91 (India)</option>
+                  <option value="+1" <%= typeof formData !== 'undefined' && formData.countryCode === '+1' ? 'selected' : '' %>>+1 (US/Canada)</option>
+                  <option value="+44" <%= typeof formData !== 'undefined' && formData.countryCode === '+44' ? 'selected' : '' %>>+44 (UK)</option>
+                  <option value="+61" <%= typeof formData !== 'undefined' && formData.countryCode === '+61' ? 'selected' : '' %>>+61 (Australia)</option>
+                  <option value="+86" <%= typeof formData !== 'undefined' && formData.countryCode === '+86' ? 'selected' : '' %>>+86 (China)</option>
+                  <option value="+81" <%= typeof formData !== 'undefined' && formData.countryCode === '+81' ? 'selected' : '' %>>+81 (Japan)</option>
+                  <option value="+82" <%= typeof formData !== 'undefined' && formData.countryCode === '+82' ? 'selected' : '' %>>+82 (South Korea)</option>
+                  <option value="+65" <%= typeof formData !== 'undefined' && formData.countryCode === '+65' ? 'selected' : '' %>>+65 (Singapore)</option>
+                  <option value="+971" <%= typeof formData !== 'undefined' && formData.countryCode === '+971' ? 'selected' : '' %>>+971 (UAE)</option>
+                  <option value="+966" <%= typeof formData !== 'undefined' && formData.countryCode === '+966' ? 'selected' : '' %>>+966 (Saudi Arabia)</option>
+                  <option value="+49" <%= typeof formData !== 'undefined' && formData.countryCode === '+49' ? 'selected' : '' %>>+49 (Germany)</option>
+                  <option value="+33" <%= typeof formData !== 'undefined' && formData.countryCode === '+33' ? 'selected' : '' %>>+33 (France)</option>
+                  <option value="+39" <%= typeof formData !== 'undefined' && formData.countryCode === '+39' ? 'selected' : '' %>>+39 (Italy)</option>
+                  <option value="+34" <%= typeof formData !== 'undefined' && formData.countryCode === '+34' ? 'selected' : '' %>>+34 (Spain)</option>
+                  <option value="+55" <%= typeof formData !== 'undefined' && formData.countryCode === '+55' ? 'selected' : '' %>>+55 (Brazil)</option>
+                  <option value="+52" <%= typeof formData !== 'undefined' && formData.countryCode === '+52' ? 'selected' : '' %>>+52 (Mexico)</option>
+                  <option value="+880" <%= typeof formData !== 'undefined' && formData.countryCode === '+880' ? 'selected' : '' %>>+880 (Bangladesh)</option>
+                  <option value="+92" <%= typeof formData !== 'undefined' && formData.countryCode === '+92' ? 'selected' : '' %>>+92 (Pakistan)</option>
+                  <option value="+94" <%= typeof formData !== 'undefined' && formData.countryCode === '+94' ? 'selected' : '' %>>+94 (Sri Lanka)</option>
+                </select>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value="<%= typeof formData !== 'undefined' && formData.phone ? formData.phone : '' %>"
+                  placeholder="9812345678"
+                  class="phone-number-input"
+                  pattern="[0-9]{6,15}"
+                  title="Please enter a valid phone number (6-15 digits)"
+                >
+              </div>
+              <span class="field-error" id="phone-error"></span>
+              <small class="form-hint">We may send you reminders for upcoming events</small>
+            </div>
+
+            <div class="form-group">
+              <label for="company">Company / School (Optional)</label>
+              <input
+                type="text"
+                id="company"
+                name="company"
+                value="<%= typeof formData !== 'undefined' && formData.company ? formData.company : '' %>"
+                placeholder="Your Company or School"
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="jobTitle">Job Title (Optional)</label>
+              <input
+                type="text"
+                id="jobTitle"
+                name="jobTitle"
+                value="<%= typeof formData !== 'undefined' && formData.jobTitle ? formData.jobTitle : '' %>"
+                placeholder="Student, Teacher, Professional..."
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="howHeard">How did you hear about us? (Optional)</label>
+              <select id="howHeard" name="howHeard">
+                <option value="">Select an option</option>
+                <option value="social" <%= typeof formData !== 'undefined' && formData.howHeard === 'social' ? 'selected' : '' %>>Social Media</option>
+                <option value="search" <%= typeof formData !== 'undefined' && formData.howHeard === 'search' ? 'selected' : '' %>>Search Engine</option>
+                <option value="friend" <%= typeof formData !== 'undefined' && formData.howHeard === 'friend' ? 'selected' : '' %>>Friend/Colleague</option>
+                <option value="email" <%= typeof formData !== 'undefined' && formData.howHeard === 'email' ? 'selected' : '' %>>Email</option>
+                <option value="other" <%= typeof formData !== 'undefined' && formData.howHeard === 'other' ? 'selected' : '' %>>Other</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg btn-block">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20" style="margin-right: 8px;">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+              Subscribe for Updates
+            </button>
+
+            <p class="form-disclaimer">
+              By subscribing, you agree to receive email updates about upcoming events. We respect your privacy and you can unsubscribe at any time.
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

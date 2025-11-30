@@ -193,6 +193,10 @@
             <div id="chart-recommend"></div>
           </div>
           <div class="chart-card">
+            <h3>Knowledge Level After</h3>
+            <div id="chart-knowledge-after"></div>
+          </div>
+          <div class="chart-card">
             <h3>Content Relevance (1-5)</h3>
             <div id="chart-content"></div>
           </div>
@@ -201,7 +205,7 @@
             <div id="chart-facilitator"></div>
           </div>
           <div class="chart-card">
-            <h3>Learned Strategies</h3>
+            <h3>Learned New Strategies</h3>
             <div id="chart-learned"></div>
           </div>
           <div class="chart-card">
@@ -401,12 +405,25 @@
   .chart-toggle {
     display: flex;
     gap: 8px;
+    position: relative;
+    z-index: 100;
   }
 
   .chart-toggle button {
     position: relative;
-    z-index: 10;
+    z-index: 100;
     cursor: pointer;
+    pointer-events: auto;
+  }
+
+  .analytics-section .table-header {
+    position: relative;
+    z-index: 100;
+  }
+
+  .charts-grid {
+    position: relative;
+    z-index: 1;
   }
 
   @media (max-width: 768px) {
@@ -673,6 +690,34 @@
       showNoData('chart-recommend', 'No post-webinar responses yet');
     }
 
+    // Knowledge Level After - Horizontal Bar
+    if (hasData(analyticsData.post.knowledgeLevelAfter)) {
+      const knowledgeOrder = ['Very Low', 'Low', 'Moderate', 'High', 'Very High'];
+      const sortedKnowledge = {};
+      knowledgeOrder.forEach(k => {
+        if (analyticsData.post.knowledgeLevelAfter[k]) sortedKnowledge[k] = analyticsData.post.knowledgeLevelAfter[k];
+      });
+      Object.keys(analyticsData.post.knowledgeLevelAfter).forEach(k => {
+        if (!sortedKnowledge[k] && k !== 'Not provided') sortedKnowledge[k] = analyticsData.post.knowledgeLevelAfter[k];
+      });
+
+      if (Object.keys(sortedKnowledge).length > 0) {
+        chartInstances.knowledgeLevelAfter = new ApexCharts(document.querySelector("#chart-knowledge-after"), {
+          chart: { type: 'bar', height: 250, toolbar: { show: false } },
+          series: [{ name: 'Responses', data: Object.values(sortedKnowledge) }],
+          xaxis: { categories: Object.keys(sortedKnowledge) },
+          plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '60%' } },
+          colors: [colors.success],
+          dataLabels: { enabled: true }
+        });
+        chartInstances.knowledgeLevelAfter.render();
+      } else {
+        showNoData('chart-knowledge-after', 'No knowledge level data');
+      }
+    } else {
+      showNoData('chart-knowledge-after', 'No post-webinar responses yet');
+    }
+
     // Content Relevance - Bar
     if (hasData(analyticsData.post.contentRelevance)) {
       const contentData = [1, 2, 3, 4, 5].map(n => analyticsData.post.contentRelevance[n] || analyticsData.post.contentRelevance[String(n)] || 0);
@@ -791,6 +836,35 @@
     console.log('DOMContentLoaded - initializing charts');
     console.log('ApexCharts available:', typeof ApexCharts !== 'undefined');
     console.log('Analytics data:', JSON.stringify(analyticsData, null, 2));
+
+    // Attach event listeners to chart toggle buttons (backup for onclick)
+    const btnPre = document.getElementById('btn-pre');
+    const btnPost = document.getElementById('btn-post');
+    const btnComparison = document.getElementById('btn-comparison');
+
+    if (btnPre) {
+      btnPre.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        showChartSection('pre');
+      });
+    }
+
+    if (btnPost) {
+      btnPost.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        showChartSection('post');
+      });
+    }
+
+    if (btnComparison) {
+      btnComparison.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        showChartSection('comparison');
+      });
+    }
 
     if (typeof ApexCharts === 'undefined') {
       console.error('ApexCharts not loaded!');
