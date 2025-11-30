@@ -1086,11 +1086,15 @@ module.exports = function(csrfProtection) {
 
       const { sendReminderEmail, sendPostWebinarEmail } = require('../utils/email');
 
-      // Get current user's email for test
+      // Use custom test email from form or fallback to logged-in user's email
+      const testEmail = req.body.testEmail && req.body.testEmail.trim()
+        ? req.body.testEmail.trim()
+        : req.user.email;
+
       const testAttendee = {
         id: 'test',
-        name: req.user.name || 'Test User',
-        email: req.user.email,
+        name: req.body.testName || req.user.name || 'Test User',
+        email: testEmail,
         surveyToken: 'test-token-' + Date.now()
       };
 
@@ -1108,7 +1112,7 @@ module.exports = function(csrfProtection) {
       }
 
       if (result.success) {
-        req.flash('success_msg', `Test email sent to ${req.user.email}`);
+        req.flash('success_msg', `Test email sent to ${testEmail}`);
       } else if (result.skipped) {
         req.flash('warning_msg', 'Email sending is not configured. Please add BREVO_API_KEY to your .env file.');
       } else {
