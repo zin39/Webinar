@@ -382,8 +382,7 @@ module.exports = function(csrfProtection) {
       });
 
       if (attendee) {
-        const { sendConfirmationEmail } = require('../utils/email');
-        const { generateCalendarLinks } = require('../utils/calendar');
+        const { sendPostWebinarEmail } = require('../utils/email');
 
         // Generate survey token if attendee doesn't have one
         if (!attendee.surveyToken) {
@@ -394,18 +393,9 @@ module.exports = function(csrfProtection) {
           });
         }
 
-        // Get webinar config
-        const webinar = await prisma.webinarConfig.findFirst({ where: { isActive: true } }) || {
-          title: 'Webinar',
-          date: new Date(process.env.WEBINAR_DATE || '2025-12-01T14:00:00Z'),
-          duration: 60,
-          meetingLink: process.env.WEBINAR_MEETING_LINK || '#'
-        };
+        await sendPostWebinarEmail(attendee);
 
-        const calendarLinks = generateCalendarLinks(webinar);
-        await sendConfirmationEmail(attendee, webinar, calendarLinks);
-
-        req.flash('success_msg', 'Confirmation email resent');
+        req.flash('success_msg', 'Post-webinar email sent');
       }
     } catch (error) {
       console.error('Resend error:', error);
