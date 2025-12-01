@@ -414,30 +414,19 @@ module.exports = function(csrfProtection) {
     res.redirect('/admin');
   });
 
-  // Bulk send emails to all attendees
+  // Bulk send post-webinar emails to all attendees
   router.post('/send-bulk-email', csrfProtection, async (req, res) => {
     try {
-      const { sendConfirmationEmail } = require('../utils/email');
-      const { generateCalendarLinks } = require('../utils/calendar');
+      const { sendPostWebinarEmail } = require('../utils/email');
 
-      // Get filter type from query/body - 'all' sends to everyone, 'pending' only to those without email sent
+      // Get filter type from query/body - 'all' sends to everyone, 'pending' only to those without post-webinar email sent
       const filter = req.body.filter || 'all';
-
-      // Get webinar config first
-      const webinar = await prisma.webinarConfig.findFirst({ where: { isActive: true } }) || {
-        title: 'Webinar',
-        date: new Date(process.env.WEBINAR_DATE || '2025-12-01T14:00:00Z'),
-        duration: 60,
-        meetingLink: process.env.WEBINAR_MEETING_LINK || '#'
-      };
-
-      const calendarLinks = generateCalendarLinks(webinar);
 
       // Get attendees based on filter
       let attendees;
       if (filter === 'pending') {
         attendees = await prisma.attendee.findMany({
-          where: { emailSent: false },
+          where: { postWebinarSent: false },
           orderBy: { registeredAt: 'desc' }
         });
       } else {
@@ -448,7 +437,7 @@ module.exports = function(csrfProtection) {
 
       if (attendees.length === 0) {
         req.flash('info_msg', filter === 'pending'
-          ? 'No pending emails to send. All attendees have already received their confirmation emails.'
+          ? 'No pending emails to send. All attendees have already received their post-webinar emails.'
           : 'No attendees to send emails to.');
         return res.redirect('/admin');
       }
@@ -469,7 +458,7 @@ module.exports = function(csrfProtection) {
             });
           }
 
-          await sendConfirmationEmail(updatedAttendee, webinar, calendarLinks);
+          await sendPostWebinarEmail(updatedAttendee);
           successCount++;
 
           // Small delay between emails (100ms) to avoid rate limiting
@@ -482,7 +471,7 @@ module.exports = function(csrfProtection) {
 
       // Build summary message
       if (failCount === 0) {
-        req.flash('success_msg', `Successfully sent ${successCount} confirmation email${successCount !== 1 ? 's' : ''}!`);
+        req.flash('success_msg', `Successfully sent ${successCount} post-webinar email${successCount !== 1 ? 's' : ''}!`);
       } else if (successCount === 0) {
         req.flash('error_msg', `Failed to send all ${failCount} emails. Please check email configuration.`);
       } else {
